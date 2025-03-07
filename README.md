@@ -43,7 +43,7 @@ Desarrollar una aplicación web para ayudar a las personas a llevar un mejor con
 
 2. Instala las dependencias del frontend:
    ```bash
-   cd [directorio-del-proyecto]
+   cd SpendWise_Front
    npm install
    ```
 
