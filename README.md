@@ -59,3 +59,5 @@ Desarrollar una aplicación web para ayudar a las personas a llevar un mejor con
 4. Accede a la aplicación desde tu navegador en `http://localhost:5173/` o el puerto donde Vue esté corriendo.
 
 SpendWise_Front
+
+No somos los unicos pero si los mejores <3
