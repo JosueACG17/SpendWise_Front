@@ -1,40 +1,62 @@
-# spendwise-front
+# Control de Ingresos y Egresos
 
-This template should help get you started developing with Vue 3 in Vite.
+## Propósito
 
-## Recommended IDE Setup
+Desarrollar una aplicación web para ayudar a las personas a llevar un mejor control acerca de sus ingresos y egresos. Queremos que cualquier usuario se pueda registrar y organizar sus gastos de manera fácil y rápida, sin necesidad de tener conocimientos sobre finanzas ni vincular cuentas bancarias.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Objetivos
 
-## Type Support for `.vue` Imports in TS
+1. Permitir a los usuarios registrar sus ingresos y egresos con categorías.
+2. Mostrar un historial de transacciones con fechas y montos.
+3. Generar gráficas simples para visualizar los gastos.
+4. Crear una interfaz fácil de usar y accesible desde cualquier dispositivo.
+5. Permitir la exportación de datos en formato PDF.
+6. Implementar filtros para buscar transacciones por categoría, fecha o monto.
+7. Exportación de datos: jsPDF para generar archivos PDF.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Integrantes
 
-## Customize configuration
+- **Josue Antonio Chan Gutierrez** (Líder) - FULLSTACK
+- **Carlos Josué Oviedo Cisneros** - FULLSTACK
+- **Josias Efrain Kumul Quetzal** – FULLSTACK
+- **Bolon Cifuentes Miguel Angel** – FULLSTACK
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## Tecnologías y Librerías
 
-## Project Setup
+### Front-end (Interfaz de Usuario)
+- **Vue 3**: Framework progresivo para una experiencia de usuario dinámica y eficiente.
+- **Tailwind CSS**: Para el diseño de una interfaz moderna y adaptable a cualquier pantalla.
+- **Pinia**: Gestión de estado para optimizar el manejo de datos en la aplicación.
+- **Vue Router**: Para la navegación y gestión de rutas dentro de la aplicación.
+- **VeeValidate + Yup**: Para la validación de formularios y aseguramiento de datos correctos.
+- **Axios**: Para manejar las solicitudes HTTP y la comunicación con la API.
+- **SweetAlert2**: Para mostrar alertas y notificaciones interactivas.
+- **Chart.js**: Para generar gráficos dinámicos de ingresos y egresos.
+- **jsPDF**: Para la exportación de reportes en formato PDF.
 
-```sh
-npm install
-```
+## Cómo Correr el Proyecto
 
-### Compile and Hot-Reload for Development
+1. Clona el repositorio en tu máquina local:
+   ```bash
+   git clone https://github.com/JosueACG17/SpendWise_Front.git
+   ```
 
-```sh
-npm run dev
-```
+2. Instala las dependencias del frontend:
+   ```bash
+   cd [directorio-del-proyecto]
+   npm install
+   ```
 
+3. Ejecuta el frontend en modo desarrollo:
+   ```bash
+   npm run dev
+   ```
+
+4. Accede a la aplicación desde tu navegador en `http://localhost:5173/` o el puerto donde Vue esté corriendo.
 ### Type-Check, Compile and Minify for Production
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
 SpendWise_Front
