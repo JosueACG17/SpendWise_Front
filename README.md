@@ -21,7 +21,7 @@ Desarrollar una aplicación web para ayudar a las personas a llevar un mejor con
 ## Integrantes
 
 - **Josue Antonio Chan Gutierrez** (Líder) - FULLSTACK
-- **Carlos Josué Oviedo Cisneros** - FULLSTACK
+- **Carlos Josué Oviedo Cisneros** - FULLSTACK <3
 - **Josias Efrain Kumul Quetzal** – FULLSTACK
 - **Bolon Cifuentes Miguel Angel** – FULLSTACK
 
