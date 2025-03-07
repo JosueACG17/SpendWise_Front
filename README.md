@@ -1,5 +1,9 @@
 # Control de Ingresos y Egresos
 
+## Problemática
+
+Muchas personas tienen dificultades para llevar un control adecuado de sus finanzas personales. La falta de herramientas accesibles y fáciles de usar provoca que los usuarios pierdan el seguimiento de sus ingresos y egresos, lo que puede llevar a una mala gestión del dinero.
+
 ## Propósito
 
 Desarrollar una aplicación web para ayudar a las personas a llevar un mejor control acerca de sus ingresos y egresos. Queremos que cualquier usuario se pueda registrar y organizar sus gastos de manera fácil y rápida, sin necesidad de tener conocimientos sobre finanzas ni vincular cuentas bancarias.
@@ -53,10 +57,5 @@ Desarrollar una aplicación web para ayudar a las personas a llevar un mejor con
    ```
 
 4. Accede a la aplicación desde tu navegador en `http://localhost:5173/` o el puerto donde Vue esté corriendo.
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
 
 SpendWise_Front
