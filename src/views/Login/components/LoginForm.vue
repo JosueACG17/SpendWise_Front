@@ -60,6 +60,7 @@
       </form>
     </div>
   </section>
+  <LoadingScreen :show="isLoading" />
 </template>
 
 <script lang="ts" setup>
@@ -69,9 +70,12 @@ import * as yup from 'yup';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
+import LoadingScreen from '@/components/LoadingScreen.vue';
 
 const authStore = useAuthStore();
 const router = useRouter();
+
+const isLoading = ref(false);
 
 const validationSchema = yup.object({
   email: yup.string()
@@ -98,17 +102,23 @@ const togglePasswordVisibility = () => {
 
 const onSubmit = handleSubmit(async (values) => {
   try {
+    isLoading.value = true;
+
     await authStore.login(values.email, values.password);
+
+    isLoading.value = false;
+
     Swal.fire({
       icon: 'success',
-      title: '¡Inicia sesión correctamente!',
+      title: '¡Inicio de sesión exitoso!',
       showConfirmButton: false,
       timer: 1000,
     }).then(() => {
       router.push({ name: 'home' });
     });
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
+  } catch {
+    isLoading.value = false;
+
     Swal.fire({
       icon: 'error',
       title: 'Credenciales Incorrectas',
@@ -118,5 +128,4 @@ const onSubmit = handleSubmit(async (values) => {
     });
   }
 });
-
 </script>

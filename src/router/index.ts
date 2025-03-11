@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/Home/HomeView.vue';
 import RegisterView from '@/views/Register/RegisterView.vue';
 import LoginView from '@/views/Login/LoginView.vue';
+import NotFoundView from '@/views/NotFoundView.vue';
 import { useAuthStore } from '@/stores/authStore';
 
 const router = createRouter({
@@ -24,6 +25,18 @@ const router = createRouter({
       name: 'Login',
       component: LoginView,
       meta: { requiresAuth: false },
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: LoginView,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: NotFoundView,
+      meta: {requiresAuth: false,}
     },
   ],
 });
