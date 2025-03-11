@@ -68,7 +68,7 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'vue-router';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2';
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -114,7 +114,7 @@ const onSubmit = handleSubmit(async (values) => {
       title: 'Credenciales Incorrectas',
       text: 'Por favor, revisa tu correo y contraseña.',
       showConfirmButton: false,
-      timer: 2000,  
+      timer: 2000,
     });
   }
 });
