@@ -1,10 +1,5 @@
 <template>
   <section class="relative flex flex-wrap lg:h-screen lg:items-center">
-    <div class="relative h-full w-full sm:h-96 lg:h-full lg:w-1/2">
-      <img alt="Fondo tecnológico"
-        src="https://images.pexels.com/photos/6771607/pexels-photo-6771607.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-    </div>
     <div class="w-full px-4 py-10 sm:px-6 sm:py-16 lg:w-1/2">
       <div class="mx-auto max-w-lg text-center">
         <h1 class="text-2xl font-bold sm:text-3xl">¡BIENVENIDO!</h1>
@@ -55,9 +50,14 @@
 
         <div class="mt-4 text-center">
           <span class="text-sm text-gray-600">¿No tienes cuenta aún? </span>
-          <RouterLink to="/register" class="text-blue-800 font-semibold">Registrarse</RouterLink>
+          <RouterLink to="/register" class="text-yellow-500 font-bold hover:text-amber-500">Registrarse</RouterLink>
         </div>
       </form>
+    </div>
+    <div class="relative h-full w-full sm:h-96 lg:h-full lg:w-1/2">
+      <img alt="Fondo tecnológico"
+        src="https://images.pexels.com/photos/11646613/pexels-photo-11646613.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
     </div>
   </section>
   <LoadingScreen :show="isLoading" />
