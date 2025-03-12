@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/Home/HomeView.vue';
+import HomeView from '@/views/User/HomeView.vue';
 import RegisterView from '@/views/Register/RegisterView.vue';
 import LoginView from '@/views/Login/LoginView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import { useAuthStore } from '@/stores/authStore';
+import ProfileView from '@/views/User/ProfileView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,6 +13,12 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
       meta: { requiresAuth: true },
     },
     {
