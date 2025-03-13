@@ -1,5 +1,5 @@
 <template>
-  <nav class=" border-gray-200 bg-black">
+  <nav class="border-gray-200 bg-black">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
       <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse text-white">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Bitcoin.png" class="h-8" alt="Flowbite Logo" />
@@ -13,13 +13,15 @@
           aria-expanded="false"
           @click="toggleDropdown"
         >
-          <span class="sr-only">Open user menu</span>
-          <p class="text-white mt-1.5 mr-2 ml-2 ">Josue Chan</p>
-          <img class="w-8 h-8 rounded-full" src="https://cdn-icons-png.flaticon.com/512/219/219983.png" alt="user photo">
+          <p class="text-white mt-1.5 mr-2 ml-2">Josue Chan</p>
+          <img
+            class="w-8 h-8 rounded-full"
+            src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
+            alt="user photo"
+          />
         </button>
         <div
           class="z-50 absolute right-0 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600"
-          id="user-dropdown"
           v-show="isDropdownOpen"
         >
           <div class="px-4 py-3">
@@ -28,10 +30,17 @@
           </div>
           <ul class="py-2" aria-labelledby="user-menu-button">
             <li>
-              <RouterLink to="/profile" class="block px-4 py-2 text-sm text-white hover:bg-gray-700 ">Perfil</RouterLink>
+              <RouterLink to="/profile" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
+                Perfil
+              </RouterLink>
             </li>
             <li>
-              <a class="block px-4 py-2 text-sm text-white hover:bg-gray-700 cursor-pointer" @click="confirmLogout">Cerrar Sesión</a>
+              <a
+                class="block px-4 py-2 text-sm text-white hover:bg-gray-700 cursor-pointer"
+                @click="confirmLogout"
+              >
+                Cerrar Sesión
+              </a>
             </li>
           </ul>
         </div>
@@ -42,32 +51,66 @@
           aria-expanded="false"
           @click="toggleMenu"
         >
-          <span class="sr-only">Open main menu</span>
-          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+          <svg
+            class="w-5 h-5"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 17 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M1 1h15M1 7h15M1 13h15"
+            />
           </svg>
         </button>
       </div>
-      <div
-        class="items-center justify-between w-full md:flex md:w-auto md:order-1"
-        id="navbar-user"
-        :class="{ 'hidden': !isMenuOpen }"
-      >
-        <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
+      <div class="items-center justify-between w-full md:flex md:w-auto md:order-1" :class="{ hidden: !isMenuOpen }">
+        <ul
+          class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0"
+        >
           <li>
-            <RouterLink to="/" class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Inicio</RouterLink>
+            <RouterLink
+              to="/home"
+              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
+            >
+              Inicio
+            </RouterLink>
           </li>
           <li>
-            <RouterLink to="/" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Gastos</RouterLink>
+            <RouterLink
+              to="/home"
+              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
+            >
+              Gastos
+            </RouterLink>
           </li>
           <li>
-            <RouterLink to="/" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Presupuestos</RouterLink>
+            <RouterLink
+              to="/home"
+              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
+            >
+              Presupuestos
+            </RouterLink>
           </li>
           <li>
-            <RouterLink to="/" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Categorias</RouterLink>
+            <RouterLink
+              to="/home"
+              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
+            >
+              Categorias
+            </RouterLink>
           </li>
           <li>
-            <RouterLink to="/" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Etiquetas</RouterLink>
+            <RouterLink
+              to="/home"
+              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
+            >
+              Etiquetas
+            </RouterLink>
           </li>
         </ul>
       </div>
@@ -92,27 +135,35 @@ const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
-const confirmLogout = () => {
-  Swal.fire({
+const confirmLogout = async () => {
+  const result = await Swal.fire({
     title: '¿Estás seguro?',
-    text: "¿Quieres cerrar sesión?",
+    text: '¿Quieres cerrar sesión?',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Sí, cerrar sesión'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      authStore.logout();
+    confirmButtonText: 'Sí, cerrar sesión',
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await authStore.logout();
       Swal.fire({
         title: 'Sesión cerrada!',
         text: 'Has cerrado sesión correctamente.',
         icon: 'success',
         timer: 1000,
         timerProgressBar: true,
-        showConfirmButton: false
+        showConfirmButton: false,
+      });
+    } catch  {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al cerrar sesión',
+        text: 'No se pudo cerrar sesión correctamente. Inténtalo de nuevo.',
       });
     }
-  });
+  }
 };
 </script>
