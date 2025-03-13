@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import { useAuthStore } from '@/stores/authStore';
 
 export const axiosInstance = axios.create({
@@ -9,25 +8,9 @@ export const axiosInstance = axios.create({
   },
 });
 
-const isTokenExpired = (token: string): boolean => {
-  try {
-    const decodedToken: { exp: number } = jwtDecode(token);
-    const currentTime = Date.now() / 1000;
-    return decodedToken.exp < currentTime;
-  } catch (error) {
-    console.error('Error decodificando el token:', error);
-    return true;
-  }
-};
-
-axiosInstance.interceptors.request.use(async (config) => {
+axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
-    if (isTokenExpired(token)) {
-      const authStore = useAuthStore();
-      authStore.logout();
-      throw new axios.Cancel('Token expirado');
-    }
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

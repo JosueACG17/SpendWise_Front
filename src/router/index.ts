@@ -6,6 +6,7 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import { useAuthStore } from '@/stores/authStore';
 import ProfileView from '@/views/User/ProfileView.vue';
 import WelcomeView from '@/views/WelcomeView.vue';
+import Swal from 'sweetalert2';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,17 +52,34 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
-  const isAuthenticated = authStore.isAuthenticated;
+  const token = localStorage.getItem('token');
 
-  if (to.name === 'welcome' && isAuthenticated) {
-    next({ name: 'home' });
-  } else if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' });
-  } else if ((to.name === 'Login' || to.name === 'Register') && isAuthenticated) {
-    next({ name: 'home' });
-  } else {
-    next();
+  if (to.meta.requiresAuth) {
+    if (token) {
+      const { isValid, message } = await authStore.checkAuth();
+      if (!isValid) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de autenticación',
+          text: message || 'Tu sesión ha expirado o el token es inválido.',
+          timer: 1500,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
+        authStore.logout();
+        next({ name: 'Login' });
+        return;
+      }
+    } else {
+      next({ name: 'Login' });
+      return;
+    }
   }
+  if ((to.name === 'Login' || to.name === 'Register'|| to.name === 'welcome') && authStore.isAuthenticated) {
+    next({ name: 'home' });
+    return;
+  }
+  next();
 });
 
 export default router;
