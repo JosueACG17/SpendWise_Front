@@ -3,7 +3,6 @@
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Contenedor de columnas -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-center text-center md:text-left">
-        <!-- Logo y descripción -->
         <div class="col-span-1">
           <RouterLink to="/home" class="flex items-center justify-center md:justify-start space-x-3 rtl:space-x-reverse">
             <img
@@ -18,7 +17,6 @@
           </p>
         </div>
 
-        <!-- Redes sociales -->
         <div class="col-span-1">
           <h3 class="text-lg font-semibold mb-4">Síguenos</h3>
           <div class="flex justify-center md:justify-start space-x-4">
@@ -59,7 +57,6 @@
         </div>
       </div>
 
-      <!-- Derechos de autor -->
       <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
         <p>&copy; 2023 SpendWise. Todos los derechos reservados.</p>
       </div>
