@@ -15,14 +15,8 @@ export const useAuthStore = defineStore('auth', () => {
     if (!token.value) {
       return { isValid: false, message: 'No hay token' }
     }
-
     const { isValid, message } = await validateToken(token.value)
     if (!isValid) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error de autenticación',
-        text: message || 'Tu sesión ha expirado o el token es inválido.',
-      })
       await logout()
     }
     return { isValid, message }
@@ -53,21 +47,21 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async (): Promise<void> => {
     try {
       if (token.value) {
-        await logoutUser(token.value); 
+        await logoutUser(token.value)
       }
     } catch (error) {
-      console.error('Error al cerrar sesión en el backend:', error);
+      console.error('Error al cerrar sesión en el backend:', error)
       Swal.fire({
         icon: 'error',
         title: 'Error al cerrar sesión',
         text: 'No se pudo cerrar sesión correctamente. Inténtalo de nuevo.',
-      });
+      })
     } finally {
-      token.value = null;
-      localStorage.removeItem('token');
-      router.push({ name: 'Login' });
+      token.value = null
+      localStorage.removeItem('token')
+      router.push({ name: 'Login' })
     }
-  };
+  }
 
   return {
     token,

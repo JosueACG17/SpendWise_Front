@@ -62,11 +62,11 @@
   <FooterComponent />
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
-import 'animate.css'; // Importar Animate.css
+import 'animate.css';
 
 const gastos = ref([
   { id: 1, nombre: 'Comida', cantidad: 200, categoria: 'Alimentación', fecha: '2025-03-14', descripcion: '9 taquitos en los tarascos' },
@@ -74,7 +74,6 @@ const gastos = ref([
   { id: 3, nombre: 'Internet', cantidad: 500, categoria: 'Servicios', fecha: '2025-03-10', descripcion: 'Mensualidad Starlink' }
 ]);
 
-// Función para obtener iconos según la categoría
 const getIcon = (categoria) => {
   switch (categoria) {
     case 'Alimentación':
@@ -90,8 +89,7 @@ const getIcon = (categoria) => {
 </script>
 
 <style scoped>
-/* Personalización adicional */
 .container {
-  background-color: #f8fafc; /* Fondo más claro */
+  background-color: #f8fafc;
 }
 </style>
