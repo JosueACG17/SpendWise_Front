@@ -24,7 +24,7 @@
               placeholder="Ingresa tu contraseña" />
             <button type="button" @click="togglePasswordVisibility"
               class="absolute inset-y-0 right-2 flex items-center">
-              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
+              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 " fill="none"
                 viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -56,7 +56,7 @@
     </div>
     <div class="relative h-full w-full sm:h-96 lg:h-full lg:w-1/2">
       <img alt="Fondo tecnológico"
-        src="https://images.pexels.com/photos/11646613/pexels-photo-11646613.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        src="@/assets/img/LoginImg.webp"
         class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
     </div>
   </section>

@@ -69,51 +69,57 @@
         </button>
       </div>
       <div class="items-center justify-between w-full md:flex md:w-auto md:order-1" :class="{ hidden: !isMenuOpen }">
-        <ul
-          class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0"
-        >
-          <li>
-            <RouterLink
-              to="/home"
-              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
-            >
-              Inicio
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/home"
-              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
-            >
-              Gastos
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/home"
-              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
-            >
-              Presupuestos
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/home"
-              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
-            >
-              Categorias
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/home"
-              class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
-            >
-              Etiquetas
-            </RouterLink>
-          </li>
-        </ul>
-      </div>
+  <ul
+    class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0"
+  >
+    <li>
+      <RouterLink
+        to="/home"
+        class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+        :class="{ 'text-yellow-500': $route.path === '/home', 'text-white hover:bg-yellow-600': $route.path !== '/home' }"
+      >
+        Inicio
+      </RouterLink>
+    </li>
+    <li>
+      <RouterLink
+        to="/gastos"
+        class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+        :class="{ 'text-yellow-500': $route.path === '/gastos', 'text-white hover:bg-yellow-600': $route.path !== '/gastos' }"
+      >
+        Gastos
+      </RouterLink>
+    </li>
+    <li>
+      <RouterLink
+        to="/presupuestos"
+        class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+        :class="{ 'text-yellow-500': $route.path === '/presupuestos', 'text-white hover:bg-yellow-600': $route.path !== '/presupuestos' }"
+      >
+        Presupuestos
+      </RouterLink>
+    </li>
+    <li>
+      <RouterLink
+        to="/categorias"
+        class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+        :class="{ 'text-yellow-500': $route.path === '/categorias', 'text-white hover:bg-yellow-600': $route.path !== '/categorias' }"
+      >
+        Categorias
+      </RouterLink>
+    </li>
+    <li>
+      <RouterLink
+        to="/etiquetas"
+        class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+        :class="{ 'text-yellow-500': $route.path === '/etiquetas', 'text-white hover:bg-yellow-600': $route.path !== '/etiquetas' }"
+      >
+        Etiquetas
+      </RouterLink>
+    </li>
+  </ul>
+</div>
+
     </div>
   </nav>
 </template>

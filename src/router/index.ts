@@ -6,7 +6,9 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import { useAuthStore } from '@/stores/authStore';
 import ProfileView from '@/views/User/ProfileView.vue';
 import WelcomeView from '@/views/WelcomeView.vue';
+import DashView from '@/views/Admin/DashView.vue';
 import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +30,12 @@ const router = createRouter({
       name: 'profile',
       component: ProfileView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: DashView,
+      meta: { requiresAuth: true, roles: ['Administrador'] },
     },
     {
       path: '/register',
@@ -53,9 +61,16 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   const token = localStorage.getItem('token');
+  let userRole: string = ''
 
   if (to.meta.requiresAuth) {
     if (token) {
+      try {
+        const decodedToken = jwtDecode<{ role: string }>(token);
+        userRole = decodedToken.role;
+      } catch (error) {
+        console.error('Invalid token:', error);
+      }
       const { isValid, message } = await authStore.checkAuth();
       if (!isValid) {
         Swal.fire({
@@ -77,6 +92,10 @@ router.beforeEach(async (to, from, next) => {
   }
   if ((to.name === 'Login' || to.name === 'Register'|| to.name === 'welcome') && authStore.isAuthenticated) {
     next({ name: 'home' });
+    return;
+  }
+  else if (to.meta.roles && Array.isArray(to.meta.roles) && !to.meta.roles.includes(userRole)) {
+    next({ name: 'NotFound' });
     return;
   }
   next();
