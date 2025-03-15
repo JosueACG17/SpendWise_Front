@@ -1,16 +1,15 @@
 <template>
   <NavbarComponent />
 
-  <div class="container mx-auto mt-8 mb-8 p-8 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
+  <div class=" mx-auto p-8 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
 
-    <div class="flex flex-col items-center mb-8">
-      <button class="bg-gradient-to-r from-green-400 to-green-600 text-white px-6 py-3 rounded-full hover:from-green-500 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
+    <div class="flex flex-col items-center ">
+      <button class="bg-gradient-to-r cursor-pointer from-yellow-500 to-yellow-600 text-white sm:px-6 sm:py-3 px-2 py-1.5 rounded-full hover:from-yellow-500 hover:to-yellow-800 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
         Agregar Gasto
       </button>
-      <h1 class="text-4xl font-bold text-gray-800 mb-4 mt-6 animate__animated animate__fadeIn">Mis Gastos</h1>
     </div>
-
-    <p class="text-center text-gray-600 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+    <h1 class="text-center text-4xl font-bold text-gray-800 mb-4 mt-5 sm:mt-0  animate__animated animate__fadeIn">Mis Gastos</h1>
+    <p class="text-center text-lg text-gray-700 mb-8 animate__animated animate__fadeIn animate__delay-1s">
       Aquí puedes ver tus gastos registrados.
     </p>
 
@@ -18,7 +17,7 @@
       <div
         v-for="gasto in gastos"
         :key="gasto.id"
-        class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 animate__animated animate__fadeInUp border border-gray-100"
+        class="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 animate__animated animate__fadeInUp border border-gray-100"
       >
         <div class="p-6 flex items-center justify-center">
           <div class="w-16 h-16 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center shadow-md">
@@ -74,7 +73,7 @@ const gastos = ref([
   { id: 3, nombre: 'Internet', cantidad: 500, categoria: 'Servicios', fecha: '2025-03-10', descripcion: 'Mensualidad Starlink' }
 ]);
 
-const getIcon = (categoria) => {
+const getIcon = (categoria:string) => {
   switch (categoria) {
     case 'Alimentación':
       return '🍔';
@@ -87,9 +86,3 @@ const getIcon = (categoria) => {
   }
 };
 </script>
-
-<style scoped>
-.container {
-  background-color: #f8fafc;
-}
-</style>

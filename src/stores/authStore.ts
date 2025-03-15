@@ -16,9 +16,6 @@ export const useAuthStore = defineStore('auth', () => {
       return { isValid: false, message: 'No hay token' }
     }
     const { isValid, message } = await validateToken(token.value)
-    if (!isValid) {
-      await logout()
-    }
     return { isValid, message }
   }
 
