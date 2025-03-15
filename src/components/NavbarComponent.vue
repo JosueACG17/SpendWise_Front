@@ -12,28 +12,30 @@
           <img class="w-8 h-8 rounded-full" src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
             alt="user photo" />
         </button>
-        <div
-          class="z-50 absolute right-0 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600"
-          v-show="isDropdownOpen">
-          <div class="px-4 py-3">
-            <span class="block text-sm text-gray-900 dark:text-white">Josue Chan</span>
-            <span class="block text-sm text-gray-500 truncate dark:text-gray-400">cgjosue17@gmail.com</span>
+        <div v-show="isDropdownOpen"
+            class="z-50 absolute right-0 w-56 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
+            <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
+              <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5"
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt="User avatar" />
+              <div>
+                <p class="text-sm font-medium text-white ">Josue Chan</p>
+                <p class="text-xs text-white">cgjosue19@gmail.com</p>
+              </div>
+            </div>
+            <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-white  hover:bg-gray-600 ">
+              <UserIcon class="h-5 w-5 mr-2" />
+              Perfil
+            </RouterLink>
+
+            <button @click="confirmLogout"
+              class="flex items-center w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600 cursor-pointer">
+              <ArrowRightOnRectangleIcon class="h-5 w-5 mr-2" />
+              Cerrar sesión
+            </button>
           </div>
-          <ul class="py-2" aria-labelledby="user-menu-button">
-            <li>
-              <RouterLink to="/profile" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
-                Perfil
-              </RouterLink>
-            </li>
-            <li>
-              <a class="block px-4 py-2 text-sm text-white hover:bg-gray-700 cursor-pointer" @click="confirmLogout">
-                Cerrar Sesión
-              </a>
-            </li>
-          </ul>
-        </div>
         <button type="button"
-          class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-300 rounded-lg md:hidden hover:bg-gray-600 cursor-pointer"
+          class="inline-flex items-center p-2 sm:w-10 sm:h-10 w-8 h-8 justify-center text-sm text-gray-300 rounded-lg md:hidden hover:bg-gray-700 cursor-pointer"
           aria-controls="navbar-user" aria-expanded="false" @click="toggleMenu">
           <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -46,35 +48,35 @@
           class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
           <li>
             <RouterLink to="/home"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/home', 'text-white hover:bg-yellow-600': $route.path !== '/home' }">
               Inicio
             </RouterLink>
           </li>
           <li>
             <RouterLink to="/gastos"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/gastos', 'text-white hover:bg-yellow-600': $route.path !== '/gastos' }">
               Gastos
             </RouterLink>
           </li>
           <li>
             <RouterLink to="/presupuestos"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/presupuestos', 'text-white hover:bg-yellow-600': $route.path !== '/presupuestos' }">
               Presupuestos
             </RouterLink>
           </li>
           <li>
             <RouterLink to="/categorias"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/categorias', 'text-white hover:bg-yellow-600': $route.path !== '/categorias' }">
               Categorias
             </RouterLink>
           </li>
           <li>
             <RouterLink to="/etiquetas"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 hover:text-yellow-500"
+              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/etiquetas', 'text-white hover:bg-yellow-600': $route.path !== '/etiquetas' }">
               Etiquetas
             </RouterLink>
@@ -89,6 +91,10 @@
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/stores/authStore';
+import {
+  UserIcon,
+  ArrowRightOnRectangleIcon,
+} from '@heroicons/vue/24/outline';
 
 const isDropdownOpen = ref(false);
 const isMenuOpen = ref(false);

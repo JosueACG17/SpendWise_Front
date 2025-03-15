@@ -96,7 +96,6 @@ router.beforeEach(async (to, from, next) => {
           timerProgressBar: true,
           showConfirmButton: false,
         });
-        authStore.logout();
         next({ name: 'Login' });
         return;
       }

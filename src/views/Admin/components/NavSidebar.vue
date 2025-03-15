@@ -43,8 +43,8 @@
             <img class="h-10 w-10 rounded-full border-2 border-gray-500 p-0.5"
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
               alt="User avatar" />
-              <span class="ml-2 text-gray-700 hidden md:block font-semibold">Josue Chan</span>
-              <ChevronDownIcon class="ml-1 h-4 w-4 text-gray-700" />
+            <span class="ml-2 text-gray-700 hidden md:block font-semibold">Josue Chan</span>
+            <ChevronDownIcon class="ml-1 h-4 w-4 text-gray-700" />
           </button>
 
           <div v-if="isUserMenuOpen"
@@ -58,17 +58,16 @@
                 <p class="text-xs text-gray-500 dark:text-gray-400">Programador</p>
               </div>
             </div>
-            <RouterLink to="/profile"
-        class="flex items-center px-4 py-2 text-sm text-gray-700  hover:bg-gray-100 ">
-        <UserIcon class="h-5 w-5 mr-2" />
-        Perfil
-      </RouterLink>
+            <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-gray-700  hover:bg-gray-100 ">
+              <UserIcon class="h-5 w-5 mr-2" />
+              Perfil
+            </RouterLink>
 
-      <button @click="confirmLogout"
-        class="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer">
-        <ArrowRightOnRectangleIcon class="h-5 w-5 mr-2" />
-        Cerrar sesión
-      </button>
+            <button @click="confirmLogout"
+              class="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer">
+              <ArrowRightOnRectangleIcon class="h-5 w-5 mr-2" />
+              Cerrar sesión
+            </button>
           </div>
         </div>
       </header>

@@ -9,26 +9,18 @@
               class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               {{ header }}
             </th>
+            <th v-if="showActions" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="(row, index) in rows" :key="index">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ row.id }}
+            <td v-for="(header, headerIndex) in headers" :key="headerIndex" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ row[headerMap[header]] || '-' }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ row.name }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                {{ row.status }}
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{ row.date }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <button class="text-indigo-600 hover:text-indigo-900">{{ row.actions }}</button>
+            <td v-if="showActions" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <button class="text-indigo-600 hover:text-indigo-900">Editar</button>
             </td>
           </tr>
         </tbody>
@@ -38,15 +30,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
-
-interface TableRow {
-  id: string | number;
-  name: string;
-  status: string;
-  date: string;
-  actions: string;
-}
+import { defineProps, computed } from 'vue';
+import type { TableRow } from '@/interfaces/TableRow';
 
 defineProps({
   title: {
@@ -60,6 +45,22 @@ defineProps({
   rows: {
     type: Array as () => TableRow[],
     required: true
+  },
+  showActions: {
+    type: Boolean,
+    default: true
   }
 });
-</script>   
+
+const headerMap = computed(() => ({
+  'Correo Electronico': 'email',
+  'Rol': 'role',
+  'ID': 'id',
+  'Nombre': 'name',
+  'Estado': 'status',
+  'Fecha': 'date',
+  'Mensaje': 'Mensaje_error',
+  'Ubicación del Error': 'Enlace_error',
+  'Fecha del error': 'Fecha_error',
+}));
+</script>
