@@ -9,6 +9,8 @@ import WelcomeView from '@/views/WelcomeView.vue';
 import DashView from '@/views/Admin/DashView.vue';
 import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
+import GastosView from '@/views/User/GastosView.vue';
+import PresupuestosView from '@/views/User/PresupuestosView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,6 +38,18 @@ const router = createRouter({
       name: 'Dashboard',
       component: DashView,
       meta: { requiresAuth: true, roles: ['Administrador'] },
+    },
+    {
+      path: '/gastos',
+      name: 'gastos',
+      component: GastosView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/presupuestos',
+      name: 'presupuestos',
+      component: PresupuestosView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/register',
