@@ -1,16 +1,16 @@
 <template>
   <NavbarComponent />
 
-  <div class="container mx-auto mt-8 mb-8 p-8 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
+  <div class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
 
-    <div class="flex flex-col items-center mb-8">
-      <button class="bg-gradient-to-r from-green-400 to-green-600 text-white px-6 py-3 rounded-full hover:from-green-500 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
+    <div class="flex flex-col items-center mb-4">
+      <button class="bg-gradient-to-r cursor-pointer from-yellow-500 to-yellow-600 text-white px-6 py-3 rounded-full hover:from-yellow-500 hover:to-yellow-800 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
         Agregar Presupuesto
       </button>
-      <h1 class="text-4xl font-bold text-gray-800 mb-4 mt-6 animate__animated animate__fadeIn">Mis Presupuestos</h1>
+      <h1 class="text-4xl font-bold text-gray-800 animate__animated animate__fadeIn">Mis Presupuestos</h1>
     </div>
 
-    <p class="text-center text-gray-600 mb-8 animate__animated animate__fadeIn animate__delay-1s">
+    <p class="text-center text-lg text-gray-600 mb-8 animate__animated animate__fadeIn animate__delay-1s">
       Gestión y visualización tus presupuestos asignados.
     </p>
 
@@ -55,11 +55,11 @@
   <FooterComponent />
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
-import 'animate.css'; // Importar Animate.css
+import 'animate.css'; 
 
 const presupuestos = ref([
   { id: 1, categoria: 'Alimentación', asignado: 1500, gastado: 800 },
@@ -68,10 +68,3 @@ const presupuestos = ref([
   { id: 4, categoria: 'Entretenimiento', asignado: 500, gastado: 300 },
 ]);
 </script>
-
-<style scoped>
-/* Personalización adicional */
-.container {
-  background-color: #f8fafc; /* Fondo más claro */
-}
-</style>
