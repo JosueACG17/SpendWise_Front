@@ -7,6 +7,8 @@ import { useAuthStore } from '@/stores/authStore';
 import ProfileView from '@/views/User/ProfileView.vue';
 import WelcomeView from '@/views/WelcomeView.vue';
 import Swal from 'sweetalert2';
+import GastosView from '../views/User/GastosView.vue';
+import PresupuestosView from '../views/User/PresupuestosView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +29,18 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/gastos',
+      name: 'gastos',
+      component: GastosView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/presupuestos',
+      name: 'presupuestos',
+      component: PresupuestosView,
       meta: { requiresAuth: true },
     },
     {

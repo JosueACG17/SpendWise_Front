@@ -82,7 +82,7 @@
           </li>
           <li>
             <RouterLink
-              to="/home"
+              to="/gastos"
               class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
             >
               Gastos
@@ -90,7 +90,7 @@
           </li>
           <li>
             <RouterLink
-              to="/home"
+              to="/presupuestos"
               class="block py-2 px-3 text-white rounded-sm sm:hover:bg-transparent md:hover:text-yellow-500 md:p-0 hover:bg-yellow-600"
             >
               Presupuestos
