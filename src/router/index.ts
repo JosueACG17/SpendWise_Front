@@ -11,6 +11,8 @@ import Swal from 'sweetalert2';
 import GastosView from '@/views/User/GastosView.vue';
 import PresupuestosView from '@/views/User/PresupuestosView.vue';
 import { jwtDecode } from 'jwt-decode';
+import CategoriasView from '@/views/User/CategoriasView.vue';
+import EtiquetasView from '@/views/User/EtiquetasView.vue';
 
 
 const router = createRouter({
@@ -44,6 +46,18 @@ const router = createRouter({
       path: '/gastos',
       name: 'gastos',
       component: GastosView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/categorias',
+      name: 'categorias',
+      component: CategoriasView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/etiquetas',
+      name: 'etiquetas',
+      component: EtiquetasView,
       meta: { requiresAuth: true },
     },
     {
