@@ -4,7 +4,7 @@ import RegisterView from '@/views/Register/RegisterView.vue';
 import LoginView from '@/views/Login/LoginView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import { useAuthStore } from '@/stores/authStore';
-import ProfileView from '@/views/User/ProfileView.vue';
+import ProfileView from '@/views/User/ProfilePrincipalView.vue';
 import WelcomeView from '@/views/WelcomeView.vue';
 
 const router = createRouter({
