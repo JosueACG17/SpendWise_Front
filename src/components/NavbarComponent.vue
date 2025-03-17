@@ -2,7 +2,7 @@
   <nav class="border-gray-200 bg-black">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
       <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse text-white">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Bitcoin.png" class="h-8" alt="Flowbite Logo" />
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Bitcoin.png" class="h-8" alt="Logo" />
         <span class="self-center text-2xl font-semibold whitespace-nowrap">SpendWise</span>
       </RouterLink>
       <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative">
