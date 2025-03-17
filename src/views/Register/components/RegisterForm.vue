@@ -20,7 +20,7 @@
     </div>
     <div class="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
       <img alt=""
-        src="https://images.pexels.com/photos/6771607/pexels-photo-6771607.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        src="@/assets/img/RegisterImg.jpeg"
         class="absolute inset-0 h-full w-full object-cover" />
     </div>
     <div class="w-full px-4 sm:px-6 lg:w-1/2 lg:px-8">
@@ -51,8 +51,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-              <svg v-else class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.03 0 2.02.15 2.96.425M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M19.5 12a9.5 9.5 0 01-15 7.5M3 3l18 18" />
               </svg>
@@ -75,8 +77,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
-              <svg v-else class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 1.03 0 2.02.15 2.96.425M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M19.5 12a9.5 9.5 0 01-15 7.5M3 3l18 18" />
               </svg>
@@ -126,19 +130,23 @@ const showConfirmPassword = ref(false);
 const errorMessage = ref('');
 const progress = ref(100);
 
+const showErrorModal = (message:string) => {
+  errorMessage.value = message;
+  progress.value = 100;
+  const interval = setInterval(() => {
+    if (progress.value > 0) {
+      progress.value -= 2;
+    } else {
+      clearInterval(interval);
+      errorMessage.value = '';
+    }
+  }, 50);
+};
+
 const onSubmit = handleSubmit(async (values) => {
   try {
     if (values.password !== values.confirmPassword) {
-      errorMessage.value = 'Las contraseñas no coinciden';
-      progress.value = 100;
-      const interval = setInterval(() => {
-        if (progress.value > 0) {
-          progress.value -= 2;
-        } else {
-          clearInterval(interval);
-          errorMessage.value = '';
-        }
-      }, 100);
+      showErrorModal('Las contraseñas no coinciden');
       return;
     }
     const response = await registerUser(values.email, values.password);
@@ -154,17 +162,8 @@ const onSubmit = handleSubmit(async (values) => {
       });
     }
   } catch (error) {
-    console.error(error);
-    errorMessage.value = handleAxiosError(error);
-
-    const interval = setInterval(() => {
-      if (progress.value > 0) {
-        progress.value -= 1;
-      } else {
-        clearInterval(interval);
-        errorMessage.value = '';
-      }
-    }, 50);
+    showErrorModal(handleAxiosError(error));
   }
 });
+
 </script>
