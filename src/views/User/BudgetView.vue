@@ -58,7 +58,7 @@
     <!-- Presupuestos por Categoría -->
     <div class="bg-white rounded-xl shadow-xl p-6">
       <h2 class="text-2xl font-bold text-gray-800 mb-6">Presupuestos por Categoría</h2>
-      <div class="space-y-6">
+      <div v-if="presupuestos.length > 0" class="space-y-6">
         <div v-for="presupuesto in presupuestos" :key="presupuesto.id" class="bg-gray-50 p-4 rounded-xl">
           <div class="flex justify-between items-center mb-3">
             <h3 class="text-xl font-semibold text-gray-800">{{ presupuesto.categoria }}</h3>
@@ -70,7 +70,7 @@
             <div class="h-2.5 rounded-full" :class="{
               'bg-gradient-to-r from-blue-400 to-blue-600': presupuesto.gastado <= presupuesto.asignado,
               'bg-gradient-to-r from-red-400 to-red-600': presupuesto.gastado > presupuesto.asignado
-            }" :style="{ width: `${Math.min((presupuesto.gastado / presupuesto.asignado) * 100, 100)}%` }"></div>
+            }" :style="{ width: `${Math.min((presupuesto.gastado / presupuesto.asignado) * 100)}%` }"></div>
           </div>
           <div class="flex justify-end mt-3 space-x-2">
             <button @click="editarPresupuesto(presupuesto)"
@@ -83,44 +83,32 @@
           </div>
         </div>
       </div>
+      <p v-else class="text-red-600">
+        No existen categorías con presupuesto asignado.
+      </p>
     </div>
 
-    <!-- Modal para agregar presupuesto -->
-    <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Agregar Presupuesto</h2>
-        <form @submit.prevent="agregarPresupuesto">
-          <div class="mb-4">
-            <label class="block text-gray-700 mb-2">Categoría</label>
-            <select v-model="nuevoPresupuesto.categoria"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
-              <option disabled value="">Selecciona una categoría</option>
-              <option v-for="categoria in categorias" :key="categoria" :value="categoria">
-                {{ categoria }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-4">
-            <label class="block text-gray-700 mb-2">Monto Asignado</label>
-            <input v-model="nuevoPresupuesto.asignado" type="number"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              placeholder="Ej. 1500" required />
-          </div>
-
-          <!-- Botones de acción -->
-          <div class="flex justify-end">
-            <button type="button" @click="isModalOpen = false"
-              class="mr-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
-              Cancelar
-            </button>
-            <button type="submit"
-              class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-4 py-2 rounded-lg hover:from-yellow-600 hover:to-yellow-700">
-              Agregar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <!-- Nuevo Modal para agregar presupuesto -->
+    <GenericModal :show="isModalOpen" title="Agregar Presupuesto" saveButtonText="Agregar" :icon="CurrencyDollarIcon" @save="agregarPresupuesto" @close="isModalOpen = false">
+      <form @submit.prevent="agregarPresupuesto">
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Categoría</label>
+          <select v-model="nuevoPresupuesto.categoria"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
+            <option disabled value="">Selecciona una categoría</option>
+            <option v-for="categoria in categorias" :key="categoria" :value="categoria">
+              {{ categoria }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Monto Asignado</label>
+          <input v-model="nuevoPresupuesto.asignado" type="number"
+            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            placeholder="Ej. 1500" required />
+        </div>
+      </form>
+    </GenericModal>
 
   </div>
 
@@ -131,6 +119,8 @@
 import { ref, computed } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
+import GenericModal from './components/GenericModal.vue';
+import { CurrencyDollarIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
 
 const categorias = ref([

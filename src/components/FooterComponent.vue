@@ -3,7 +3,7 @@
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
         <div class="flex flex-col items-center md:items-start">
-          <RouterLink to="/home" class="flex items-center space-x-3 rtl:space-x-reverse">
+          <RouterLink to="/inicio" class="flex items-center space-x-3 rtl:space-x-reverse">
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/5/50/Bitcoin.png"
               class="h-6"
