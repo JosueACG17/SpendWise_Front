@@ -110,15 +110,17 @@ router.beforeEach(async (to, from, next) => {
           timerProgressBar: true,
           showConfirmButton: false,
         });
+        localStorage.removeItem('token')
         next({ name: 'Login' });
         return;
       }
     } else {
+      localStorage.removeItem('token')
       next({ name: 'Login' });
       return;
     }
   }
-  if ((to.name === 'Login' || to.name === 'Register'|| to.name === 'welcome') && authStore.isAuthenticated) {
+  if ((to.name === 'Login' || to.name === 'Register' || to.name === 'welcome') && authStore.isAuthenticated) {
     next({ name: 'home' });
     return;
   }
