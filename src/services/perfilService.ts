@@ -1,25 +1,20 @@
-export const usePerfilService = () => {
-  const crearPerfil = async (perfilData: FormData) => {
-    try {
-      const response = await fetch('https://localhost:7035/api/Perfil', {
-        method: 'POST',
-        body: perfilData,
-      });
+import type { Perfil } from '@/interfaces/Perfil'
+import axios from 'axios'
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al guardar el perfil');
-      }
+const apiUrl = 'https://localhost:7035/api/Perfil'
 
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error en el servicio:', error);
-      throw new Error('Ocurrió un error interno al registrar el usuario.'); // Mensaje genérico para el usuario
-    }
-  };
+export const obtenerPerfil = async (usuarioId: number): Promise<Perfil | null> => {
+  try {
+    const { data } = await axios.get(`${apiUrl}/${usuarioId}`)
+    return data
+  } catch {
+    return null
+  }
+}
 
-  return {
-    crearPerfil,
-  };
-};
+export const crearPerfil = async (formData: FormData): Promise<Perfil> => {
+  const { data } = await axios.post(apiUrl, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data
+}

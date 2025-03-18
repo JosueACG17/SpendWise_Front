@@ -1,27 +1,23 @@
-import { defineStore } from 'pinia';
-import { usePerfilService } from '@/services/perfilService';
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import type { Perfil } from '@/interfaces/Perfil'
+import { obtenerPerfil, crearPerfil } from '@/services/perfilService'
 
-export const usePerfilStore = defineStore('perfil', {
-  state: () => ({
-    perfil: null as any, // Aquí guardaremos los datos del perfil
-    loading: false,
-    error: null as string | null,
-  }),
-  actions: {
-    async crearPerfil(perfilData: FormData) {
-      this.loading = true;
-      this.error = null;
+export const usePerfilStore = defineStore('perfil', () => {
+  const perfil = ref<Perfil | null>(null)
 
-      try {
-        const service = usePerfilService();
-        const response = await service.crearPerfil(perfilData);
-        this.perfil = response; // Guardar el perfil creado en el estado
-      } catch (error: any) {
-        this.error = error.message || 'Ocurrió un error interno al registrar el usuario.';
-        throw error; // Relanzar el error para que el componente lo maneje
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
-});
+  const cargarPerfil = async (usuarioId: number) => {
+    perfil.value = await obtenerPerfil(usuarioId)
+  }
+
+  const registrarPerfil = async (formData: FormData) => {
+    const nuevoPerfil = await crearPerfil(formData)
+    perfil.value = nuevoPerfil
+  }
+
+  return {
+    perfil,
+    cargarPerfil,
+    registrarPerfil,
+  }
+})
