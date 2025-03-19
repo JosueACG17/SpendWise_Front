@@ -8,12 +8,12 @@ import ProfileView from '@/views/User/ProfileView.vue';
 import WelcomeView from '@/views/WelcomeView.vue';
 import DashView from '@/views/Admin/DashView.vue';
 import Swal from 'sweetalert2';
-import GastosView from '@/views/User/GastosView.vue';
-import PresupuestosView from '@/views/User/PresupuestosView.vue';
+import GastosView from '@/views/User/BillsView.vue';
+import PresupuestosView from '@/views/User/BudgetView.vue';
 import { jwtDecode } from 'jwt-decode';
-import CategoriasView from '@/views/User/CategoriasView.vue';
-import EtiquetasView from '@/views/User/EtiquetasView.vue';
-
+import CategoriasView from '@/views/User/CategoryView.vue';
+import EtiquetasView from '@/views/User/LabelsView.vue';
+import NotificationsView from '@/views/User/NotificationsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,7 +25,7 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
     {
-      path: '/home',
+      path: '/inicio',
       name: 'home',
       component: HomeView,
       meta: { requiresAuth: true },
@@ -64,6 +64,12 @@ const router = createRouter({
       path: '/presupuestos',
       name: 'presupuestos',
       component: PresupuestosView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/notificaciones',
+      name: 'notificaciones',
+      component: NotificationsView,
       meta: { requiresAuth: true },
     },
     {

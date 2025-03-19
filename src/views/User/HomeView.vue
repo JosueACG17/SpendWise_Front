@@ -1,6 +1,6 @@
 <template>
   <NavbarComponent />
-  <div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+  <div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen overflow-x-hidden">
     <!-- Hero Section -->
     <section class="py-16 px-4">
       <div class="text-center max-w-3xl mx-auto animate__animated animate__fadeIn">
@@ -12,15 +12,17 @@
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <RouterLink to="/gastos">
-          <button class="bg-yellow-500  px-8 py-3 rounded-lg font-medium hover:bg-yellow-600 cursor-pointer transition-colors animate__animated animate__fadeInLeft animate__delay-1s">
-            Ver gastos
-          </button>
-        </RouterLink>
-        <RouterLink to="/presupuestos">
-          <button class="bg-black text-white hover:bg-gray-800 px-8 py-3 rounded-lg font-medium cursor-pointer transition-colors animate__animated animate__fadeInRight animate__delay-1s">
-            Ver presupuestos
-          </button>
-        </RouterLink>
+            <button
+              class="bg-yellow-500 px-8 py-3 rounded-lg font-medium w-full  hover:bg-yellow-600 cursor-pointer transition-colors animate__animated animate__fadeInLeft animate__delay-1s">
+              Ver gastos
+            </button>
+          </RouterLink>
+          <RouterLink to="/presupuestos">
+            <button
+              class="bg-black text-white hover:bg-gray-800 px-8 py-3 w-full rounded-lg font-medium cursor-pointer transition-colors animate__animated animate__fadeInRight animate__delay-1s">
+              Ver presupuestos
+            </button>
+          </RouterLink>
         </div>
       </div>
     </section>
@@ -28,7 +30,8 @@
     <!-- Features Section -->
     <section class="sm:py-12 py-4 px-4">
       <div class=" grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full mx-auto">
-        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 animate__animated animate__fadeInUp animate__delay-1s">
+        <div
+          class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 animate__animated animate__fadeInUp animate__delay-1s">
           <div class="bg-[#342E2E] w-12 h-12 rounded-full flex items-center justify-center mb-4">
             <WalletIcon class="text-white w-6 h-6" />
           </div>
@@ -37,7 +40,8 @@
             Registra y categoriza tus gastos para tener un control total de tu dinero.
           </p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 animate__animated animate__fadeInUp animate__delay-2s">
+        <div
+          class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 animate__animated animate__fadeInUp animate__delay-2s">
           <div class="bg-[#342E2E] w-12 h-12 rounded-full flex items-center justify-center mb-4">
             <BanknotesIcon class="text-white w-6 h-6" />
           </div>
@@ -46,7 +50,8 @@
             Establece metas de ahorro y sigue tu progreso para alcanzar tus objetivos.
           </p>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 animate__animated animate__fadeInUp animate__delay-3s">
+        <div
+          class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 animate__animated animate__fadeInUp animate__delay-3s">
           <div class="bg-[#342E2E] w-12 h-12 rounded-full flex items-center justify-center mb-4">
             <ChartBarIcon class="text-white w-6 h-6" />
           </div>
@@ -90,33 +95,39 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeIn">
             <div class="flex items-center mb-4">
-              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png" class="w-12 h-12 bg-gray-200 rounded-full mr-4">
+              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
+                class="w-12 h-12 bg-gray-200 rounded-full mr-4">
               <div>
                 <h4 class="font-semibold text-[#342E2E]">María García</h4>
                 <p class="text-sm text-gray-500">Emprendedora</p>
               </div>
             </div>
-            <p class="text-[#817A7A]">"Esta aplicación ha transformado la manera en que manejo mis finanzas personales. Ahora tengo claridad total sobre mis gastos."</p>
+            <p class="text-[#817A7A]">"Esta aplicación ha transformado la manera en que manejo mis finanzas personales.
+              Ahora tengo claridad total sobre mis gastos."</p>
           </div>
           <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeIn animate__delay-1s">
             <div class="flex items-center mb-4">
-              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png" class="w-12 h-12 bg-gray-200 rounded-full mr-4">
+              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
+                class="w-12 h-12 bg-gray-200 rounded-full mr-4">
               <div>
                 <h4 class="font-semibold text-[#342E2E]">Carlos Rodríguez</h4>
                 <p class="text-sm text-gray-500">Profesional</p>
               </div>
             </div>
-            <p class="text-[#817A7A]">"Gracias a esta plataforma he podido ahorrar más del 20% de mis ingresos mensuales. Las visualizaciones son increíblemente útiles."</p>
+            <p class="text-[#817A7A]">"Gracias a esta plataforma he podido ahorrar más del 20% de mis ingresos
+              mensuales. Las visualizaciones son increíblemente útiles."</p>
           </div>
           <div class="bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeIn animate__delay-2s">
             <div class="flex items-center mb-4">
-              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png" class="w-12 h-12 bg-gray-200 rounded-full mr-4">
+              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
+                class="w-12 h-12 bg-gray-200 rounded-full mr-4">
               <div>
                 <h4 class="font-semibold text-[#342E2E]">Laura Martínez</h4>
                 <p class="text-sm text-gray-500">Estudiante</p>
               </div>
             </div>
-            <p class="text-[#817A7A]">"Incluso con un presupuesto ajustado de estudiante, esta app me ha ayudado a organizar mis gastos y evitar deudas innecesarias."</p>
+            <p class="text-[#817A7A]">"Incluso con un presupuesto ajustado de estudiante, esta app me ha ayudado a
+              organizar mis gastos y evitar deudas innecesarias."</p>
           </div>
         </div>
       </div>
