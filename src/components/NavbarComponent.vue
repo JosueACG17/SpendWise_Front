@@ -8,8 +8,8 @@
       <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative">
         <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 cursor-pointer" id="user-menu-button"
           aria-expanded="false" @click="toggleDropdown">
-          <p class="text-white mt-1.5 mr-2 ml-2">Josue Chan</p>
-          <img class="w-8 h-8 rounded-full" src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
+          <p class="text-white mt-1.5 mr-2 ml-2">{{ userName }}</p>
+          <img class="w-8 h-8 rounded-full" :src="userPhoto"
             alt="user photo" />
         </button>
         <!-- Icono de notificaciones -->
@@ -23,19 +23,20 @@
         </div>
       </RouterLink>
         <div v-show="isDropdownOpen"
-          class="z-50 absolute right-0 w-56 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
-          <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
-            <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5"
-              src="https://cdn-icons-png.flaticon.com/512/219/219983.png" alt="User avatar" />
-            <div>
-              <p class="text-sm font-medium text-white ">Josue Chan</p>
-              <p class="text-xs text-white">cgjosue19@gmail.com</p>
+            class="z-50 absolute right-0 w-56 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
+            <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
+              <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5"
+                :src="userPhoto"
+                alt="User avatar" />
+              <div>
+                <p class="text-sm font-medium text-white ">{{ userName }}</p>
+                <p class="text-xs text-white">{{ userEmail }}</p>
+              </div>
             </div>
-          </div>
-          <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-white  hover:bg-gray-600 ">
-            <UserIcon class="h-5 w-5 mr-2" />
-            Perfil
-          </RouterLink>
+            <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-white  hover:bg-gray-600 ">
+              <UserIcon class="h-5 w-5 mr-2" />
+              Perfil
+            </RouterLink>
 
           <button @click="confirmLogout"
             class="flex items-center w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600 cursor-pointer">
@@ -97,9 +98,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect  } from 'vue';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/stores/authStore';
+import { usePerfilStore } from '@/stores/perfilStore';
 import {
   UserIcon,
   ArrowRightOnRectangleIcon,
@@ -113,6 +115,16 @@ const totalNotificaciones = computed(() => notificacionesStore.total);
 const isDropdownOpen = ref(false);
 const isMenuOpen = ref(false);
 const authStore = useAuthStore();
+const perfilStore = usePerfilStore();
+
+const userEmail = computed(() => authStore.email || 'email@dominio.com')
+const userName = computed(() => perfilStore.perfil?.nombreCompleto || 'Nombre Usuario')
+const userPhoto = computed(() => perfilStore.perfil?.fotoUrl || 'https://cdn-icons-png.flaticon.com/512/219/219983.png')
+
+watchEffect(() => {
+  console.log('Perfil actualizado:', perfilStore.perfil);
+  // Aquí puedes forzar una actualización si es necesario
+});
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;

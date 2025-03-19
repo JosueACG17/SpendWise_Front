@@ -3,11 +3,15 @@ import { ref, computed } from 'vue'
 import { loginUser, registerUser, validateToken, logoutUser } from '@/services/authService'
 import { useRouter } from 'vue-router'
 import Swal from 'sweetalert2'
+import { usePerfilStore } from './perfilStore'
+import { jwtDecode } from 'jwt-decode'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
   const email = ref<string | null>(null)
+  const userId = ref<number | null>(null)
   const router = useRouter()
+  const perfilStore = usePerfilStore()
 
   const isAuthenticated = computed(() => !!token.value)
 
@@ -19,17 +23,24 @@ export const useAuthStore = defineStore('auth', () => {
     return { isValid, message }
   }
 
-  const login = async (email: string, password: string): Promise<void> => {
+  const login = async (emailInput: string, password: string): Promise<void> => {
     try {
-      const response = await loginUser(email, password)
-      token.value = response.token
-      localStorage.setItem('token', response.token)
-      router.push({ name: 'home' })
+      const response = await loginUser(emailInput, password);
+      token.value = response.token;
+      localStorage.setItem('token', response.token);
+
+      const decodedToken = jwtDecode<{ nameid: string; email: string }>(response.token);
+
+      email.value = decodedToken.email;
+      userId.value = parseInt(decodedToken.nameid, 10);
+
+      await perfilStore.cargarPerfil(userId.value);
+      router.push({ name: 'home' });
     } catch (error) {
-      console.error('Error en login:', error)
-      throw error
+      console.error('Error en login:', error);
+      throw error;
     }
-  }
+  };
 
   const register = async (email: string, password: string): Promise<void> => {
     try {
@@ -56,6 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       token.value = null
       localStorage.removeItem('token')
+      perfilStore.clearPerfil()
       router.push({ name: 'Login' })
     }
   }
@@ -68,5 +80,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     checkAuth,
+    userId
   }
 })
