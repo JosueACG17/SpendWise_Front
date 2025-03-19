@@ -15,9 +15,14 @@ export const usePerfilStore = defineStore('perfil', () => {
     perfil.value = nuevoPerfil
   }
 
+  const clearPerfil = () => {
+    perfil.value = null
+  }
+
   return {
     perfil,
     cargarPerfil,
     registrarPerfil,
+    clearPerfil
   }
 })

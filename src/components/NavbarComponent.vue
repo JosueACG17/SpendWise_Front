@@ -8,19 +8,19 @@
       <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse relative">
         <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 cursor-pointer" id="user-menu-button"
           aria-expanded="false" @click="toggleDropdown">
-          <p class="text-white mt-1.5 mr-2 ml-2">Josue Chan</p>
-          <img class="w-8 h-8 rounded-full" src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
+          <p class="text-white mt-1.5 mr-2 ml-2">{{ userName }}</p>
+          <img class="w-8 h-8 rounded-full" :src="userPhoto"
             alt="user photo" />
         </button>
         <div v-show="isDropdownOpen"
             class="z-50 absolute right-0 w-56 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
             <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
               <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                :src="userPhoto"
                 alt="User avatar" />
               <div>
-                <p class="text-sm font-medium text-white ">Josue Chan</p>
-                <p class="text-xs text-white">cgjosue19@gmail.com</p>
+                <p class="text-sm font-medium text-white ">{{ userName }}</p>
+                <p class="text-xs text-white">{{ userEmail }}</p>
               </div>
             </div>
             <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-white  hover:bg-gray-600 ">
@@ -88,9 +88,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed, watchEffect  } from 'vue';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/stores/authStore';
+import { usePerfilStore } from '@/stores/perfilStore';
 import {
   UserIcon,
   ArrowRightOnRectangleIcon,
@@ -99,6 +100,16 @@ import {
 const isDropdownOpen = ref(false);
 const isMenuOpen = ref(false);
 const authStore = useAuthStore();
+const perfilStore = usePerfilStore();
+
+const userEmail = computed(() => authStore.email || 'email@dominio.com')
+const userName = computed(() => perfilStore.perfil?.nombreCompleto || 'Nombre Usuario')
+const userPhoto = computed(() => perfilStore.perfil?.fotoUrl || 'https://cdn-icons-png.flaticon.com/512/219/219983.png')
+
+watchEffect(() => {
+  console.log('Perfil actualizado:', perfilStore.perfil);
+  // Aquí puedes forzar una actualización si es necesario
+});
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
