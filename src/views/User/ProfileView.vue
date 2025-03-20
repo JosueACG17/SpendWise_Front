@@ -74,7 +74,7 @@
       />
       <button
         type="submit"
-        class="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300 cursor-pointer"
+        class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer"
       >
         Guardar Perfil
       </button>
@@ -89,7 +89,6 @@ import { useAuthStore } from '@/stores/authStore'
 import NavbarComponent from '@/components/NavbarComponent.vue'
 import { jwtDecode } from 'jwt-decode'
 
-// Accedemos al ID del usuario logueado desde AuthStore
 const authStore = useAuthStore()
 const usuarioId = ref<number | null>(null)
 
@@ -127,13 +126,20 @@ const handleSubmit = async () => {
   if (!foto.value) return
 
   const formData = new FormData()
-  formData.append('usuarioId', usuarioId.value?.toString() || '')
   formData.append('nombreCompleto', nombreCompleto.value)
   formData.append('telefono', telefono.value)
   formData.append('fechaNacimiento', fechaNacimiento.value)
   formData.append('genero', genero.value)
   formData.append('foto', foto.value)
 
-  await perfilStore.registrarPerfil(formData)
+  formData.forEach((value, key) => {
+    console.log(key, value)
+  })
+
+  try {
+    await perfilStore.registrarPerfil(formData)
+  } catch (error) {
+    console.error('Error al registrar el perfil:', error)
+  }
 }
 </script>
