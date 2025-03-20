@@ -5,10 +5,10 @@ const apiUrl = 'https://localhost:7035/api/Perfil'
 
 export const obtenerPerfil = async (usuarioId: number): Promise<Perfil | null> => {
   try {
-    const { data } = await axios.get(`${apiUrl}/${usuarioId}`)
-    return data
+    const { data } = await axios.get(`${apiUrl}/usuario/${usuarioId}`);
+    return data;
   } catch {
-    return null
+    return null;
   }
 }
 
