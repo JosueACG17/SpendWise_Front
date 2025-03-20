@@ -10,6 +10,7 @@
       </div>
       <div class="flex flex-col w-full">
         <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">{{ perfilStore.perfil.nombreCompleto }}</h2>
+        <h4 class="text-xl sm:text-2xl font-semibold text-gray-400 mb-3">{{ authStore.email }}</h4>
         <div class="grid text-sm text-gray-700 mb-4">
           <div class="grid grid-cols-2">
             <div class="px-4 py-2 font-semibold sm:text-base">Teléfono</div>
@@ -116,30 +117,33 @@ const genero = ref('')
 const foto = ref<File | null>(null)
 
 const handleFile = (e: Event) => {
-  const fileList = (e.target as HTMLInputElement).files
+  const fileList = (e.target as HTMLInputElement).files;
   if (fileList && fileList.length > 0) {
-    foto.value = fileList[0]
+    const file = fileList[0];
+    if (file.type.startsWith('image/')) {
+      foto.value = file;
+    } else {
+      alert('Por favor, selecciona un archivo de imagen.');
+    }
   }
-}
+};
 
 const handleSubmit = async () => {
-  if (!foto.value) return
+  if (!foto.value) return;
 
-  const formData = new FormData()
-  formData.append('nombreCompleto', nombreCompleto.value)
-  formData.append('telefono', telefono.value)
-  formData.append('fechaNacimiento', fechaNacimiento.value)
-  formData.append('genero', genero.value)
-  formData.append('foto', foto.value)
-
-  formData.forEach((value, key) => {
-    console.log(key, value)
-  })
+  const formData = new FormData();
+  formData.append('nombreCompleto', nombreCompleto.value);
+  formData.append('telefono', telefono.value);
+  formData.append('fechaNacimiento', fechaNacimiento.value);
+  formData.append('genero', genero.value);
+  formData.append('foto', foto.value);
 
   try {
-    await perfilStore.registrarPerfil(formData)
+    await perfilStore.registrarPerfil(formData);
+    alert('Perfil guardado correctamente.');
   } catch (error) {
-    console.error('Error al registrar el perfil:', error)
+    console.error('Error al registrar el perfil:', error);
+    alert('Hubo un error al guardar el perfil. Por favor, inténtalo de nuevo.');
   }
-}
+};
 </script>
