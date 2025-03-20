@@ -34,6 +34,8 @@ export const useAuthStore = defineStore('auth', () => {
       email.value = decodedToken.email;
       userId.value = parseInt(decodedToken.nameid, 10);
 
+      localStorage.setItem('email', decodedToken.email);
+
       await perfilStore.cargarPerfil(userId.value);
       router.push({ name: 'home' });
     } catch (error) {
@@ -72,6 +74,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const loadFromLocalStorage = () => {
+    const storedEmail = localStorage.getItem('email');
+
+    if (storedEmail) {
+      email.value = storedEmail;
+    }
+  };
+
   return {
     token,
     email,
@@ -80,6 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     checkAuth,
-    userId
+    userId,
+    loadFromLocalStorage
   }
 })

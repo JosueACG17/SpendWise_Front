@@ -10,6 +10,7 @@
       </div>
       <div class="flex flex-col w-full">
         <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">{{ perfilStore.perfil.nombreCompleto }}</h2>
+        <h4 class="text-xl sm:text-2xl font-semibold text-gray-400 mb-3">{{ authStore.email }}</h4>
         <div class="grid text-sm text-gray-700 mb-4">
           <div class="grid grid-cols-2">
             <div class="px-4 py-2 font-semibold sm:text-base">Teléfono</div>

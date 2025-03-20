@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watchEffect  } from 'vue';
+import { ref, computed } from 'vue';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/stores/authStore';
 import { usePerfilStore } from '@/stores/perfilStore';
@@ -120,11 +120,6 @@ const perfilStore = usePerfilStore();
 const userEmail = computed(() => authStore.email || 'email@dominio.com')
 const userName = computed(() => perfilStore.perfil?.nombreCompleto || 'Nombre Usuario')
 const userPhoto = computed(() => perfilStore.perfil?.fotoUrl || 'https://cdn-icons-png.flaticon.com/512/219/219983.png')
-
-watchEffect(() => {
-  console.log('Perfil actualizado:', perfilStore.perfil);
-  // Aquí puedes forzar una actualización si es necesario
-});
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
