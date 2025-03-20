@@ -34,14 +34,8 @@
               class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
             >
               <button
-                @click="$emit('edit', row)"
-                class="text-indigo-600 hover:text-indigo-900"
-              >
-                Editar
-              </button>
-              <button
                 @click="$emit('delete', row)"
-                class="text-red-500 hover:text-red-700 ml-2"
+                class="text-red-500 hover:text-red-700"
               >
                 Eliminar
               </button>
@@ -76,18 +70,8 @@ defineProps({
 });
 
 const headerMap = computed(() => ({
-  'Correo Electronico': 'email',
-  'Rol': 'role',
-  'ID': 'id',
-  'Nombre': 'name',
-  'Estado': 'status',
-  'Fecha': 'date',
   'Mensaje': 'Mensaje_error',
   'Ubicación del Error': 'Enlace_error',
   'Fecha del error': 'Fecha_error',
 }));
 </script>
-
-<style scoped>
-/* Estilos adicionales si es necesario */
-</style>
