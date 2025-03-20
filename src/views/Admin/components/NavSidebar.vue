@@ -6,22 +6,24 @@
     ]">
       <div class="flex items-center justify-center h-16 border-b border-gray-200">
         <h1 class="text-xl font-bold text-gray-800" v-if="isSidebarOpen">Dashboard</h1>
-        <h1 class="text-xl font-bold text-gray-800" v-else>D</h1>
       </div>
       <nav class="mt-5 px-2">
         <div v-for="(item, index) in menuItems" :key="index" class="mb-2">
-          <a href="#" :class="[
-            'flex items-center p-3 rounded-lg transition-colors',
-            item.active
-              ? 'bg-blue-500 text-white'
-              : 'text-gray-600 hover:bg-gray-100'
-          ]">
+          <RouterLink
+            :to="item.route"
+            :class="[
+              'flex items-center p-3 rounded-lg transition-colors',
+              item.active
+                ? 'bg-blue-500 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
+            ]"
+          >
             <component :is="item.icon" class="h-5 w-5" />
             <span :class="[
               'ml-3 transition-opacity duration-300',
               isSidebarOpen ? 'opacity-100' : 'opacity-0 hidden'
             ]">{{ item.name }}</span>
-          </a>
+          </RouterLink>
         </div>
       </nav>
     </div>
@@ -102,11 +104,11 @@ const toggleSidebar = () => {
 };
 
 const menuItems = ref([
-  { name: 'Dashboard', icon: HomeIcon, active: true },
-  { name: 'Usuarios', icon: UsersIcon, active: false },
-  { name: 'Proyectos', icon: BriefcaseIcon, active: false },
-  { name: 'Ventas', icon: ShoppingCartIcon, active: false },
-  { name: 'Configuración', icon: SettingsIcon, active: false },
+  { name: 'Dashboard', icon: HomeIcon, route: '/dashboard', active: false },
+  { name: 'Usuarios', icon: UsersIcon, route: '/usuarios', active: false },
+  { name: 'Logs', icon: BriefcaseIcon, route: '/logs', active: false },
+  { name: 'Ventas', icon: ShoppingCartIcon, route: '/ventas', active: false },
+  { name: 'Configuración', icon: SettingsIcon, route: '/configuracion', active: false },
 ]);
 
 const confirmLogout = async () => {
