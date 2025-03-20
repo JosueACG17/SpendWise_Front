@@ -14,6 +14,8 @@ import { jwtDecode } from 'jwt-decode';
 import CategoriasView from '@/views/User/CategoryView.vue';
 import EtiquetasView from '@/views/User/LabelsView.vue';
 import NotificationsView from '@/views/User/NotificationsView.vue';
+import UsuariosCrudView from '../views/Admin/UsuariosCrudView.vue';
+import LogsView from '../views/Admin/LogsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,7 +42,6 @@ const router = createRouter({
       path: '/dashboard',
       name: 'Dashboard',
       component: DashView,
-      meta: { requiresAuth: true, roles: ['Administrador'] },
     },
     {
       path: '/gastos',
@@ -70,6 +71,18 @@ const router = createRouter({
       path: '/notificaciones',
       name: 'notificaciones',
       component: NotificationsView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/usuarios',
+      name: 'usuarios',
+      component: UsuariosCrudView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/logs',
+      name: 'logs',
+      component: LogsView,
       meta: { requiresAuth: true },
     },
     {

@@ -48,7 +48,7 @@ const tableLogs = ref([]);
 onMounted(async () => {
   await errorLogStore.getErrorLogs();
   tableLogs.value = errorLogStore.errorLogs.map((log) => ({
-    Mensaje_error: log.mensaje_error,
+    Mensaje: log.mensaje,
     Enlace_error: log.enlace_error,
     Fecha_error: log.fecha_error,
   }));
