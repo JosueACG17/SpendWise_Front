@@ -23,7 +23,7 @@
         </div>
       </RouterLink>
         <div v-show="isDropdownOpen"
-            class="z-50 absolute right-0 w-56 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
+            class="z-50 absolute right-0 w-60 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
             <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
               <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5"
                 :src="userPhoto"

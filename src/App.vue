@@ -3,15 +3,11 @@
 </template>
 <script lang="ts" setup>
 import { onMounted } from 'vue';
-import { usePerfilStore } from '@/stores/perfilStore';
 import { useAuthStore } from '@/stores/authStore';
 
-onMounted(() => {
-  const perfilStore = usePerfilStore();
-  perfilStore.cargarPerfilDesdeLocalStorage();
-
+onMounted(async () => {
   const authStore = useAuthStore();
-  authStore.loadFromLocalStorage();
+  await authStore.initializeAuth();
 });
 </script>
 

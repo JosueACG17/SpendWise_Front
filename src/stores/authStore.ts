@@ -34,8 +34,6 @@ export const useAuthStore = defineStore('auth', () => {
       email.value = decodedToken.email;
       userId.value = parseInt(decodedToken.nameid, 10);
 
-      localStorage.setItem('email', decodedToken.email);
-
       await perfilStore.cargarPerfil(userId.value);
       router.push({ name: 'home' });
     } catch (error) {
@@ -74,13 +72,23 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const loadFromLocalStorage = () => {
-    const storedEmail = localStorage.getItem('email');
+  const initializeAuth = async () => {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      try {
+        const decoded = jwtDecode<{ nameid: string; email: string }>(storedToken);
+        token.value = storedToken;
+        email.value = decoded.email;
+        userId.value = parseInt(decoded.nameid, 10);
 
-    if (storedEmail) {
-      email.value = storedEmail;
+        await perfilStore.cargarPerfil(userId.value);
+      } catch (error) {
+        console.error('Token inválido al iniciar:', error);
+        await logout();
+      }
     }
   };
+
 
   return {
     token,
@@ -91,6 +99,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     checkAuth,
     userId,
-    loadFromLocalStorage
+    initializeAuth
   }
 })

@@ -13,8 +13,16 @@ export const obtenerPerfil = async (usuarioId: number): Promise<Perfil | null> =
 }
 
 export const crearPerfil = async (formData: FormData): Promise<Perfil> => {
-  const { data } = await axios.post(apiUrl, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
-  return data
-}
+  try {
+    const { data } = await axios.post(apiUrl, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data;
+  } catch (error) {
+    console.error('Error en crearPerfil:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Detalles del error:', error.response?.data);
+    }
+    throw error;
+  }
+};
