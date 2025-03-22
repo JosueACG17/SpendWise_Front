@@ -1,7 +1,8 @@
 <template>
   <NavbarComponent />
 
-  <div class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
+  <div
+    class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
 
     <!-- Botón para abrir el modal de agregar presupuesto -->
     <div class="flex flex-col items-center mb-4">
@@ -89,7 +90,8 @@
     </div>
 
     <!-- Nuevo Modal para agregar presupuesto -->
-    <GenericModal :show="isModalOpen" title="Agregar Presupuesto" saveButtonText="Agregar" :icon="CurrencyDollarIcon" @save="agregarPresupuesto" @close="isModalOpen = false">
+    <GenericModal :show="isModalOpen" title="Agregar Presupuesto" saveButtonText="Agregar" :icon="CurrencyDollarIcon"
+      @save="agregarPresupuesto" @close="isModalOpen = false">
       <form @submit.prevent="agregarPresupuesto">
         <div class="mb-4">
           <label class="block text-gray-700 mb-2">Categoría</label>
