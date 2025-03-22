@@ -6,7 +6,7 @@
 
     <!-- Botón para abrir el modal de agregar presupuesto -->
     <div class="flex flex-col items-center mb-4">
-      <button @click="isModalOpen = true"
+      <button @click="openAddModal"
         class="bg-gradient-to-r cursor-pointer from-yellow-500 to-yellow-600 text-white sm:px-6 sm:py-3 px-2 py-1.5 rounded-full hover:from-yellow-500 hover:to-yellow-800 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
         Agregar Presupuesto
       </button>
@@ -23,15 +23,15 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <div class="bg-gray-50 p-4 rounded-xl">
           <p class="text-gray-700">Total Asignado</p>
-          <p class="text-2xl font-bold text-gray-800">${{ totalAsignado }} MXN</p>
+          <p class="text-2xl font-bold text-gray-800">${{ totalPresupuestado }} MXN</p>
         </div>
         <div class="bg-gray-50 p-4 rounded-xl">
           <p class="text-gray-700">Total Gastado</p>
-          <p class="text-2xl font-extrabold text-red-600">${{ totalGastado }} MXN</p>
+          <p class="text-2xl font-extrabold text-red-600">${{ totalGastadoGeneral }} MXN</p>
         </div>
         <div class="bg-gray-50 p-4 rounded-xl">
           <p class="text-gray-700">Restante</p>
-          <p class="text-2xl font-extrabold text-green-600">${{ totalRestante }} MXN</p>
+          <p class="text-2xl font-extrabold text-green-600">${{ totalPresupuestado - totalGastadoGeneral }} MXN</p>
         </div>
       </div>
     </div>
@@ -39,16 +39,16 @@
     <!-- Progreso General de Presupuestos -->
     <div class="bg-white rounded-xl shadow-xl p-6 mb-8">
       <h2 class="text-2xl font-bold text-gray-800 mb-6">Progreso General de Presupuestos</h2>
-      <div v-if="totalAsignado > 0" class="w-full bg-gray-200 rounded-full h-2.5">
+      <div v-if="totalPresupuestado > 0" class="w-full bg-gray-200 rounded-full h-2.5">
         <div class="h-2.5 rounded-full" :class="{
-          'bg-gradient-to-r from-blue-400 to-blue-600': totalGastado <= totalAsignado,
-          'bg-gradient-to-r from-red-400 to-red-600': totalGastado > totalAsignado
-        }" :style="{ width: `${Math.min((totalGastado / totalAsignado) * 100, 100)}%` }"></div>
+          'bg-gradient-to-r from-blue-400 to-blue-600': totalGastadoGeneral <= totalPresupuestado,
+          'bg-gradient-to-r from-red-400 to-red-600': totalGastadoGeneral > totalPresupuestado
+        }" :style="{ width: `${Math.min((totalGastadoGeneral / totalPresupuestado) * 100, 100)}%` }"></div>
       </div>
       <div v-else class="w-full bg-gray-200 rounded-full h-2.5"></div>
       <p class="text-gray-700 mt-2">
-        <span v-if="totalAsignado > 0">
-          Gastado: ${{ totalGastado }} MXN / Asignado: ${{ totalAsignado }} MXN
+        <span v-if="totalPresupuestado > 0">
+          Gastado: ${{ totalGastadoGeneral }} MXN / Asignado: ${{ totalPresupuestado }} MXN
         </span>
         <span v-else class="text-red-600">
           No hay presupuesto asignado.
@@ -62,23 +62,26 @@
       <div v-if="presupuestos.length > 0" class="space-y-6">
         <div v-for="presupuesto in presupuestos" :key="presupuesto.id" class="bg-gray-50 p-4 rounded-xl">
           <div class="flex justify-between items-center mb-3">
-            <h3 class="text-xl font-semibold text-gray-800">{{ presupuesto.categoria }}</h3>
-            <p class="text-gray-700" :class="{ 'text-red-600': presupuesto.gastado > presupuesto.asignado }">
-              {{ presupuesto.gastado }} / {{ presupuesto.asignado }} MXN
+            <!-- <h3 class="text-xl font-semibold text-gray-800">{{ presupuesto.categoriaId }}</h3> -->
+            <h3 class="text-xl font-semibold text-gray-800">
+              {{ getCategoriaNombre(presupuesto.categoriaId) }}
+            </h3>
+            <p class="text-gray-700" :class="{ 'text-red-600': presupuesto.totalGastado > presupuesto.monto }">
+              {{ formatCurrency(presupuesto.totalGastado) }} / {{ formatCurrency(presupuesto.monto) }}
             </p>
           </div>
           <div class="w-full bg-gray-200 rounded-full h-2.5">
             <div class="h-2.5 rounded-full" :class="{
-              'bg-gradient-to-r from-blue-400 to-blue-600': presupuesto.gastado <= presupuesto.asignado,
-              'bg-gradient-to-r from-red-400 to-red-600': presupuesto.gastado > presupuesto.asignado
-            }" :style="{ width: `${Math.min((presupuesto.gastado / presupuesto.asignado) * 100)}%` }"></div>
+              'bg-gradient-to-r from-blue-400 to-blue-600': presupuesto.totalGastado <= presupuesto.monto,
+              'bg-gradient-to-r from-red-400 to-red-600': presupuesto.totalGastado > presupuesto.monto
+            }" :style="{ width: `${Math.min((presupuesto.totalGastado / presupuesto.monto) * 100)}%` }"></div>
           </div>
           <div class="flex justify-end mt-3 space-x-2">
             <button @click="editarPresupuesto(presupuesto)"
               class="text-yellow-600 hover:text-yellow-700 cursor-pointer">
               Editar
             </button>
-            <button @click="eliminarPresupuesto(presupuesto.id)" class="text-red-600 hover:text-red-700 cursor-pointer">
+            <button @click="confirmDelete(presupuesto.id)" class="text-red-600 hover:text-red-700 cursor-pointer">
               Eliminar
             </button>
           </div>
@@ -98,19 +101,22 @@
           <select v-model="nuevoPresupuesto.categoria"
             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
             <option disabled value="">Selecciona una categoría</option>
-            <option v-for="categoria in categorias" :key="categoria" :value="categoria">
-              {{ categoria }}
+            <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">
+              {{ categoria.nombre }}
             </option>
           </select>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-2">Monto Asignado</label>
-          <input v-model="nuevoPresupuesto.asignado" type="number"
+          <input v-model="nuevoPresupuesto.monto" type="number"
             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
             placeholder="Ej. 1500" required />
         </div>
       </form>
     </GenericModal>
+
+    <DeleteConfirmationModal :show="showDeleteModal" itemName="Categoría" :itemToDelete="categoryToDelete"
+      @confirmDelete="deleteCategory" @close="closeDeleteModal" />
 
   </div>
 
@@ -118,36 +124,31 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from './components/GenericModal.vue';
 import { CurrencyDollarIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
+import { addBudget, deleteBudget, getBudgetsByUser, updateBudget } from '@/services/presupuestosService';
+import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
+import { getCategories } from '@/services/categoryService';
+import { getGastosPorUsuario } from '@/services/gastosService';
 
-const categorias = ref([
-  'Alimentación',
-  'Transporte',
-  'Servicios',
-  'Entretenimiento',
-  'Educación',
-  'Salud',
-  'Ropa',
-  'Otros',
-]);
+const categorias = ref([]);
 
-const presupuestos = ref([
-  { id: 1, categoria: 'Alimentación', asignado: 1500, gastado: 800 },
-  { id: 2, categoria: 'Transporte', asignado: 1000, gastado: 600 },
-  { id: 3, categoria: 'Servicios', asignado: 2000, gastado: 900 },
-  { id: 4, categoria: 'Entretenimiento', asignado: 500, gastado: 300 },
-]);
+const presupuestos = ref([]);
+
+const gastos = ref([]);
 
 const isModalOpen = ref(false);
+const editingCategory = ref(null);
 const nuevoPresupuesto = ref({
-  categoria: '',
-  asignado: 0,
-  gastado: 0,
+  categoriaId: 1,
+  usuarioId: 1,
+  monto: 1,
+  fechaInicio: new Date(),
+  fechaFin: new Date(),
 });
 
 const totalAsignado = computed(() => {
@@ -162,23 +163,152 @@ const totalRestante = computed(() => {
   return totalAsignado.value - totalGastado.value;
 });
 
-const agregarPresupuesto = () => {
-  const nuevoId = presupuestos.value.length + 1;
-  presupuestos.value.push({
-    id: nuevoId,
-    categoria: nuevoPresupuesto.value.categoria,
-    asignado: nuevoPresupuesto.value.asignado,
-    gastado: 0,
+const usuarioId = 1;
+const showDeleteModal = ref(false);
+const categoryToDelete = ref(null);
+
+const totalPresupuestado = ref(0);
+const totalGastadoGeneral = ref(0);
+
+onMounted(async () => {
+  await cargarPresupuestos();
+  await cargarGastos();
+  await cargarCategorias();
+  calcularGastosPorPresupuesto();
+});
+
+const cargarCategorias = async () => {
+  try {
+    categorias.value = await getCategories(usuarioId);
+  } catch (error) {
+    console.error('Error al obtener categorias:', error);
+  }
+};
+
+const cargarPresupuestos = async () => {
+  try {
+    presupuestos.value = await getBudgetsByUser(usuarioId);
+  } catch (error) {
+    console.error('Error al obtener categorias:', error);
+  }
+};
+
+const cargarGastos = async () => {
+  try {
+    gastos.value = await getGastosPorUsuario(usuarioId);
+  } catch (error) {
+    console.error('Error al obtener gastos:', error);
+  }
+};
+
+const calcularGastosPorPresupuesto = () => {
+  presupuestos.value = presupuestos.value.map(presupuesto => ({
+    ...presupuesto,
+    totalGastado: 0,
+  }));
+
+  gastos.value.forEach(gasto => {
+    const presupuesto = presupuestos.value.find(p => p.categoriaId === gasto.categoriaId);
+    if (presupuesto) {
+      presupuesto.totalGastado += gasto.monto;
+    }
   });
-  isModalOpen.value = false;
-  nuevoPresupuesto.value = { categoria: '', asignado: 0, gastado: 0 };
+
+  totalPresupuestado.value = presupuestos.value.reduce((acc, p) => acc + p.monto, 0);
+  totalGastadoGeneral.value = gastos.value.reduce((acc, g) => acc + g.monto, 0);
+
+};
+
+const openAddModal = () => {
+  editingCategory.value = null;
+  nuevoPresupuesto.value = {
+    categoriaId: 1,
+    usuarioId: 1,
+    monto: 1,
+    fechaInicio: '',
+    fechaFin: '',
+  };
+  isModalOpen.value = true;
+};
+
+const agregarPresupuesto = async () => {
+  try {
+    if (editingCategory.value) {
+      const updatedCategory = {
+        nombre: editingCategory.value.nombre,
+        usuarioId: 1,
+        categoriaId: 1,
+        monto: nuevoPresupuesto.value.monto,
+      };
+      await updateBudget(editingCategory.value.id, updatedCategory);
+    } else {
+      const newCategory = {
+        nombre: nuevoPresupuesto.value.nombre,
+        usuarioId: 1,
+        categoriaId: 1,
+        monto: nuevoPresupuesto.value.monto,
+      };
+      await addBudget(newCategory);
+    }
+    closeModal();
+    await cargarPresupuestos();
+    calcularGastosPorPresupuesto();
+  } catch (error) {
+    console.error("Error al guardar la categoría:", error);
+  }
 };
 
 const editarPresupuesto = (presupuesto) => {
-  console.log('Editar:', presupuesto);
+  editingCategory.value = presupuesto;
+
+  nuevoPresupuesto.value = {
+    categoriaId: presupuesto.categoriaId,
+    usuarioId: 1,
+    monto: presupuesto.monto,
+    fechaInicio: presupuesto.fechaInicio,
+    fechaFin: presupuesto.fechaFin,
+  };
+  isModalOpen.value = true;
 };
 
-const eliminarPresupuesto = (id) => {
-  presupuestos.value = presupuestos.value.filter(p => p.id !== id);
+const confirmDelete = (categoria) => {
+  categoryToDelete.value = categoria;
+  showDeleteModal.value = true;
 };
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
+  categoryToDelete.value = null;
+};
+
+const deleteCategory = async () => {
+  if (categoryToDelete.value) {
+    try {
+      await deleteBudget(categoryToDelete.value);
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
+    }
+  }
+  closeDeleteModal();
+  await cargarPresupuestos();
+  calcularGastosPorPresupuesto();
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
+const formatCurrency = (monto) => {
+  if (!monto) return 'Monto no disponible';
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(monto);
+};
+
+const getCategoriaNombre = (categoriaId) => {
+  const categoria = categorias.value.find(c => c.id === categoriaId);
+  return categoria ? categoria.nombre : "Sin categoría";
+};
+
 </script>

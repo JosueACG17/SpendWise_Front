@@ -8,7 +8,6 @@ interface Category {
 
 export const addCategory = async (category: Category): Promise<{ message: string }> => {
   try {
-    console.log(category);
     const response = await axiosInstance.post<{ message: string }>('/categorias', category);
     return response.data;
   } catch (error) {
@@ -50,8 +49,6 @@ export const updateCategory = async (id: number, category: Category): Promise<{ 
       ...category,
       id: id,
     };
-    console.log(categoryActualizada);
-
     const response = await axiosInstance.put<{ message: string }>(`/categorias/${id}`, categoryActualizada);
     return response.data;
   } catch (error) {

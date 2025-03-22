@@ -48,7 +48,7 @@
           </div>
           <div>
             <h3 class="text-lg font-semibold text-gray-900">{{ formatCurrency(item.monto) }} - {{
-              formatFecha(item.fecha) }}</h3>
+              formatFecha(item.fecha) }} - {{ item.nombreCategoria }} </h3>
           </div>
         </div>
         <div class="flex items-center space-x-3">
@@ -126,6 +126,7 @@ interface TableItem {
   categoriaId: number;
   fecha: string;
   descripcion: string;
+  nombreCategoria?: string;
 }
 
 const props = defineProps({

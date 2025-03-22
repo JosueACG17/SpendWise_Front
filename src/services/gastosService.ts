@@ -10,7 +10,6 @@ interface Gasto {
 
 export const addGasto = async (gasto: Gasto): Promise<{ message: string }> => {
   try {
-    console.log(gasto);
     const response = await axiosInstance.post<{ message: string }>('/gastos', gasto);
     return response.data;
   } catch (error) {
@@ -53,8 +52,6 @@ export const updateGasto = async (id: number, gasto: any): Promise<{ message: st
       id: id,
       monto: Number(gasto.monto) || 0,
     };
-    console.log(gastoActualizado);
-
     const response = await axiosInstance.put<{ message: string }>(`/gastos/${id}`, gastoActualizado);
     return response.data;
   } catch (error) {

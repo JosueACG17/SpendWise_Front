@@ -21,25 +21,6 @@
       </div>
     </div>
 
-    <!-- Resumen de Presupuestos -->
-    <div class="bg-white rounded-xl shadow-xl p-6 mb-8">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">Resumen de gastos</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <div class="bg-gray-50 p-4 rounded-xl">
-          <p class="text-gray-700">Presupuesto Total</p>
-          <p class="text-2xl font-bold text-gray-800">{{ formatCurrency(totalAsignado) }} MXN</p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-xl">
-          <p class="text-gray-700">Gastos totales</p>
-          <p class="text-2xl font-extrabold text-red-600">{{ formatCurrency(totalGastado) }} MXN</p>
-        </div>
-        <div class="bg-gray-50 p-4 rounded-xl">
-          <p class="text-gray-700">Restante</p>
-          <p class="text-2xl font-extrabold text-green-600">{{ formatCurrency(totalRestante) }} MXN</p>
-        </div>
-      </div>
-    </div>
-
     <TableContent title="Lista de gastos" description="Gestiona tus gastos para un mejor análisis."
       searchPlaceholder="Buscar gastos..." :items="gastos" emptyStateMessage="Comienza creando un nuevo gasto"
       addButtonText="Agregar Gasto" @add="openAddModal" @edit="editGastos" @delete="eliminarGasto" />
@@ -50,7 +31,7 @@
         <v-card-text>
           <v-form @submit.prevent="submitForm">
             <div class="inputs">
-              <v-select label="Selecciona una categoría" :items="presupuestos" item-title="categoria" item-value="id"
+              <v-select label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
                 v-model="selectedId" variant="solo-filled"></v-select>
               <v-text-field v-model="form.monto" label="Monto" type="number" variant="solo-filled"></v-text-field>
               <v-text-field v-model="form.fecha" label="Fecha" type="date" variant="solo-filled"></v-text-field>
@@ -79,16 +60,17 @@ import FooterComponent from '@/components/FooterComponent.vue';
 import 'animate.css';
 import { addGasto, deleteGasto, getGastosPorUsuario, updateGasto } from '@/services/gastosService';
 import TableContent from './components/TableContentGastos.vue';
+import { getCategories } from '@/services/categoryService';
 
-onMounted(() => {
-  cargarGastos();
-});
+
 
 const dialog = ref(false)
 const gastos = ref([]);
 const usuarioId = 1;
 const selectedId = ref(null);
 const editingCategory = ref(null);
+
+const categorias = ref([]);
 
 const getIcon = (categoria: string) => {
   switch (categoria) {
@@ -103,13 +85,38 @@ const getIcon = (categoria: string) => {
   }
 };
 
+onMounted(async () => {
+  await cargarGastos();
+  await cargarCategorias();
+  await asignarNombreCategorias();
+});
+
 const cargarGastos = async () => {
   try {
     gastos.value = await getGastosPorUsuario(usuarioId);
-    console.log('Gastos cargados:', gastos.value);
   } catch (error) {
     console.error('Error al obtener gastos:', error);
   }
+};
+
+const cargarCategorias = async () => {
+  try {
+    categorias.value = await getCategories(usuarioId);
+  } catch (error) {
+    console.error('Error al obtener categorias:', error);
+  }
+};
+
+const asignarNombreCategorias = () => {
+  if (!gastos.value.length || !categorias.value.length) return;
+  gastos.value = gastos.value.map(gasto => {
+    const categoria = categorias.value.find(cat => cat.id === gasto.categoriaId);
+    return {
+      ...gasto,
+      nombreCategoria: categoria ? categoria.nombre : "Sin categoría"
+    };
+  });
+
 };
 
 const totalAsignado = computed(() => {
@@ -125,12 +132,7 @@ const totalRestante = computed(() => {
 });
 
 
-const presupuestos = ref([
-  { id: 1, categoria: 'Alimentación', asignado: 1500, gastado: 800 },
-  { id: 2, categoria: 'Transporte', asignado: 1000, gastado: 600 },
-  { id: 3, categoria: 'Servicios', asignado: 2000, gastado: 900 },
-  { id: 4, categoria: 'Entretenimiento', asignado: 500, gastado: 300 },
-]);
+const presupuestos = ref([]);
 
 const form = ref({
   usuarioId: 1,
@@ -144,18 +146,14 @@ const form = ref({
 
 const submitForm = async () => {
   try {
-    // console.log(form.value);
-    // return
     if (editingCategory.value) {
       await updateGasto(editingCategory.value.id, form.value);
-      console.log(`Gasto ${editingCategory.value.id} actualizado`);
-
     } else {
       const response = await addGasto(form.value);
-      console.log('Gasto agregado:', response);
     }
     dialog.value = false;
-    cargarGastos();
+    await cargarGastos();
+    await asignarNombreCategorias();
   } catch (error) {
     console.error('Error al agregar gasto:', error);
   }
@@ -176,8 +174,8 @@ const eliminarGasto = async (data) => {
   // if (!confirm('¿Estás seguro de que quieres eliminar este gasto?')) return;
   try {
     await deleteGasto(data.id);
-    console.log(`Gasto ${data.id} eliminado`);
-    cargarGastos();
+    await cargarGastos();
+    await asignarNombreCategorias();
   } catch (error) {
     console.error('Error al eliminar gasto:', error);
   }

@@ -7,7 +7,6 @@ interface Label {
 
 export const addLabel = async (category: any): Promise<{ message: string }> => {
   try {
-    console.log(category);
     const response = await axiosInstance.post<{ message: string }>('/etiquetas', category);
     return response.data;
   } catch (error) {
@@ -49,8 +48,6 @@ export const updateLabel = async (id: number, category: Label): Promise<{ messag
       ...category,
       id: id,
     };
-    console.log(categoryActualizada);
-
     const response = await axiosInstance.put<{ message: string }>(`/etiquetas/${id}`, categoryActualizada);
     return response.data;
   } catch (error) {

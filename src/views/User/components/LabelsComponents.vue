@@ -96,7 +96,6 @@ onMounted(() => {
 const cargarCategorias = async () => {
   try {
     etiquetas.value = await getLabels(usuarioId);
-    console.log('Categorias cargados:', etiquetas.value);
   } catch (error) {
     console.error('Error al obtener categorias:', error);
   }
@@ -108,7 +107,6 @@ const editEtiqueta = (etiqueta) => {
     nombre: etiqueta.nombre,
   };
   showModal.value = true;
-  console.log(etiquetaToDelete.value);
 };
 
 const closeModal = () => {
@@ -124,14 +122,12 @@ const saveEtiqueta = async () => {
         usuarioId: 1,
       };
       await updateLabel(editingEtiqueta.value.id, updatedCategory);
-      console.log(`Categoría ${editingEtiqueta.value.id} actualizada`);
     } else {
       const newCategory = {
         nombre: formData.value.nombre,
         usuarioId: 1,
       };
       await addLabel(newCategory);
-      console.log("Nueva categoría creada");
     }
     closeModal();
     cargarCategorias();
@@ -154,7 +150,6 @@ const deleteEtiqueta = async () => {
   if (etiquetaToDelete.value) {
     try {
       await deleteLabel(etiquetaToDelete.value.id);
-      console.log(`Etiqueta ${etiquetaToDelete.value.id} eliminada`);
     } catch (error) {
       console.error("Error al eliminar la categoría:", error);
     }

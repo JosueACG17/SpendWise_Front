@@ -24,12 +24,12 @@
       <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard title="Total Categorías" :value="categorias.length" :icon="TagIcon" iconBgColor="bg-yellow-100"
           iconColor="text-yellow-600" />
-        <StatsCard title="Categoria Más Usada" :value="Alimentacion" :icon="ChartBarIcon" iconBgColor="bg-green-100"
+        <!-- <StatsCard title="Categoria Más Usada" :value="Alimentacion" :icon="ChartBarIcon" iconBgColor="bg-green-100"
           iconColor="text-green-600" />
         <StatsCard title="Ultima Actualización" :value="Hoy" :icon="ClockIcon" iconBgColor="bg-blue-100"
           iconColor="text-blue-600" />
         <StatsCard title="Presupuesto Asignado" :value="Presupuesto" :icon="CurrencyDollarIcon"
-          iconBgColor="bg-purple-100" iconColor="text-purple-600" />
+          iconBgColor="bg-purple-100" iconColor="text-purple-600" /> -->
       </div>
     </div>
 
@@ -103,7 +103,6 @@ onMounted(() => {
 const cargarCategorias = async () => {
   try {
     categorias.value = await getCategories(usuarioId);
-    console.log('Categorias cargados:', categorias.value);
   } catch (error) {
     console.error('Error al obtener categorias:', error);
   }
@@ -138,14 +137,12 @@ const saveCategory = async () => {
         usuarioId: 1,
       };
       await updateCategory(editingCategory.value.id, updatedCategory);
-      console.log(`Categoría ${editingCategory.value.id} actualizada`);
     } else {
       const newCategory = {
         nombre: formData.value.nombre,
         usuarioId: 1,
       };
       await addCategory(newCategory);
-      console.log("Nueva categoría creada");
     }
     closeModal();
     cargarCategorias();
@@ -168,7 +165,6 @@ const deleteCategory = async () => {
   if (categoryToDelete.value) {
     try {
       await deleteCategoria(categoryToDelete.value.id);
-      console.log(`Categoría ${categoryToDelete.value.id} eliminada`);
     } catch (error) {
       console.error("Error al eliminar la categoría:", error);
     }
