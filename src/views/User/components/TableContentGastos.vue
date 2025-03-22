@@ -37,17 +37,17 @@
         </div>
       </div>
 
-      <div v-for="item in filteredItems" :key="item.Id"
+      <div v-for="item in filteredItems" :key="item.id"
         class="bg-white p-4 rounded-2xl flex justify-between items-center hover:bg-gray-50 transition-colors duration-200">
         <div class="flex items-center space-x-4">
           <div class="flex-shrink-0">
             <div
               class="h-12 w-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-              {{ item.Nombre.charAt(0) }}
+              {{ item.id }}
             </div>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-gray-900">{{ item.Nombre }}</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ item.monto }} - {{ formatFecha(item.fecha) }}</h3>
           </div>
         </div>
         <div class="flex items-center space-x-3">
@@ -119,8 +119,12 @@ import {
 } from '@heroicons/vue/24/solid';
 
 interface TableItem {
-  Id: number;
-  Nombre: string;
+  id: number;
+  monto: number;
+  usuarioId: number;
+  categoriaId: number;
+  fecha: string;
+  descripcion: string;
 }
 
 const props = defineProps({
@@ -161,7 +165,19 @@ const filteredItems = computed(() => {
   if (!searchQuery.value) return props.items;
   const query = searchQuery.value.toLowerCase();
   return props.items.filter((item) =>
-    item.Nombre.toLowerCase().includes(query)
+    item.monto.toString().includes(query)
   );
 });
+
+
+const formatFecha = (fecha) => {
+  if (!fecha) return 'Fecha no disponible';
+  return new Date(fecha).toLocaleDateString('es-MX', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+
+
 </script>

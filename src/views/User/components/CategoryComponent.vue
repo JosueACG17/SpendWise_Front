@@ -13,7 +13,8 @@
           </p>
         </div>
         <div class="flex space-x-4">
-          <button @click="openAddModal" class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
+          <button @click="openAddModal"
+            class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
             Agregar Categoría
           </button>
         </div>
@@ -21,81 +22,40 @@
 
       <!-- Stats Cards -->
       <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Total Categorías"
-          :value="categorias.length"
-          :icon="TagIcon"
-          iconBgColor="bg-yellow-100"
-          iconColor="text-yellow-600"
-        />
-        <StatsCard
-          title="Categoria Más Usada"
-          :value="Alimentacion"
-          :icon="ChartBarIcon"
-          iconBgColor="bg-green-100"
-          iconColor="text-green-600"
-        />
-        <StatsCard
-          title="Ultima Actualización"
-          :value="Hoy"
-          :icon="ClockIcon"
-          iconBgColor="bg-blue-100"
-          iconColor="text-blue-600"
-        />
-        <StatsCard
-          title="Presupuesto Asignado"
-          :value="Presupuesto"
-          :icon="CurrencyDollarIcon"
-          iconBgColor="bg-purple-100"
-          iconColor="text-purple-600"
-        />
+        <StatsCard title="Total Categorías" :value="categorias.length" :icon="TagIcon" iconBgColor="bg-yellow-100"
+          iconColor="text-yellow-600" />
+        <StatsCard title="Categoria Más Usada" :value="Alimentacion" :icon="ChartBarIcon" iconBgColor="bg-green-100"
+          iconColor="text-green-600" />
+        <StatsCard title="Ultima Actualización" :value="Hoy" :icon="ClockIcon" iconBgColor="bg-blue-100"
+          iconColor="text-blue-600" />
+        <StatsCard title="Presupuesto Asignado" :value="Presupuesto" :icon="CurrencyDollarIcon"
+          iconBgColor="bg-purple-100" iconColor="text-purple-600" />
       </div>
     </div>
 
     <!-- Main Content -->
-    <TableContent
-      title="Lista de Categorías"
-      description="Gestiona tus categorías para un mejor análisis de gastos."
-      searchPlaceholder="Buscar categorías..."
-      :items="categorias"
-      emptyStateMessage="Comienza creando una nueva categoría"
-      addButtonText="Agregar Categoría"
-      @add="openAddModal"
-      @edit="editCategory"
-      @delete="confirmDelete"
-    />
+    <TableContent title="Lista de Categorías" description="Gestiona tus categorías para un mejor análisis de gastos."
+      searchPlaceholder="Buscar categorías..." :items="categorias"
+      emptyStateMessage="Comienza creando una nueva categoría" addButtonText="Agregar Categoría" @add="openAddModal"
+      @edit="editCategory" @delete="confirmDelete" />
   </div>
 
   <!-- Add/Edit Modal -->
-  <GenericModal
-    :show="showModal"
-    :title="editingCategory ? 'Editar Categoría' : 'Agregar Nueva Categoría'"
-    :saveButtonText="editingCategory ? 'Actualizar' : 'Crear'"
-    :icon="BriefcaseIcon"
-    @save="saveCategory"
-    @close="closeModal"
-  >
+  <GenericModal :show="showModal" :title="editingCategory ? 'Editar Categoría' : 'Agregar Nueva Categoría'"
+    :saveButtonText="editingCategory ? 'Actualizar' : 'Crear'" :icon="BriefcaseIcon" @save="saveCategory"
+    @close="closeModal">
     <div class="mb-4">
       <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-      <input
-        type="text"
-        id="nombre"
-        v-model="formData.nombre"
+      <input type="text" id="nombre" v-model="formData.nombre"
         class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-        placeholder="Nombre de la categoría"
-      />
+        placeholder="Nombre de la categoría" />
     </div>
 
   </GenericModal>
 
   <!-- Delete Confirmation Modal -->
-  <DeleteConfirmationModal
-    :show="showDeleteModal"
-    itemName="Categoría"
-    :itemToDelete="categoryToDelete"
-    @confirmDelete="deleteCategory"
-    @close="closeDeleteModal"
-  />
+  <DeleteConfirmationModal :show="showDeleteModal" itemName="Categoría" :itemToDelete="categoryToDelete"
+    @confirmDelete="deleteCategory" @close="closeDeleteModal" />
 
   <FooterComponent />
 </template>
@@ -123,10 +83,10 @@ const Presupuesto = ref("$2,450");
 
 
 const categorias = ref([
-  { Id: 1, Nombre: 'Alimentación'},
-  { Id: 2, Nombre: 'Transporte'},
-  { Id: 3, Nombre: 'Servicios'},
-  { Id: 4, Nombre: 'Entretenimiento'},
+  { Id: 1, Nombre: 'Alimentación' },
+  { Id: 2, Nombre: 'Transporte' },
+  { Id: 3, Nombre: 'Servicios' },
+  { Id: 4, Nombre: 'Entretenimiento' },
 ]);
 
 
@@ -204,8 +164,15 @@ const deleteCategory = () => {
 
 <style scoped>
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hover\:bg-gray-50:hover {

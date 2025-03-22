@@ -14,7 +14,7 @@
         <!-- <v-select label="Select" :items="presupuestos" :label="categoria" variant="solo-filled"></v-select> -->
         <v-select label="Selecciona una categoría" :items="presupuestos" item-title="categoria" item-value="id"
           v-model="selectedId" variant="solo-filled"></v-select>
-        <button @click="dialog = true"
+        <button @click="openAddModal"
           class="bg-gradient-to-r cursor-pointer from-yellow-500 to-yellow-600 text-white sm:px-6 sm:py-3 px-2 py-1.5 rounded-full hover:from-yellow-500 hover:to-yellow-800 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
           Agregar Gasto
         </button>
@@ -40,49 +40,9 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-      <div v-for="gasto in gastos" :key="gasto.id"
-        class="bg-white rounded-xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 animate__animated animate__fadeInUp border border-gray-100">
-        <div class="p-6 flex items-center justify-center">
-          <div
-            class="w-16 h-16 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center shadow-md">
-            <span class="text-white text-2xl">
-              {{ getIcon(gasto.categoria) }}
-            </span>
-          </div>
-        </div>
-
-        <div class="p-6">
-          <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">{{ gasto.nombre }}</h2>
-          <div class="space-y-3">
-            <p class="text-gray-600 flex items-center">
-              <span class="mr-2">💰</span>
-              <strong>Monto:</strong> {{ gasto.monto }} MXN
-            </p>
-            <p class="text-gray-600 flex items-center">
-              <span class="mr-2">🏷️</span>
-              <strong>Categoría:</strong> {{ gasto.categoriaId }}
-            </p>
-            <p class="text-gray-600 flex items-center">
-              <span class="mr-2">📅</span>
-              <!-- <strong>Fecha:</strong> {{ gasto.fecha }} -->
-              <strong>Fecha:</strong> {{ formatFecha(gasto.fecha) }}
-            </p>
-            <p class="text-gray-600 flex items-center">
-              <span class="mr-2">📝</span>
-              <strong>Descripción:</strong> {{ gasto.descripcion }}
-            </p>
-          </div>
-        </div>
-
-        <div class="bg-gray-100 p-4 text-center rounded-b-3xl">
-          <button
-            class="bg-gradient-to-r from-gray-700 to-gray-900 text-white px-6 py-2 rounded-full hover:from-gray-800 hover:to-gray-950 transition-all duration-300 shadow-md hover:shadow-lg">
-            Detalles
-          </button>
-        </div>
-      </div>
-    </div>
+    <TableContent title="Lista de gastos" description="Gestiona tus gastos para un mejor análisis."
+      searchPlaceholder="Buscar gastos..." :items="gastos" emptyStateMessage="Comienza creando un nuevo gasto"
+      addButtonText="Agregar Gasto" @add="openAddModal" @edit="editGastos" @delete="eliminarGasto" />
 
     <v-dialog v-model="dialog" width="500">
       <v-card max-width="700">
@@ -117,16 +77,18 @@ import { computed, onMounted, ref } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import 'animate.css';
-import { addGasto, getGastosPorUsuario } from '@/services/gastosService';
+import { addGasto, deleteGasto, getGastosPorUsuario, updateGasto } from '@/services/gastosService';
+import TableContent from './components/TableContentGastos.vue';
 
 onMounted(() => {
-  cargarGastos(); // Cargar los gastos cuando se monte el componente
+  cargarGastos();
 });
 
 const dialog = ref(false)
-
 const gastos = ref([]);
 const usuarioId = 1;
+const selectedId = ref(null);
+const editingCategory = ref(null);
 
 const getIcon = (categoria: string) => {
   switch (categoria) {
@@ -162,7 +124,6 @@ const totalRestante = computed(() => {
   return totalAsignado.value - totalGastado.value;
 });
 
-const selectedId = ref(null);
 
 const presupuestos = ref([
   { id: 1, categoria: 'Alimentación', asignado: 1500, gastado: 800 },
@@ -183,11 +144,18 @@ const form = ref({
 
 const submitForm = async () => {
   try {
-    console.log(form.value);
+    // console.log(form.value);
     // return
-    const response = await addGasto(form.value);
-    console.log('Gasto agregado:', response);
+    if (editingCategory.value) {
+      await updateGasto(editingCategory.value.id, form.value);
+      console.log(`Gasto ${editingCategory.value.id} actualizado`);
+
+    } else {
+      const response = await addGasto(form.value);
+      console.log('Gasto agregado:', response);
+    }
     dialog.value = false;
+    cargarGastos();
   } catch (error) {
     console.error('Error al agregar gasto:', error);
   }
@@ -202,6 +170,44 @@ const formatFecha = (fecha) => {
     day: 'numeric',
   });
 };
+
+
+const eliminarGasto = async (data) => {
+  // if (!confirm('¿Estás seguro de que quieres eliminar este gasto?')) return;
+  try {
+    await deleteGasto(data.id);
+    console.log(`Gasto ${data.id} eliminado`);
+    cargarGastos();
+  } catch (error) {
+    console.error('Error al eliminar gasto:', error);
+  }
+};
+
+const openAddModal = () => {
+  editingCategory.value = null;
+  form.value = {
+    usuarioId: 1,
+    monto: 0,
+    categoriaId: 1,
+    fecha: new Date(),
+    descripcion: '',
+  };
+  dialog.value = true;
+};
+
+const editGastos = async (gasto) => {
+  editingCategory.value = gasto;
+  form.value = {
+    usuarioId: 1,
+    monto: gasto.monto,
+    categoriaId: 1,
+    fecha: gasto.fecha,
+    descripcion: gasto.descripcion,
+  };
+  dialog.value = true;
+
+};
+
 </script>
 
 
