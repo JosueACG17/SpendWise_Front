@@ -33,12 +33,12 @@
               v-if="showActions"
               class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
             >
-              <button
-                @click="$emit('delete', row)"
-                class="text-red-500 hover:text-red-700"
-              >
-                Eliminar
-              </button>
+            <button
+              @click="$emit('delete', row)"
+              class="inline-flex cursor-pointer items-center p-1.5 border border-transparent rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              <TrashIcon class="h-4 w-4" />
+            </button>
             </td>
           </tr>
         </tbody>
@@ -49,6 +49,8 @@
 
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue';
+import { TrashIcon } from '@heroicons/vue/24/solid';
+
 
 defineProps({
   title: {

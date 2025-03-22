@@ -22,7 +22,7 @@
           </div>
           <div class="grid grid-cols-2">
             <div class="px-4 py-2 font-semibold sm:text-base">Fecha de Nacimiento</div>
-            <div class="px-4 py-2 sm:text-base">{{ perfilStore.perfil.fechaNacimiento }}</div>
+            <div class="px-4 py-2 sm:text-base">{{ formatDate(perfilStore.perfil.fechaNacimiento) }}</div>
           </div>
         </div>
         <div class="flex justify-end mt-6">
@@ -81,6 +81,7 @@
       </button>
     </form>
   </div>
+  <LoadingScreen :show="isLoading" />
 </template>
 
 <script setup lang="ts">
@@ -88,19 +89,21 @@ import { ref, onMounted } from 'vue'
 import { usePerfilStore } from '@/stores/perfilStore'
 import { useAuthStore } from '@/stores/authStore'
 import NavbarComponent from '@/components/NavbarComponent.vue'
-import { jwtDecode } from 'jwt-decode'
+import {jwtDecode }from 'jwt-decode'
 import Swal from 'sweetalert2';
+import LoadingScreen from '@/components/LoadingScreen.vue';
 
 const authStore = useAuthStore()
 const usuarioId = ref<number | null>(null)
+const isLoading = ref(false);
 
 onMounted(() => {
   if (authStore.isAuthenticated) {
     const token = authStore.token
     if (token) {
       try {
-        const decodedToken = jwtDecode<{ nameid: number}>(token);
-        usuarioId.value = decodedToken.nameid;
+        const decodedToken = jwtDecode<{ nameid: string }>(token);
+        usuarioId.value = parseInt(decodedToken.nameid);
         perfilStore.cargarPerfil(usuarioId.value);
       } catch (error) {
         console.error('Error al decodificar el token:', error);
@@ -135,25 +138,31 @@ const handleSubmit = async () => {
   formData.append('telefono', telefono.value);
   formData.append('fechaNacimiento', fechaNacimiento.value);
   formData.append('genero', genero.value);
-  formData.append('foto', foto.value as Blob); // ya validaste que no es null
+  formData.append('foto', foto.value as Blob); 
   formData.append('usuarioId', usuarioId.value.toString());
 
   try {
+    isLoading.value = true;
     await perfilStore.registrarPerfil(formData);
-
-    // Mostrar SweetAlert cuando el perfil se crea exitosamente
+    isLoading.value = false;
     Swal.fire({
       title: '¡Perfil creado!',
       text: 'Tu perfil ha sido creado exitosamente.',
       icon: 'success',
-      confirmButtonText: 'Aceptar',
+      showConfirmButton: false,
+      timer: 1000,
     });
-
-    // Recargar el perfil para mostrar los datos actualizados
     await perfilStore.cargarPerfil(usuarioId.value);
   } catch (error) {
+    isLoading.value = false;
     console.error('Error al registrar perfil:', error);
     alert('Ocurrió un error al registrar tu perfil. Revisa los datos e intenta nuevamente.');
   }
+};
+
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString('es-ES', options);
 };
 </script>

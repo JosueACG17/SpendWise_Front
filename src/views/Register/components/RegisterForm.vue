@@ -99,6 +99,7 @@
       </form>
     </div>
   </section>
+  <LoadingScreen :show="isLoading" />
 </template>
 
 <script lang="ts" setup>
@@ -109,8 +110,11 @@ import { useRouter } from 'vue-router';
 import { registerUser } from '@/services/authService';
 import { handleAxiosError } from '@/utils/Request';
 import Swal from 'sweetalert2';
+import LoadingScreen from '@/components/LoadingScreen.vue';
+
 
 const router = useRouter();
+const isLoading = ref(false);
 
 const validationSchema = yup.object({
   email: yup.string().trim().email('Correo incorrecto').required('El correo es requerido'),
@@ -149,7 +153,9 @@ const onSubmit = handleSubmit(async (values) => {
       showErrorModal('Las contraseñas no coinciden');
       return;
     }
+    isLoading.value = true;
     const response = await registerUser(values.email, values.password);
+    isLoading.value = false;
     if (response.message === 'Usuario registrado exitosamente') {
       Swal.fire({
         icon: 'success',
@@ -162,6 +168,7 @@ const onSubmit = handleSubmit(async (values) => {
       });
     }
   } catch (error) {
+    isLoading.value = false;
     showErrorModal(handleAxiosError(error));
   }
 });

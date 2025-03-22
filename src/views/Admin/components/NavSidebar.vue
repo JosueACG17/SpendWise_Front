@@ -6,6 +6,7 @@
     ]">
       <div class="flex items-center justify-center h-16 border-b border-gray-200">
         <h1 class="text-xl font-bold text-gray-800" v-if="isSidebarOpen">Dashboard</h1>
+        <h1 class="text-xl font-bold text-gray-800" v-else>D</h1>
       </div>
       <nav class="mt-5 px-2">
         <div v-for="(item, index) in menuItems" :key="index" class="mb-2">
@@ -91,8 +92,7 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon,
   ChevronDownIcon,
-  ShoppingCartIcon,
-  Cog6ToothIcon as SettingsIcon
+
 } from '@heroicons/vue/24/outline';
 
 const authStore = useAuthStore();
@@ -107,8 +107,7 @@ const menuItems = ref([
   { name: 'Dashboard', icon: HomeIcon, route: '/dashboard', active: false },
   { name: 'Usuarios', icon: UsersIcon, route: '/usuarios', active: false },
   { name: 'Logs', icon: BriefcaseIcon, route: '/logs', active: false },
-  { name: 'Ventas', icon: ShoppingCartIcon, route: '/ventas', active: false },
-  { name: 'Configuración', icon: SettingsIcon, route: '/configuracion', active: false },
+
 ]);
 
 const confirmLogout = async () => {

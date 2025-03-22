@@ -18,3 +18,26 @@ export const fetchErrorLogs = async (): Promise<ErrorLog[]> => {
     throw error;
   }
 };
+
+export const deleteErrorLog = async (id: number): Promise<void> => {
+  try {
+    await axiosInstance.delete(`/ErrorLogs/${id}`);
+  } catch (error) {
+    handleAxiosError(error, {
+      404: 'Log de error no encontrado',
+      500: 'Error al eliminar el log de error',
+    });
+    throw error;
+  }
+};
+
+export const deleteAllErrorLogs = async (): Promise<void> => {
+  try {
+    await axiosInstance.delete('/ErrorLogs/all');
+  } catch (error) {
+    handleAxiosError(error, {
+      500: 'Error al eliminar todos los logs de error',
+    });
+    throw error;
+  }
+};
