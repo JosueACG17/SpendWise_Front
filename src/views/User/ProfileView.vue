@@ -2,7 +2,6 @@
   <NavbarComponent />
   <div class="p-4 max-w-xl mx-auto">
     <h1 class="text-2xl font-bold mb-4 text-gray-900">Mi Perfil</h1>
-
     <!-- Si ya tiene perfil -->
     <div v-if="perfilStore.perfil" class="bg-white flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 p-6">
       <div class="w-32 h-32 overflow-hidden flex-shrink-0 rounded-full mb-4">
@@ -26,57 +25,25 @@
           </div>
         </div>
         <div class="flex justify-end mt-6">
-          <button
-            class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer"
-          >
+          <button class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer">
             Editar Perfil
           </button>
         </div>
       </div>
     </div>
-
     <!-- Si NO tiene perfil -->
     <form v-else @submit.prevent="handleSubmit" class="grid gap-4">
-      <input
-        v-model="nombreCompleto"
-        type="text"
-        placeholder="Nombre completo"
-        required
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-      />
-      <input
-        v-model="telefono"
-        type="tel"
-        placeholder="Teléfono"
-        required
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-      />
-      <input
-        v-model="fechaNacimiento"
-        type="date"
-        required
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-      />
-      <select
-        v-model="genero"
-        required
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-      >
+      <input v-model="nombreCompleto" type="text" placeholder="Nombre completo" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
+      <input v-model="telefono" type="tel" placeholder="Teléfono" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
+      <input v-model="fechaNacimiento" type="date" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
+      <select v-model="genero" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
         <option disabled value="">Selecciona un género</option>
         <option>Masculino</option>
         <option>Femenino</option>
         <option>Otro</option>
       </select>
-      <input
-        type="file"
-        @change="handleFile"
-        required
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-      />
-      <button
-        type="submit"
-        class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer"
-      >
+      <input type="file" @change="handleFile" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
+      <button type="submit" class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer">
         Guardar Perfil
       </button>
     </form>
@@ -135,21 +102,17 @@ const handleSubmit = async () => {
   formData.append('telefono', telefono.value);
   formData.append('fechaNacimiento', fechaNacimiento.value);
   formData.append('genero', genero.value);
-  formData.append('foto', foto.value as Blob); // ya validaste que no es null
+  formData.append('foto', foto.value as Blob);
   formData.append('usuarioId', usuarioId.value.toString());
 
   try {
     await perfilStore.registrarPerfil(formData);
-
-    // Mostrar SweetAlert cuando el perfil se crea exitosamente
     Swal.fire({
       title: '¡Perfil creado!',
       text: 'Tu perfil ha sido creado exitosamente.',
       icon: 'success',
       confirmButtonText: 'Aceptar',
     });
-
-    // Recargar el perfil para mostrar los datos actualizados
     await perfilStore.cargarPerfil(usuarioId.value);
   } catch (error) {
     console.error('Error al registrar perfil:', error);
