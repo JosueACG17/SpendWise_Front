@@ -47,7 +47,8 @@
             </div>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-gray-900">{{ item.monto }} - {{ formatFecha(item.fecha) }}</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ formatCurrency(item.monto) }} - {{
+              formatFecha(item.fecha) }}</h3>
           </div>
         </div>
         <div class="flex items-center space-x-3">
@@ -179,5 +180,12 @@ const formatFecha = (fecha) => {
   });
 };
 
+const formatCurrency = (monto) => {
+  if (!monto) return 'Monto no disponible';
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(monto);
+};
 
 </script>

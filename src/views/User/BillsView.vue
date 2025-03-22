@@ -27,15 +27,15 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <div class="bg-gray-50 p-4 rounded-xl">
           <p class="text-gray-700">Presupuesto Total</p>
-          <p class="text-2xl font-bold text-gray-800">${{ totalAsignado }} MXN</p>
+          <p class="text-2xl font-bold text-gray-800">{{ formatCurrency(totalAsignado) }} MXN</p>
         </div>
         <div class="bg-gray-50 p-4 rounded-xl">
           <p class="text-gray-700">Gastos totales</p>
-          <p class="text-2xl font-extrabold text-red-600">${{ totalGastado }} MXN</p>
+          <p class="text-2xl font-extrabold text-red-600">{{ formatCurrency(totalGastado) }} MXN</p>
         </div>
         <div class="bg-gray-50 p-4 rounded-xl">
           <p class="text-gray-700">Restante</p>
-          <p class="text-2xl font-extrabold text-green-600">${{ totalRestante }} MXN</p>
+          <p class="text-2xl font-extrabold text-green-600">{{ formatCurrency(totalRestante) }} MXN</p>
         </div>
       </div>
     </div>
@@ -206,6 +206,14 @@ const editGastos = async (gasto) => {
   };
   dialog.value = true;
 
+};
+
+const formatCurrency = (monto) => {
+  if (!monto) return 'Monto no disponible';
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(monto);
 };
 
 </script>
