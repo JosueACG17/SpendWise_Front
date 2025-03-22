@@ -12,72 +12,45 @@
           </p>
         </div>
         <div class="flex space-x-4">
-          <button @click="openAddModal" class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
+          <button @click="openAddModal"
+            class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
             Agregar Etiqueta
           </button>
         </div>
       </div>
 
       <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <StatsCard
-          title="Total Etiquetas"
-          :value="etiquetas.length"
-          :icon="TagIcon"
-          iconBgColor="bg-yellow-100"
-          iconColor="text-yellow-600"
-        />
+        <StatsCard title="Total Etiquetas" :value="etiquetas.length" :icon="TagIcon" iconBgColor="bg-yellow-100"
+          iconColor="text-yellow-600" />
       </div>
     </div>
 
 
-    <TableContent
-      title="Lista de Etiquetas"
-      description="Gestiona tus etiquetas para un mejor control financiero."
-      searchPlaceholder="Buscar etiquetas..."
-      :items="etiquetas"
-      emptyStateMessage="Comienza creando una nueva etiqueta"
-      addButtonText="Agregar Etiqueta"
-      @add="openAddModal"
-      @edit="editEtiqueta"
-      @delete="confirmDelete"
-    />
+    <TableContent title="Lista de Etiquetas" description="Gestiona tus etiquetas para un mejor control financiero."
+      searchPlaceholder="Buscar etiquetas..." :items="etiquetas" emptyStateMessage="Comienza creando una nueva etiqueta"
+      addButtonText="Agregar Etiqueta" @add="openAddModal" @edit="editEtiqueta" @delete="confirmDelete" />
   </div>
 
 
-  <GenericModal
-    :show="showModal"
-    :title="editingEtiqueta ? 'Editar Etiqueta' : 'Agregar Nueva Etiqueta'"
-    :saveButtonText="editingEtiqueta ? 'Actualizar' : 'Crear'"
-    :icon="TagIcon"
-    @save="saveEtiqueta"
-    @close="closeModal"
-  >
+  <GenericModal :show="showModal" :title="editingEtiqueta ? 'Editar Etiqueta' : 'Agregar Nueva Etiqueta'"
+    :saveButtonText="editingEtiqueta ? 'Actualizar' : 'Crear'" :icon="TagIcon" @save="saveEtiqueta" @close="closeModal">
     <div class="mb-4">
       <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-      <input
-        type="text"
-        id="nombre"
-        v-model="formData.nombre"
+      <input type="text" id="nombre" v-model="formData.nombre"
         class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-        placeholder="Nombre de la etiqueta"
-      />
+        placeholder="nombre de la etiqueta" />
     </div>
   </GenericModal>
 
 
-  <DeleteConfirmationModal
-    :show="showDeleteModal"
-    itemName="Etiqueta"
-    :itemToDelete="etiquetaToDelete"
-    @confirmDelete="deleteEtiqueta"
-    @close="closeDeleteModal"
-  />
+  <DeleteConfirmationModal :show="showDeleteModal" itemName="Etiqueta" :itemToDelete="etiquetaToDelete"
+    @confirmDelete="deleteEtiqueta" @close="closeDeleteModal" />
 
   <FooterComponent />
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from '@/views/User/components/GenericModal.vue';
@@ -88,12 +61,13 @@ import {
   TagIcon
 } from '@heroicons/vue/24/solid';
 import 'animate.css';
+import { addLabel, deleteLabel, getLabels, updateLabel } from '@/services/labelService';
 
 const etiquetas = ref([
-  { Id: 1, Nombre: 'Urgente' },
-  { Id: 2, Nombre: 'Ocio' },
-  { Id: 3, Nombre: 'Trabajo' },
-  { Id: 4, Nombre: 'Personal' },
+  // { Id: 1, nombre: 'Urgente' },
+  // { Id: 2, nombre: 'Ocio' },
+  // { Id: 3, nombre: 'Trabajo' },
+  // { Id: 4, nombre: 'Personal' },
 ]);
 
 const showModal = ref(false);
@@ -113,38 +87,58 @@ const openAddModal = () => {
   showModal.value = true;
 };
 
+const usuarioId = 1;
+
+onMounted(() => {
+  cargarCategorias();
+});
+
+const cargarCategorias = async () => {
+  try {
+    etiquetas.value = await getLabels(usuarioId);
+    console.log('Categorias cargados:', etiquetas.value);
+  } catch (error) {
+    console.error('Error al obtener categorias:', error);
+  }
+};
+
 const editEtiqueta = (etiqueta) => {
   editingEtiqueta.value = etiqueta;
   formData.value = {
-    nombre: etiqueta.Nombre,
+    nombre: etiqueta.nombre,
   };
   showModal.value = true;
+  console.log(etiquetaToDelete.value);
 };
 
 const closeModal = () => {
   showModal.value = false;
 };
 
-const saveEtiqueta = () => {
-  if (editingEtiqueta.value) {
-    const index = etiquetas.value.findIndex(e => e.Id === editingEtiqueta.value.Id);
-    if (index !== -1) {
-      etiquetas.value[index] = {
-        ...etiquetas.value[index],
-        Nombre: formData.value.nombre
+const saveEtiqueta = async () => {
+  try {
+    if (editingEtiqueta.value) {
+      const updatedCategory = {
+        id: editingEtiqueta.value.id,
+        nombre: formData.value.nombre,
+        usuarioId: 1,
       };
+      await updateLabel(editingEtiqueta.value.id, updatedCategory);
+      console.log(`Categoría ${editingEtiqueta.value.id} actualizada`);
+    } else {
+      const newCategory = {
+        nombre: formData.value.nombre,
+        usuarioId: 1,
+      };
+      await addLabel(newCategory);
+      console.log("Nueva categoría creada");
     }
-  } else {
-
-    const newId = Math.max(0, ...etiquetas.value.map(e => e.Id)) + 1;
-    etiquetas.value.push({
-      Id: newId,
-      Nombre: formData.value.nombre,
-    });
+    closeModal();
+    cargarCategorias();
+  } catch (error) {
+    console.error("Error al guardar la categoría:", error);
   }
-  closeModal();
 };
-
 
 const confirmDelete = (etiqueta) => {
   etiquetaToDelete.value = etiqueta;
@@ -156,21 +150,31 @@ const closeDeleteModal = () => {
   etiquetaToDelete.value = null;
 };
 
-const deleteEtiqueta = () => {
+const deleteEtiqueta = async () => {
   if (etiquetaToDelete.value) {
-    const index = etiquetas.value.findIndex(e => e.Id === etiquetaToDelete.value.Id);
-    if (index !== -1) {
-      etiquetas.value.splice(index, 1);
+    try {
+      await deleteLabel(etiquetaToDelete.value.id);
+      console.log(`Etiqueta ${etiquetaToDelete.value.id} eliminada`);
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
     }
   }
   closeDeleteModal();
+  cargarCategorias();
 };
 </script>
 
 <style scoped>
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hover\:bg-gray-50:hover {

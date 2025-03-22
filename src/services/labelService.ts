@@ -1,15 +1,14 @@
 import { axiosInstance, handleAxiosError } from "@/utils/Request";
 
-interface Category {
+interface Label {
   id: number;
   nombre: string;
-  usuarioId?: number;
 }
 
-export const addCategory = async (category: Category): Promise<{ message: string }> => {
+export const addLabel = async (category: any): Promise<{ message: string }> => {
   try {
     console.log(category);
-    const response = await axiosInstance.post<{ message: string }>('/categorias', category);
+    const response = await axiosInstance.post<{ message: string }>('/etiquetas', category);
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
@@ -19,9 +18,9 @@ export const addCategory = async (category: Category): Promise<{ message: string
   }
 };
 
-export const getCategories = async (usuarioId: number): Promise<Category[]> => {
+export const getLabels = async (usuarioId: number): Promise<any[]> => {
   try {
-    const response = await axiosInstance.get<Category[]>(`/categorias/usuario/${usuarioId}`);
+    const response = await axiosInstance.get<Label[]>(`/etiquetas/usuario/${usuarioId}`);
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
@@ -31,9 +30,9 @@ export const getCategories = async (usuarioId: number): Promise<Category[]> => {
   }
 };
 
-export const deleteCategoria = async (id: number): Promise<{ message: string }> => {
+export const deleteLabel = async (id: number): Promise<{ message: string }> => {
   try {
-    const response = await axiosInstance.delete<{ message: string }>(`/categorias/${id}`);
+    const response = await axiosInstance.delete<{ message: string }>(`/etiquetas/${id}`);
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
@@ -44,7 +43,7 @@ export const deleteCategoria = async (id: number): Promise<{ message: string }> 
   }
 };
 
-export const updateCategory = async (id: number, category: Category): Promise<{ message: string }> => {
+export const updateLabel = async (id: number, category: Label): Promise<{ message: string }> => {
   try {
     const categoryActualizada = {
       ...category,
@@ -52,7 +51,7 @@ export const updateCategory = async (id: number, category: Category): Promise<{ 
     };
     console.log(categoryActualizada);
 
-    const response = await axiosInstance.put<{ message: string }>(`/categorias/${id}`, categoryActualizada);
+    const response = await axiosInstance.put<{ message: string }>(`/etiquetas/${id}`, categoryActualizada);
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
