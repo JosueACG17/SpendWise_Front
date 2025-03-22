@@ -61,21 +61,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from '@/views/User/components/GenericModal.vue';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import StatsCard from '@/views/User/components/StatsCard.vue';
 import TableContent from './TableContent.vue';
-import {
-  TagIcon,
-  ChartBarIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  BriefcaseIcon
-} from '@heroicons/vue/24/solid';
+import { TagIcon, ChartBarIcon, ClockIcon, CurrencyDollarIcon, BriefcaseIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
+import { addCategory, deleteCategoria, getCategories, updateCategory } from '@/services/categoryService';
 
 const Alimentacion = ref("Alimentos");
 const Hoy = ref("Hoy");
@@ -83,10 +78,10 @@ const Presupuesto = ref("$2,450");
 
 
 const categorias = ref([
-  { Id: 1, Nombre: 'Alimentación' },
-  { Id: 2, Nombre: 'Transporte' },
-  { Id: 3, Nombre: 'Servicios' },
-  { Id: 4, Nombre: 'Entretenimiento' },
+  // { Id: 1, Nombre: 'Alimentación' },
+  // { Id: 2, Nombre: 'Transporte' },
+  // { Id: 3, Nombre: 'Servicios' },
+  // { Id: 4, Nombre: 'Entretenimiento' },
 ]);
 
 
@@ -94,17 +89,30 @@ const showModal = ref(false);
 const editingCategory = ref(null);
 const formData = ref({
   nombre: '',
-  tipo: 'gasto',
 });
 
 const showDeleteModal = ref(false);
 const categoryToDelete = ref(null);
 
+const usuarioId = 1;
+
+onMounted(() => {
+  cargarCategorias();
+});
+
+const cargarCategorias = async () => {
+  try {
+    categorias.value = await getCategories(usuarioId);
+    console.log('Categorias cargados:', categorias.value);
+  } catch (error) {
+    console.error('Error al obtener categorias:', error);
+  }
+};
+
 const openAddModal = () => {
   editingCategory.value = null;
   formData.value = {
     nombre: '',
-    tipo: 'gasto',
   };
   showModal.value = true;
 };
@@ -112,8 +120,7 @@ const openAddModal = () => {
 const editCategory = (categoria) => {
   editingCategory.value = categoria;
   formData.value = {
-    nombre: categoria.Nombre,
-    tipo: 'gasto',
+    nombre: categoria.nombre,
   };
   showModal.value = true;
 };
@@ -122,23 +129,29 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const saveCategory = () => {
-  if (editingCategory.value) {
-    const index = categorias.value.findIndex(c => c.Id === editingCategory.value.Id);
-    if (index !== -1) {
-      categorias.value[index] = {
-        ...categorias.value[index],
-        Nombre: formData.value.nombre
+const saveCategory = async () => {
+  try {
+    if (editingCategory.value) {
+      const updatedCategory = {
+        id: editingCategory.value.id,
+        nombre: formData.value.nombre,
+        usuarioId: 1,
       };
+      await updateCategory(editingCategory.value.id, updatedCategory);
+      console.log(`Categoría ${editingCategory.value.id} actualizada`);
+    } else {
+      const newCategory = {
+        nombre: formData.value.nombre,
+        usuarioId: 1,
+      };
+      await addCategory(newCategory);
+      console.log("Nueva categoría creada");
     }
-  } else {
-    const newId = Math.max(0, ...categorias.value.map(c => c.Id)) + 1;
-    categorias.value.push({
-      Id: newId,
-      Nombre: formData.value.nombre,
-    });
+    closeModal();
+    cargarCategorias();
+  } catch (error) {
+    console.error("Error al guardar la categoría:", error);
   }
-  closeModal();
 };
 
 const confirmDelete = (categoria) => {
@@ -151,14 +164,17 @@ const closeDeleteModal = () => {
   categoryToDelete.value = null;
 };
 
-const deleteCategory = () => {
+const deleteCategory = async () => {
   if (categoryToDelete.value) {
-    const index = categorias.value.findIndex(c => c.Id === categoryToDelete.value.Id);
-    if (index !== -1) {
-      categorias.value.splice(index, 1);
+    try {
+      await deleteCategoria(categoryToDelete.value.id);
+      console.log(`Categoría ${categoryToDelete.value.id} eliminada`);
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
     }
   }
   closeDeleteModal();
+  cargarCategorias();
 };
 </script>
 
