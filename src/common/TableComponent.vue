@@ -31,19 +31,20 @@
             </td>
             <td
               v-if="showActions"
-              class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+              class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-2"
             >
               <button
                 @click="$emit('edit', row)"
-                class="text-indigo-600 hover:text-indigo-900"
-              >
-                Editar
+                class="inline-flex cursor-pointer items-center p-1.5 border border-transparent rounded-full shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                >
+                <PencilIcon class="h-4 w-4" />
               </button>
               <button
+                v-if="!nonDeletableUserIds.includes(row.id)"
                 @click="$emit('delete', row)"
-                class="text-red-500 hover:text-red-700 ml-2"
-              >
-                Eliminar
+                class="inline-flex cursor-pointer items-center p-1.5 border border-transparent rounded-full shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                <TrashIcon class="h-4 w-4" />
               </button>
             </td>
           </tr>
@@ -55,6 +56,7 @@
 
 <script lang="ts" setup>
 import { defineProps, computed } from 'vue';
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
 defineProps({
   title: {
@@ -72,6 +74,10 @@ defineProps({
   showActions: {
     type: Boolean,
     default: true,
+  },
+  nonDeletableUserIds: {
+    type: Array as () => number[],
+    default: () => [],
   },
 });
 

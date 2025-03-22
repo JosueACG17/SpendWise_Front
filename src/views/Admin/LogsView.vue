@@ -6,8 +6,9 @@
       <div class="flex justify-end mb-4">
         <button
           @click="clearAllErrors"
-          class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+          class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 flex items-center cursor-pointer"
         >
+          <TrashIcon class="w-5 h-5 mr-2" />
           Vaciar Todo
         </button>
       </div>
@@ -24,26 +25,30 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import Swal from 'sweetalert2';
 import NavSidebar from './components/NavSidebar.vue';
 import TableComponentLogs from '@/common/TableComponentLogs.vue';
 import { useErrorLogStore } from '@/stores/errorLogStore';
+import type { ErrorLog } from '@/interfaces/ErrorLog';
+import { TrashIcon } from '@heroicons/vue/24/solid';
+
 
 const errorLogStore = useErrorLogStore();
-const tableLogs = ref([]);
+const tableLogs = computed(() =>
+  errorLogStore.errorLogs.map((log) => ({
+    id: log.id,
+    Mensaje_error: log.mensaje_error,
+    Enlace_error: log.enlace_error,
+    Fecha_error: log.fecha_error,
+  }))
+);
 
 onMounted(async () => {
   await errorLogStore.getErrorLogs();
-  tableLogs.value = errorLogStore.errorLogs.map((log) => ({
-    id: log.id,
-    Mensaje_error: log.mensaje,
-    Enlace_error: log.enlace_error,
-    Fecha_error: log.fecha_error,
-  }));
 });
 
-const deleteError = (error) => {
+const deleteError = (error: ErrorLog) => {
   Swal.fire({
     title: '¿Estás seguro?',
     text: '¿Quieres eliminar este error?',
@@ -52,10 +57,14 @@ const deleteError = (error) => {
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
     confirmButtonText: 'Sí, eliminar',
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      tableLogs.value = tableLogs.value.filter((log) => log.id !== error.id);
-      Swal.fire('¡Eliminado!', 'El error ha sido eliminado.', 'success');
+      try {
+        await errorLogStore.removeErrorLog(error.id);
+        Swal.fire('¡Eliminado!', 'El error ha sido eliminado.', 'success');
+      } catch  {
+        Swal.fire('Error', 'No se pudo eliminar el error.', 'error');
+      }
     }
   });
 };
@@ -69,10 +78,14 @@ const clearAllErrors = () => {
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
     confirmButtonText: 'Sí, vaciar todo',
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      tableLogs.value = [];
-      Swal.fire('¡Vaciado!', 'Todos los errores han sido eliminados.', 'success');
+      try {
+        await errorLogStore.removeAllErrorLogs();
+        Swal.fire('¡Vaciado!', 'Todos los errores han sido eliminados.', 'success');
+      } catch  {
+        Swal.fire('Error', 'No se pudieron eliminar los errores.', 'error');
+      }
     }
   });
 };
