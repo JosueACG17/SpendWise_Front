@@ -1,8 +1,8 @@
 <template>
   <NavSidebar>
     <main class="flex-1 overflow-auto p-6 bg-gray-100">
-      <p class="text-center text-3xl font-bold mb-4">¡Bienvenido Josue!</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <p class="text-center text-3xl font-bold mb-6">¡Bienvenido!</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
         <CardComponent v-for="(card, index) in dashboardCards" :key="index" :card="card" />
       </div>
       <TableComponent
@@ -23,32 +23,41 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import NavSidebar from './components/NavSidebar.vue';
 import CardComponent from '@/common/CardComponent.vue';
 import TableComponent from '@/common/TableComponent.vue';
-import { UsersIcon, ShoppingCartIcon, BriefcaseIcon } from '@heroicons/vue/24/outline';
+import { UsersIcon, ExclamationTriangleIcon} from '@heroicons/vue/24/outline';
 import { useErrorLogStore } from '@/stores/errorLogStore';
+import { useUserStore } from '@/stores/userStore';
+
+const userStore = useUserStore();
+const errorLogStore = useErrorLogStore();
 
 const dashboardCards = ref([
-  { title: 'Usuarios', value: '12,361', icon: UsersIcon, bgColor: 'bg-blue-500' },
-  { title: 'Ventas', value: '1,247', icon: ShoppingCartIcon, bgColor: 'bg-purple-500' },
-  { title: 'Proyectos', value: '374', icon: BriefcaseIcon, bgColor: 'bg-green-500' },
+  { title: 'Usuarios', value: '0', icon: UsersIcon, bgColor: 'bg-blue-500' },
+  { title: 'Errores Encontrados', value: '0', icon: ExclamationTriangleIcon, bgColor: 'bg-red-500' },
 ]);
 
-const tableUsers = ref([
-  { email: 'usuario1@example.com', role: 'Admin' },
-  { email: 'usuario2@example.com', role: 'Editor' },
-  { email: 'usuario3@example.com', role: 'Usuario' },
-]);
-
-const errorLogStore = useErrorLogStore();
 const tableLogs = ref([]);
+const tableUsers = computed(() => {
+  const users = userStore.users.map((user) => ({
+    id: user.id,
+    email: user.email,
+    role: user.rolNombre || 'Sin rol',
+  }));
+  return users;
+});
 
 onMounted(async () => {
+  await userStore.getUsers();
   await errorLogStore.getErrorLogs();
+
+  dashboardCards.value[0].value = userStore.users.length.toString();
+  dashboardCards.value[1].value = errorLogStore.errorLogs.length.toString();
+
   tableLogs.value = errorLogStore.errorLogs.map((log) => ({
-    Mensaje: log.mensaje,
+    Mensaje_error: log.mensaje_error,
     Enlace_error: log.enlace_error,
     Fecha_error: log.fecha_error,
   }));

@@ -9,7 +9,7 @@
         <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 cursor-pointer" id="user-menu-button"
           aria-expanded="false" @click="toggleDropdown">
           <p class="text-white mt-1.5 mr-2 ml-2">{{ userName }}</p>
-          <img class="w-8 h-8 rounded-full" :src="userPhoto"
+          <img class="w-8 h-8 rounded-full object-cover" :src="userPhoto"
             alt="user photo" />
         </button>
         <!-- Icono de notificaciones -->
@@ -25,7 +25,7 @@
         <div v-show="isDropdownOpen"
             class="z-50 absolute right-0 w-60 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
             <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
-              <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5"
+              <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5 object-cover"
                 :src="userPhoto"
                 alt="User avatar" />
               <div>

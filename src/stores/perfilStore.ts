@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { Perfil } from '@/interfaces/Perfil';
-import { obtenerPerfil, crearPerfil } from '@/services/perfilService';
+import { obtenerPerfil, crearPerfil, actualizarPerfilPorUsuario } from '@/services/perfilService';
 
 export const usePerfilStore = defineStore('perfil', () => {
   const perfil = ref<Perfil | null>(null);
@@ -15,6 +15,12 @@ export const usePerfilStore = defineStore('perfil', () => {
     perfil.value = nuevoPerfil;
   };
 
+  const editarPerfilPorUsuario = async (usuarioId: number, formData: FormData) => {
+    const perfilActualizado = await actualizarPerfilPorUsuario(usuarioId, formData);
+    perfil.value = perfilActualizado;
+    return perfilActualizado;
+  };
+
   const clearPerfil = () => {
     perfil.value = null;
   };
@@ -23,6 +29,7 @@ export const usePerfilStore = defineStore('perfil', () => {
     perfil,
     cargarPerfil,
     registrarPerfil,
+    editarPerfilPorUsuario,
     clearPerfil
   };
 });

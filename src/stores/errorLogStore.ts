@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { fetchErrorLogs, type ErrorLog } from '@/services/errorlogService';
+import { fetchErrorLogs, deleteErrorLog, deleteAllErrorLogs, type ErrorLog } from '@/services/errorLogService';
 
 export const useErrorLogStore = defineStore('errorLog', () => {
   const errorLogs = ref<ErrorLog[]>([]);
@@ -15,8 +15,30 @@ export const useErrorLogStore = defineStore('errorLog', () => {
     }
   };
 
+  const removeErrorLog = async (id: number) => {
+    try {
+      await deleteErrorLog(id);
+      errorLogs.value = errorLogs.value.filter(log => log.id !== id);
+    } catch (error) {
+      console.error('Error al eliminar el log:', error);
+      throw error;
+    }
+  };
+
+  const removeAllErrorLogs = async () => {
+    try {
+      await deleteAllErrorLogs();
+      errorLogs.value = [];
+    } catch (error) {
+      console.error('Error al eliminar todos los logs:', error);
+      throw error;
+    }
+  };
+
   return {
     errorLogs,
     getErrorLogs,
+    removeErrorLog,
+    removeAllErrorLogs,
   };
 });
