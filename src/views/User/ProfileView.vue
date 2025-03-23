@@ -1,76 +1,128 @@
 <template>
   <NavbarComponent />
-  <div class="p-4 max-w-xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4 text-gray-900">Mi Perfil</h1>
+  <div class="p-5">
+    <h1 class="text-3xl font-bold mb-4 text-gray-900">Mi Perfil</h1>
     <!-- Si ya tiene perfil -->
-    <div v-if="perfilStore.perfil" class="bg-white flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6 p-6">
-      <div class="w-32 h-32 overflow-hidden flex-shrink-0 rounded-full mb-4">
-        <img :src="perfilStore.perfil.fotoUrl" class="w-full h-full object-cover" alt="Foto de perfil" />
+    <div v-if="perfilStore.perfil" class="bg-white rounded-xl shadow-xl overflow-hidden">
+      <div class="relative h-32 bg-gradient-to-r from-gray-800 to-gray-900">
+        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
       </div>
-      <div class="flex flex-col w-full">
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 mb-3">{{ perfilStore.perfil.nombreCompleto }}</h2>
-        <h4 class="text-xl sm:text-2xl font-semibold text-gray-400 mb-3">{{ authStore.email }}</h4>
-        <div class="grid text-sm text-gray-700 mb-4">
-          <div class="grid grid-cols-2">
-            <div class="px-4 py-2 font-semibold sm:text-base">Teléfono</div>
-            <div class="px-4 py-2 sm:text-base">{{ perfilStore.perfil.telefono }}</div>
-          </div>
-          <div class="grid grid-cols-2">
-            <div class="px-4 py-2 font-semibold sm:text-base">Género</div>
-            <div class="px-4 py-2 sm:text-base">{{ perfilStore.perfil.genero }}</div>
-          </div>
-          <div class="grid grid-cols-2">
-            <div class="px-4 py-2 font-semibold sm:text-base">Fecha de Nacimiento</div>
-            <div class="px-4 py-2 sm:text-base">{{ formatDate(perfilStore.perfil.fechaNacimiento) }}</div>
+      <div class="relative">
+        <div class="absolute -top-20 left-8">
+          <div class="relative">
+            <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg">
+              <img :src="perfilStore.perfil.fotoUrl" alt="Foto de perfil" class="w-full h-full object-cover"/>
+            </div>
           </div>
         </div>
-        <div class="flex justify-end mt-6">
-          <button
-            @click="abrirModalEditar"
-            class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer"
-          >
-            Editar Perfil
-          </button>
+        <div class="pt-24 px-8 pb-8">
+          <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-800">{{ perfilStore.perfil.nombreCompleto }}</h2>
+            <h4 class="text-lg font-medium text-gray-500">{{ authStore.email }}</h4>
+          </div>
+          <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-gray-50 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div class="text-sm font-semibold text-gray-500 mb-2">Teléfono</div>
+                <div class="text-lg font-medium text-gray-800">{{ perfilStore.perfil.telefono }}</div>
+              </div>
+              <div class="bg-gray-50 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div class="text-sm font-semibold text-gray-500 mb-2">Género</div>
+                <div class="text-lg font-medium text-gray-800">{{ perfilStore.perfil.genero }}</div>
+              </div>
+              <div class="bg-gray-50 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div class="text-sm font-semibold text-gray-500 mb-2">Fecha de Nacimiento</div>
+                <div class="text-lg font-medium text-gray-800">{{ formatDate(perfilStore.perfil.fechaNacimiento) }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-end mt-8">
+            <button @click="abrirModalEditar" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              Editar Perfil
+            </button>
+          </div>
         </div>
       </div>
     </div>
     <!-- Si NO tiene perfil -->
-    <form v-else @submit.prevent="handleSubmit" class="grid gap-4">
-      <input v-model="nombreCompleto" type="text" placeholder="Nombre completo" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
-      <input v-model="telefono" type="tel" placeholder="Teléfono" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
-      <input v-model="fechaNacimiento" type="date" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
-      <select v-model="genero" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
-        <option disabled value="">Selecciona un género</option>
-        <option>Masculino</option>
-        <option>Femenino</option>
-        <option>Otro</option>
-      </select>
-      <input type="file" @change="handleFile" required class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
-      <button type="submit" class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer">
-        Guardar Perfil
-      </button>
+    <form v-else @submit.prevent="handleSubmit" class="grid gap-4 max-w-3xl mx-auto bg-white rounded-xl shadow-xl p-8">
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-gray-700">Nombre completo</label>
+        <input v-model="nombreCompleto" type="text" placeholder="Ingresa tu nombre completo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-gray-700">Teléfono</label>
+        <input v-model="telefono" type="tel" placeholder="Ingresa tu teléfono" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-gray-700">Fecha de nacimiento</label>
+        <input v-model="fechaNacimiento" type="date" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-gray-700">Género</label>
+        <select v-model="genero" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition">
+          <option disabled value="">Selecciona un género</option>
+          <option>Masculino</option>
+          <option>Femenino</option>
+          <option>Otro</option>
+        </select>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
+        <input type="file" @change="handleFile" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+      </div>
+      <div class="flex justify-end">
+        <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Guardar Perfil
+        </button>
+      </div>
     </form>
 
     <!-- Modal para editar perfil -->
-    <div v-if="mostrarModalEditar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div class="bg-white p-6 rounded-lg w-full max-w-md">
-        <h2 class="text-xl font-bold mb-4 text-gray-900">Editar Perfil</h2>
-        <form @submit.prevent="actualizarPerfil">
-          <input v-model="editarNombreCompleto" type="text" placeholder="Nombre completo" required class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
-          <input v-model="editarTelefono" type="tel" placeholder="Teléfono" required class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
-          <input v-model="editarFechaNacimiento" type="date" required class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
-          <select v-model="editarGenero" required class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-            <option disabled value="">Selecciona un género</option>
-            <option>Masculino</option>
-            <option>Femenino</option>
-            <option>Otro</option>
-          </select>
-          <input type="file" @change="handleFileEditar" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-yellow-500"/>
+    <div v-if="mostrarModalEditar" class="fixed inset-0 flex items-center justify-center p-4">
+      <div class="fixed inset-0 bg-gray-900 opacity-75"></div>
+      <div class="relative bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Perfil</h2>
+        <form @submit.prevent="actualizarPerfil" class="space-y-6">
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700">Nombre completo</label>
+            <input v-model="editarNombreCompleto" type="text" placeholder="Ingresa tu nombre completo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700">Teléfono</label>
+            <input v-model="editarTelefono" type="tel" placeholder="Ingresa tu teléfono" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700">Fecha de nacimiento</label>
+            <input v-model="editarFechaNacimiento" type="date" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700">Género</label>
+            <select v-model="editarGenero" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition">
+              <option disabled value="">Selecciona un género</option>
+              <option>Masculino</option>
+              <option>Femenino</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
+            <input type="file" @change="handleFileEditar" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+          </div>
           <div class="flex justify-end space-x-4">
-            <button type="button" @click="cerrarModalEditar" class="bg-gray-300 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300 cursor-pointer">
+            <button type="button" @click="cerrarModalEditar" class="bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
               Cancelar
             </button>
-            <button type="submit" class="bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition duration-300 cursor-pointer">
+            <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
               Guardar Cambios
             </button>
           </div>
@@ -96,14 +148,12 @@ const usuarioId = ref<number | null>(null)
 const isLoading = ref(false)
 const mostrarModalEditar = ref(false)
 
-// Datos del formulario de creación
 const nombreCompleto = ref('')
 const telefono = ref('')
 const fechaNacimiento = ref('')
 const genero = ref('')
 const foto = ref<File | null>(null)
 
-// Datos del formulario de edición
 const editarNombreCompleto = ref('')
 const editarTelefono = ref('')
 const editarFechaNacimiento = ref('')
