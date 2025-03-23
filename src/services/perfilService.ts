@@ -26,3 +26,18 @@ export const crearPerfil = async (formData: FormData): Promise<Perfil> => {
     throw error;
   }
 };
+
+export const actualizarPerfilPorUsuario = async (usuarioId: number, formData: FormData): Promise<Perfil> => {
+  try {
+    const { data } = await axios.put(`${apiUrl}/usuario/${usuarioId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data;
+  } catch (error) {
+    console.error('Error en actualizarPerfilPorUsuarioId:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Detalles del error:', error.response?.data);
+    }
+    throw error;
+  }
+};
