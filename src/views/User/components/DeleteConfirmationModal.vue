@@ -19,7 +19,7 @@
               </h3>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">
-                  ¿Estás seguro que deseas eliminar {{ itemName }} "{{ itemToDelete?.Nombre }}"? Esta acción no se puede
+                  ¿Estás seguro que deseas eliminar {{ itemName }}? Esta acción no se puede
                   deshacer.
                 </p>
               </div>
@@ -47,7 +47,6 @@ import { ExclamationTriangleIcon } from '@heroicons/vue/24/solid';
 defineProps({
   show: Boolean,
   itemName: String,
-  itemToDelete: Object,
 });
 
 const emit = defineEmits(['confirmDelete', 'close']);
