@@ -48,18 +48,21 @@
       </div>
     </div>
     <!-- Si NO tiene perfil -->
-    <form v-else @submit.prevent="handleSubmit" class="grid gap-4 max-w-3xl mx-auto bg-white rounded-xl shadow-xl p-8">
+    <form v-else @submit.prevent="onSubmit" class="grid gap-4 max-w-3xl mx-auto bg-white rounded-xl shadow-xl p-8">
       <div class="space-y-2">
         <label class="text-sm font-medium text-gray-700">Nombre completo</label>
         <input v-model="nombreCompleto" type="text" placeholder="Ingresa tu nombre completo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+        <p v-if="errors.nombreCompleto" class="text-red-600 text-sm mt-1">{{ errors.nombreCompleto }}</p>
       </div>
       <div class="space-y-2">
         <label class="text-sm font-medium text-gray-700">Teléfono</label>
         <input v-model="telefono" type="tel" placeholder="Ingresa tu teléfono" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+        <p v-if="errors.telefono" class="text-red-600 text-sm mt-1">{{ errors.telefono }}</p>
       </div>
       <div class="space-y-2">
         <label class="text-sm font-medium text-gray-700">Fecha de nacimiento</label>
         <input v-model="fechaNacimiento" type="date" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+        <p v-if="errors.fechaNacimiento" class="text-red-600 text-sm mt-1">{{ errors.fechaNacimiento }}</p>
       </div>
       <div class="space-y-2">
         <label class="text-sm font-medium text-gray-700">Género</label>
@@ -69,10 +72,12 @@
           <option>Femenino</option>
           <option>Otro</option>
         </select>
+        <p v-if="errors.genero" class="text-red-600 text-sm mt-1">{{ errors.genero }}</p>
       </div>
       <div class="space-y-2">
         <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
         <input type="file" @change="handleFile" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+        <p v-if="errors.foto" class="text-red-600 text-sm mt-1">{{ errors.foto }}</p>
       </div>
       <div class="flex justify-end">
         <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
@@ -83,13 +88,21 @@
         </button>
       </div>
     </form>
-
     <!-- Modal para editar perfil -->
     <div v-if="mostrarModalEditar" class="fixed inset-0 flex items-center justify-center p-4">
       <div class="fixed inset-0 bg-gray-900 opacity-75"></div>
-      <div class="relative bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Perfil</h2>
-        <form @submit.prevent="actualizarPerfil" class="space-y-6">
+      <div class="relative bg-white rounded-xl shadow-xl p-7 w-full max-w-md">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Editar Perfil</h2>
+        <form @submit.prevent="actualizarPerfil" class="space-y-2.5">
+          <div class="flex items-center gap-x-4">
+            <div v-if="nuevaFotoUrl || perfilStore.perfil.fotoUrl" class="mt-2">
+              <img :src="nuevaFotoUrl || perfilStore.perfil.fotoUrl" alt="Foto de perfil actual" class="w-20 h-20 rounded-full object-cover mr-6"/>
+            </div>
+            <div class="w-full">
+              <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
+              <input type="file" @change="handleFileEditar" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+            </div>
+          </div>
           <div class="space-y-2">
             <label class="text-sm font-medium text-gray-700">Nombre completo</label>
             <input v-model="editarNombreCompleto" type="text" placeholder="Ingresa tu nombre completo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
@@ -102,7 +115,7 @@
             <label class="text-sm font-medium text-gray-700">Fecha de nacimiento</label>
             <input v-model="editarFechaNacimiento" type="date" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
           </div>
-          <div class="space-y-2">
+          <div class="space-y-2 mb-5">
             <label class="text-sm font-medium text-gray-700">Género</label>
             <select v-model="editarGenero" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition">
               <option disabled value="">Selecciona un género</option>
@@ -110,10 +123,6 @@
               <option>Femenino</option>
               <option>Otro</option>
             </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
-            <input type="file" @change="handleFileEditar" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
           </div>
           <div class="flex justify-end space-x-4">
             <button type="button" @click="cerrarModalEditar" class="bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
@@ -141,6 +150,46 @@ import NavbarComponent from '@/components/NavbarComponent.vue'
 import { jwtDecode } from 'jwt-decode'
 import Swal from 'sweetalert2'
 import LoadingScreen from '@/components/LoadingScreen.vue'
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+
+const perfilSchema = yup.object({
+  nombreCompleto: yup
+    .string()
+    .trim()
+    .required('El nombre completo es requerido'),
+  telefono: yup
+    .string()
+    .trim()
+    .required('El teléfono es requerido')
+    .matches(/^[0-9]+$/, 'El teléfono solo debe contener números')
+    .min(10, 'El teléfono debe tener al menos 10 dígitos'),
+  fechaNacimiento: yup
+    .date()
+    .required('La fecha de nacimiento es requerida')
+    .max(new Date(), 'La fecha de nacimiento no puede ser futura'),
+  genero: yup
+    .string()
+    .required('El género es requerido'),
+  foto: yup
+    .mixed()
+    .required('La foto de perfil es requerida')
+    .test('fileType', 'Solo se permiten imágenes', (value) => {
+      if (!value) return true; // Si no hay archivo, no se valida
+      const allowedTypes = ['image/jpeg', 'image/png'];
+      return allowedTypes.includes((value as File).type);
+    }),
+});
+
+const { errors, defineField, handleSubmit } = useForm({
+  validationSchema: perfilSchema,
+});
+
+const [nombreCompleto] = defineField('nombreCompleto');
+const [telefono] = defineField('telefono');
+const [fechaNacimiento] = defineField('fechaNacimiento');
+const [genero] = defineField('genero');
+const [foto] = defineField('foto');
 
 const authStore = useAuthStore()
 const perfilStore = usePerfilStore()
@@ -148,17 +197,13 @@ const usuarioId = ref<number | null>(null)
 const isLoading = ref(false)
 const mostrarModalEditar = ref(false)
 
-const nombreCompleto = ref('')
-const telefono = ref('')
-const fechaNacimiento = ref('')
-const genero = ref('')
-const foto = ref<File | null>(null)
-
 const editarNombreCompleto = ref('')
 const editarTelefono = ref('')
 const editarFechaNacimiento = ref('')
 const editarGenero = ref('')
 const editarFoto = ref<File | null>(null)
+const nuevaFotoUrl = ref<string | null>(null)
+const fotoUrl = ref<string | null>(null)
 
 onMounted(() => {
   if (authStore.isAuthenticated) {
@@ -186,21 +231,22 @@ const handleFileEditar = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
     editarFoto.value = target.files[0]
+    nuevaFotoUrl.value = URL.createObjectURL(target.files[0])
   }
 }
 
-const handleSubmit = async () => {
+const onSubmit = handleSubmit(async (values) => {
   if (!usuarioId.value) {
     console.error('ID de usuario no disponible')
     return
   }
 
   const formData = new FormData()
-  formData.append('nombreCompleto', nombreCompleto.value)
-  formData.append('telefono', telefono.value)
-  formData.append('fechaNacimiento', fechaNacimiento.value)
-  formData.append('genero', genero.value)
-  formData.append('foto', foto.value as Blob)
+  formData.append('nombreCompleto', values.nombreCompleto)
+  formData.append('telefono', values.telefono)
+  formData.append('fechaNacimiento', values.fechaNacimiento)
+  formData.append('genero', values.genero)
+  formData.append('foto', values.foto)
   formData.append('usuarioId', usuarioId.value.toString())
 
   try {
@@ -217,10 +263,14 @@ const handleSubmit = async () => {
     await perfilStore.cargarPerfil(usuarioId.value)
   } catch (error) {
     isLoading.value = false
-    console.error('Error al registrar perfil:', error)
-    alert('Ocurrió un error al registrar tu perfil. Revisa los datos e intenta nuevamente.')
+    console.error('Error al actualizar perfil:', error)
+    Swal.fire({
+      title: 'Error',
+      text: 'Ocurrió un error al registrar tu perfil. Revisa los datos e intenta nuevamente.',
+      icon: 'error',
+    })
   }
-}
+})
 
 const abrirModalEditar = () => {
   if (perfilStore.perfil) {
@@ -228,6 +278,8 @@ const abrirModalEditar = () => {
     editarTelefono.value = perfilStore.perfil.telefono
     editarFechaNacimiento.value = formatDateForInput(perfilStore.perfil.fechaNacimiento)
     editarGenero.value = perfilStore.perfil.genero
+    fotoUrl.value = perfilStore.perfil.fotoUrl
+    nuevaFotoUrl.value = null
     mostrarModalEditar.value = true
   }
 }
@@ -242,6 +294,7 @@ const formatDateForInput = (dateString: string): string => {
 
 const cerrarModalEditar = () => {
   mostrarModalEditar.value = false
+  nuevaFotoUrl.value = null
 }
 
 const actualizarPerfil = async () => {
@@ -257,10 +310,10 @@ const actualizarPerfil = async () => {
   formData.append('genero', editarGenero.value)
   if (editarFoto.value) {
     formData.append('foto', editarFoto.value)
-  }
-
-  for (const [key, value] of formData.entries()) {
-    console.log(key, value);
+  } else if (fotoUrl.value) {
+    const response = await fetch(fotoUrl.value)
+    const blob = await response.blob()
+    formData.append('foto', blob, 'foto.jpg')
   }
 
   try {
