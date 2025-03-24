@@ -72,18 +72,6 @@ const editingCategory = ref(null);
 
 const categorias = ref([]);
 
-const getIcon = (categoria: string) => {
-  switch (categoria) {
-    case 'Alimentación':
-      return '🍔';
-    case 'Transporte':
-      return '🚗';
-    case 'Servicios':
-      return '🌐';
-    default:
-      return '💳';
-  }
-};
 
 onMounted(async () => {
   await cargarGastos();
