@@ -1,5 +1,5 @@
 <template>
-  <CategoryComponent/>
+  <CategoryComponent />
 </template>
 <script lang="ts" setup>
 import CategoryComponent from './components/CategoryComponent.vue';

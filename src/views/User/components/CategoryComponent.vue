@@ -14,22 +14,22 @@
         </div>
         <div class="flex space-x-4">
           <button @click="openAddModal"
-            class="bg-gradient-to-r border border-transparent rounded-full shadow-sm text-base text-white cursor-pointer duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 font-medium from-yellow-500 hover:from-yellow-600 hover:to-amber-700 inline-flex items-center px-5 py-3 to-amber-600 transition-all">
+            class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
             Agregar Categoría
           </button>
         </div>
       </div>
 
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 gap-5 lg:grid-cols-4 mt-8 sm:grid-cols-2">
+      <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard title="Total Categorías" :value="categorias.length" :icon="TagIcon" iconBgColor="bg-yellow-100"
           iconColor="text-yellow-600" />
-        <StatsCard title="Categoria Más Usada" :value="Alimentacion" :icon="ChartBarIcon" iconBgColor="bg-green-100"
+        <!-- <StatsCard title="Categoria Más Usada" :value="Alimentacion" :icon="ChartBarIcon" iconBgColor="bg-green-100"
           iconColor="text-green-600" />
         <StatsCard title="Ultima Actualización" :value="Hoy" :icon="ClockIcon" iconBgColor="bg-blue-100"
           iconColor="text-blue-600" />
         <StatsCard title="Presupuesto Asignado" :value="Presupuesto" :icon="CurrencyDollarIcon"
-          iconBgColor="bg-purple-100" iconColor="text-purple-600" />
+          iconBgColor="bg-purple-100" iconColor="text-purple-600" /> -->
       </div>
     </div>
 
@@ -45,9 +45,9 @@
     :saveButtonText="editingCategory ? 'Actualizar' : 'Crear'" :icon="BriefcaseIcon" @save="saveCategory"
     @close="closeModal">
     <div class="mb-4">
-      <label for="nombre" class="text-gray-700 text-sm block font-medium">Nombre</label>
+      <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
       <input type="text" id="nombre" v-model="formData.nombre"
-        class="border-gray-300 p-3 rounded-md shadow-sm w-full block focus:border-yellow-500 focus:ring-yellow-500 mt-1 sm:text-sm"
+        class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
         placeholder="Nombre de la categoría" />
     </div>
 
@@ -61,21 +61,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from '@/common/GenericModal.vue';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import StatsCard from '@/views/User/components/StatsCard.vue';
 import TableContent from './TableContent.vue';
-import {
-  TagIcon,
-  ChartBarIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  BriefcaseIcon
-} from '@heroicons/vue/24/solid';
+import { TagIcon, ChartBarIcon, ClockIcon, CurrencyDollarIcon, BriefcaseIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
+import { addCategory, deleteCategoria, getCategories, updateCategory } from '@/services/categoryService';
 
 const Alimentacion = ref("Alimentos");
 const Hoy = ref("Hoy");
@@ -83,10 +78,10 @@ const Presupuesto = ref("$2,450");
 
 
 const categorias = ref([
-  { Id: 1, Nombre: 'Alimentación' },
-  { Id: 2, Nombre: 'Transporte' },
-  { Id: 3, Nombre: 'Servicios' },
-  { Id: 4, Nombre: 'Entretenimiento' },
+  // { Id: 1, Nombre: 'Alimentación' },
+  // { Id: 2, Nombre: 'Transporte' },
+  // { Id: 3, Nombre: 'Servicios' },
+  // { Id: 4, Nombre: 'Entretenimiento' },
 ]);
 
 
@@ -94,17 +89,29 @@ const showModal = ref(false);
 const editingCategory = ref(null);
 const formData = ref({
   nombre: '',
-  tipo: 'gasto',
 });
 
 const showDeleteModal = ref(false);
 const categoryToDelete = ref(null);
 
+const usuarioId = 1;
+
+onMounted(() => {
+  cargarCategorias();
+});
+
+const cargarCategorias = async () => {
+  try {
+    categorias.value = await getCategories(usuarioId);
+  } catch (error) {
+    console.error('Error al obtener categorias:', error);
+  }
+};
+
 const openAddModal = () => {
   editingCategory.value = null;
   formData.value = {
     nombre: '',
-    tipo: 'gasto',
   };
   showModal.value = true;
 };
@@ -112,8 +119,7 @@ const openAddModal = () => {
 const editCategory = (categoria) => {
   editingCategory.value = categoria;
   formData.value = {
-    nombre: categoria.Nombre,
-    tipo: 'gasto',
+    nombre: categoria.nombre,
   };
   showModal.value = true;
 };
@@ -122,23 +128,27 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const saveCategory = () => {
-  if (editingCategory.value) {
-    const index = categorias.value.findIndex(c => c.Id === editingCategory.value.Id);
-    if (index !== -1) {
-      categorias.value[index] = {
-        ...categorias.value[index],
-        Nombre: formData.value.nombre
+const saveCategory = async () => {
+  try {
+    if (editingCategory.value) {
+      const updatedCategory = {
+        id: editingCategory.value.id,
+        nombre: formData.value.nombre,
+        usuarioId: 1,
       };
+      await updateCategory(editingCategory.value.id, updatedCategory);
+    } else {
+      const newCategory = {
+        nombre: formData.value.nombre,
+        usuarioId: 1,
+      };
+      await addCategory(newCategory);
     }
-  } else {
-    const newId = Math.max(0, ...categorias.value.map(c => c.Id)) + 1;
-    categorias.value.push({
-      Id: newId,
-      Nombre: formData.value.nombre,
-    });
+    closeModal();
+    cargarCategorias();
+  } catch (error) {
+    console.error("Error al guardar la categoría:", error);
   }
-  closeModal();
 };
 
 const confirmDelete = (categoria) => {
@@ -151,14 +161,16 @@ const closeDeleteModal = () => {
   categoryToDelete.value = null;
 };
 
-const deleteCategory = () => {
+const deleteCategory = async () => {
   if (categoryToDelete.value) {
-    const index = categorias.value.findIndex(c => c.Id === categoryToDelete.value.Id);
-    if (index !== -1) {
-      categorias.value.splice(index, 1);
+    try {
+      await deleteCategoria(categoryToDelete.value.id);
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
     }
   }
   closeDeleteModal();
+  cargarCategorias();
 };
 </script>
 

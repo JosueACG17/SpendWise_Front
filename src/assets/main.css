@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+.v-text-field .v-input__details {
+    display: none;
+}
+
+button{
+    cursor: pointer;
+}

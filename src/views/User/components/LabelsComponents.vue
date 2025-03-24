@@ -13,13 +13,13 @@
         </div>
         <div class="flex space-x-4">
           <button @click="openAddModal"
-            class="bg-gradient-to-r border border-transparent rounded-full shadow-sm text-base text-white cursor-pointer duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 font-medium from-yellow-500 hover:from-yellow-600 hover:to-amber-700 inline-flex items-center px-5 py-3 to-amber-600 transition-all">
+            class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
             Agregar Etiqueta
           </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-5 lg:grid-cols-4 mt-8 sm:grid-cols-2">
+      <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard title="Total Etiquetas" :value="etiquetas.length" :icon="TagIcon" iconBgColor="bg-yellow-100"
           iconColor="text-yellow-600" />
       </div>
@@ -35,10 +35,10 @@
   <GenericModal :show="showModal" :title="editingEtiqueta ? 'Editar Etiqueta' : 'Agregar Nueva Etiqueta'"
     :saveButtonText="editingEtiqueta ? 'Actualizar' : 'Crear'" :icon="TagIcon" @save="saveEtiqueta" @close="closeModal">
     <div class="mb-4">
-      <label for="nombre" class="text-gray-700 text-sm block font-medium">Nombre</label>
+      <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
       <input type="text" id="nombre" v-model="formData.nombre"
-        class="border-gray-300 p-3 rounded-md shadow-sm w-full block focus:border-yellow-500 focus:ring-yellow-500 mt-1 sm:text-sm"
-        placeholder="Nombre de la etiqueta" />
+        class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+        placeholder="nombre de la etiqueta" />
     </div>
   </GenericModal>
 
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from '@/common/GenericModal.vue';
@@ -61,12 +61,13 @@ import {
   TagIcon
 } from '@heroicons/vue/24/solid';
 import 'animate.css';
+import { addLabel, deleteLabel, getLabels, updateLabel } from '@/services/labelService';
 
 const etiquetas = ref([
-  { Id: 1, Nombre: 'Urgente' },
-  { Id: 2, Nombre: 'Ocio' },
-  { Id: 3, Nombre: 'Trabajo' },
-  { Id: 4, Nombre: 'Personal' },
+  // { Id: 1, nombre: 'Urgente' },
+  // { Id: 2, nombre: 'Ocio' },
+  // { Id: 3, nombre: 'Trabajo' },
+  // { Id: 4, nombre: 'Personal' },
 ]);
 
 const showModal = ref(false);
@@ -86,10 +87,24 @@ const openAddModal = () => {
   showModal.value = true;
 };
 
+const usuarioId = 1;
+
+onMounted(() => {
+  cargarCategorias();
+});
+
+const cargarCategorias = async () => {
+  try {
+    etiquetas.value = await getLabels(usuarioId);
+  } catch (error) {
+    console.error('Error al obtener categorias:', error);
+  }
+};
+
 const editEtiqueta = (etiqueta) => {
   editingEtiqueta.value = etiqueta;
   formData.value = {
-    nombre: etiqueta.Nombre,
+    nombre: etiqueta.nombre,
   };
   showModal.value = true;
 };
@@ -98,26 +113,28 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const saveEtiqueta = () => {
-  if (editingEtiqueta.value) {
-    const index = etiquetas.value.findIndex(e => e.Id === editingEtiqueta.value.Id);
-    if (index !== -1) {
-      etiquetas.value[index] = {
-        ...etiquetas.value[index],
-        Nombre: formData.value.nombre
+const saveEtiqueta = async () => {
+  try {
+    if (editingEtiqueta.value) {
+      const updatedCategory = {
+        id: editingEtiqueta.value.id,
+        nombre: formData.value.nombre,
+        usuarioId: 1,
       };
+      await updateLabel(editingEtiqueta.value.id, updatedCategory);
+    } else {
+      const newCategory = {
+        nombre: formData.value.nombre,
+        usuarioId: 1,
+      };
+      await addLabel(newCategory);
     }
-  } else {
-
-    const newId = Math.max(0, ...etiquetas.value.map(e => e.Id)) + 1;
-    etiquetas.value.push({
-      Id: newId,
-      Nombre: formData.value.nombre,
-    });
+    closeModal();
+    cargarCategorias();
+  } catch (error) {
+    console.error("Error al guardar la categoría:", error);
   }
-  closeModal();
 };
-
 
 const confirmDelete = (etiqueta) => {
   etiquetaToDelete.value = etiqueta;
@@ -129,14 +146,16 @@ const closeDeleteModal = () => {
   etiquetaToDelete.value = null;
 };
 
-const deleteEtiqueta = () => {
+const deleteEtiqueta = async () => {
   if (etiquetaToDelete.value) {
-    const index = etiquetas.value.findIndex(e => e.Id === etiquetaToDelete.value.Id);
-    if (index !== -1) {
-      etiquetas.value.splice(index, 1);
+    try {
+      await deleteLabel(etiquetaToDelete.value.id);
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
     }
   }
   closeDeleteModal();
+  cargarCategorias();
 };
 </script>
 

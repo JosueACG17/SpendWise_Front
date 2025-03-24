@@ -47,7 +47,8 @@
             </div>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-gray-900">{{ item.nombre }}</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ formatCurrency(item.monto) }} - {{
+              formatFecha(item.fecha) }} - {{ item.nombreCategoria }} </h3>
           </div>
         </div>
         <div class="flex items-center space-x-3">
@@ -120,7 +121,12 @@ import {
 
 interface TableItem {
   id: number;
-  nombre: string;
+  monto: number;
+  usuarioId: number;
+  categoriaId: number;
+  fecha: string;
+  descripcion: string;
+  nombreCategoria?: string;
 }
 
 const props = defineProps({
@@ -161,7 +167,26 @@ const filteredItems = computed(() => {
   if (!searchQuery.value) return props.items;
   const query = searchQuery.value.toLowerCase();
   return props.items.filter((item) =>
-    item.nombre.toLowerCase().includes(query)
+    item.monto.toString().includes(query)
   );
 });
+
+
+const formatFecha = (fecha) => {
+  if (!fecha) return 'Fecha no disponible';
+  return new Date(fecha).toLocaleDateString('es-MX', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+
+const formatCurrency = (monto) => {
+  if (!monto) return 'Monto no disponible';
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+  }).format(monto);
+};
+
 </script>
