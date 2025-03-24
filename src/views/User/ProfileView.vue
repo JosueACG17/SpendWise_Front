@@ -1,7 +1,7 @@
 <template>
   <NavbarComponent />
   <div class="p-5">
-    <h1 class="text-3xl font-bold mb-4 text-gray-900">Mi Perfil</h1>
+    <h1 class="text-3xl font-bold mb-4 text-gray-900 text-center">Mi Perfil</h1>
     <!-- Si ya tiene perfil -->
     <div v-if="perfilStore.perfil" class="bg-white rounded-xl shadow-xl overflow-hidden">
       <div class="relative h-32 bg-gradient-to-r from-gray-800 to-gray-900">

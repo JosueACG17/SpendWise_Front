@@ -43,7 +43,7 @@
           <div class="flex-shrink-0">
             <div
               class="h-12 w-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-              {{ item.id }}
+              {{ item.nombre.charAt(0) }}
             </div>
           </div>
           <div>

@@ -62,28 +62,17 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
+import {jwtDecode} from 'jwt-decode';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from '@/common/GenericModal.vue';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import StatsCard from '@/views/User/components/StatsCard.vue';
 import TableContent from './TableContent.vue';
-import { TagIcon, ChartBarIcon, ClockIcon, CurrencyDollarIcon, BriefcaseIcon } from '@heroicons/vue/24/solid';
+import { TagIcon,BriefcaseIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
 import { addCategory, deleteCategoria, getCategories, updateCategory } from '@/services/categoryService';
-
-const Alimentacion = ref("Alimentos");
-const Hoy = ref("Hoy");
-const Presupuesto = ref("$2,450");
-
-
-const categorias = ref([
-  // { Id: 1, Nombre: 'Alimentación' },
-  // { Id: 2, Nombre: 'Transporte' },
-  // { Id: 3, Nombre: 'Servicios' },
-  // { Id: 4, Nombre: 'Entretenimiento' },
-]);
-
+const categorias = ref([]);
 
 const showModal = ref(false);
 const editingCategory = ref(null);
@@ -94,7 +83,10 @@ const formData = ref({
 const showDeleteModal = ref(false);
 const categoryToDelete = ref(null);
 
-const usuarioId = 1;
+// Obtener el token del localStorage y decodificarlo
+const token = localStorage.getItem('token');
+const decodedToken = token ? jwtDecode(token) : null;
+const usuarioId = decodedToken ? decodedToken.nameid : null;
 
 onMounted(() => {
   cargarCategorias();
@@ -134,13 +126,13 @@ const saveCategory = async () => {
       const updatedCategory = {
         id: editingCategory.value.id,
         nombre: formData.value.nombre,
-        usuarioId: 1,
+        usuarioId: usuarioId,
       };
       await updateCategory(editingCategory.value.id, updatedCategory);
     } else {
       const newCategory = {
         nombre: formData.value.nombre,
-        usuarioId: 1,
+        usuarioId: usuarioId,
       };
       await addCategory(newCategory);
     }
