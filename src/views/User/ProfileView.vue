@@ -83,13 +83,21 @@
         </button>
       </div>
     </form>
-
     <!-- Modal para editar perfil -->
     <div v-if="mostrarModalEditar" class="fixed inset-0 flex items-center justify-center p-4">
       <div class="fixed inset-0 bg-gray-900 opacity-75"></div>
-      <div class="relative bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Perfil</h2>
-        <form @submit.prevent="actualizarPerfil" class="space-y-6">
+      <div class="relative bg-white rounded-xl shadow-xl p-7 w-full max-w-md">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Editar Perfil</h2>
+        <form @submit.prevent="actualizarPerfil" class="space-y-2.5">
+          <div class="flex items-center gap-x-4">
+            <div v-if="nuevaFotoUrl || perfilStore.perfil.fotoUrl" class="mt-2">
+              <img :src="nuevaFotoUrl || perfilStore.perfil.fotoUrl" alt="Foto de perfil actual" class="w-20 h-20 rounded-full object-cover mr-6"/>
+            </div>
+            <div class="w-full">
+              <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
+              <input type="file" @change="handleFileEditar" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
+            </div>
+          </div>
           <div class="space-y-2">
             <label class="text-sm font-medium text-gray-700">Nombre completo</label>
             <input v-model="editarNombreCompleto" type="text" placeholder="Ingresa tu nombre completo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
@@ -102,7 +110,7 @@
             <label class="text-sm font-medium text-gray-700">Fecha de nacimiento</label>
             <input v-model="editarFechaNacimiento" type="date" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
           </div>
-          <div class="space-y-2">
+          <div class="space-y-2 mb-5">
             <label class="text-sm font-medium text-gray-700">Género</label>
             <select v-model="editarGenero" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition">
               <option disabled value="">Selecciona un género</option>
@@ -110,10 +118,6 @@
               <option>Femenino</option>
               <option>Otro</option>
             </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
-            <input type="file" @change="handleFileEditar" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
           </div>
           <div class="flex justify-end space-x-4">
             <button type="button" @click="cerrarModalEditar" class="bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
@@ -159,6 +163,8 @@ const editarTelefono = ref('')
 const editarFechaNacimiento = ref('')
 const editarGenero = ref('')
 const editarFoto = ref<File | null>(null)
+const nuevaFotoUrl = ref<string | null>(null)
+const fotoUrl = ref<string | null>(null)
 
 onMounted(() => {
   if (authStore.isAuthenticated) {
@@ -186,6 +192,7 @@ const handleFileEditar = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
     editarFoto.value = target.files[0]
+    nuevaFotoUrl.value = URL.createObjectURL(target.files[0])
   }
 }
 
@@ -228,6 +235,8 @@ const abrirModalEditar = () => {
     editarTelefono.value = perfilStore.perfil.telefono
     editarFechaNacimiento.value = formatDateForInput(perfilStore.perfil.fechaNacimiento)
     editarGenero.value = perfilStore.perfil.genero
+    fotoUrl.value = perfilStore.perfil.fotoUrl
+    nuevaFotoUrl.value = null
     mostrarModalEditar.value = true
   }
 }
@@ -242,6 +251,7 @@ const formatDateForInput = (dateString: string): string => {
 
 const cerrarModalEditar = () => {
   mostrarModalEditar.value = false
+  nuevaFotoUrl.value = null
 }
 
 const actualizarPerfil = async () => {
@@ -257,10 +267,10 @@ const actualizarPerfil = async () => {
   formData.append('genero', editarGenero.value)
   if (editarFoto.value) {
     formData.append('foto', editarFoto.value)
-  }
-
-  for (const [key, value] of formData.entries()) {
-    console.log(key, value);
+  } else if (fotoUrl.value) {
+    const response = await fetch(fotoUrl.value)
+    const blob = await response.blob()
+    formData.append('foto', blob, 'foto.jpg')
   }
 
   try {
