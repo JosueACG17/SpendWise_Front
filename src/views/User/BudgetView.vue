@@ -296,7 +296,7 @@ const closeModal = () => {
 };
 
 const formatCurrency = (monto) => {
-  if (!monto) return 'Monto no disponible';
+  if (!monto) return 'Aún no hay gastos';
   return new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency: 'MXN',
