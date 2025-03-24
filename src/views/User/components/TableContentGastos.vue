@@ -43,12 +43,15 @@
           <div class="flex-shrink-0">
             <div
               class="h-12 w-12 rounded-lg bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-              {{ item.id }}
+              {{ item.nombreCategoria ? item.nombreCategoria.charAt(0) : '' }}
             </div>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-gray-900">{{ formatCurrency(item.monto) }} - {{
-              formatFecha(item.fecha) }} - {{ item.nombreCategoria }} </h3>
+            <h3 class="text-lg font-semibold text-gray-900"> {{ item.nombreCategoria }} - {{ formatCurrency(item.monto)
+              }} - {{
+                formatFecha(item.fecha) }}</h3>
+            <p class="text-sm text-gray-500">{{ item.descripcion }}</p>
+
           </div>
         </div>
         <div class="flex items-center space-x-3">

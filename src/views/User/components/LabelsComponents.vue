@@ -25,12 +25,10 @@
       </div>
     </div>
 
-
     <TableContent title="Lista de Etiquetas" description="Gestiona tus etiquetas para un mejor control financiero."
       searchPlaceholder="Buscar etiquetas..." :items="etiquetas" emptyStateMessage="Comienza creando una nueva etiqueta"
       addButtonText="Agregar Etiqueta" @add="openAddModal" @edit="editEtiqueta" @delete="confirmDelete" />
   </div>
-
 
   <GenericModal :show="showModal" :title="editingEtiqueta ? 'Editar Etiqueta' : 'Agregar Nueva Etiqueta'"
     :saveButtonText="editingEtiqueta ? 'Actualizar' : 'Crear'" :icon="TagIcon" @save="saveEtiqueta" @close="closeModal">
@@ -42,7 +40,6 @@
     </div>
   </GenericModal>
 
-
   <DeleteConfirmationModal :show="showDeleteModal" itemName="Etiqueta" :itemToDelete="etiquetaToDelete"
     @confirmDelete="deleteEtiqueta" @close="closeDeleteModal" />
 
@@ -50,25 +47,19 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import {jwtDecode} from 'jwt-decode';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from '@/common/GenericModal.vue';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import StatsCard from '@/views/User/components/StatsCard.vue';
 import TableContent from './TableContent.vue';
-import {
-  TagIcon
-} from '@heroicons/vue/24/solid';
+import { TagIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
 import { addLabel, deleteLabel, getLabels, updateLabel } from '@/services/labelService';
 
-const etiquetas = ref([
-  // { Id: 1, nombre: 'Urgente' },
-  // { Id: 2, nombre: 'Ocio' },
-  // { Id: 3, nombre: 'Trabajo' },
-  // { Id: 4, nombre: 'Personal' },
-]);
+const etiquetas = ref([]);
 
 const showModal = ref(false);
 const editingEtiqueta = ref(null);
@@ -87,7 +78,10 @@ const openAddModal = () => {
   showModal.value = true;
 };
 
-const usuarioId = 1;
+// Obtener el token del localStorage y decodificarlo
+const token = localStorage.getItem('token');
+const decodedToken = token ? jwtDecode(token) : null;
+const usuarioId = decodedToken ? decodedToken.nameid : null;
 
 onMounted(() => {
   cargarCategorias();
@@ -119,13 +113,13 @@ const saveEtiqueta = async () => {
       const updatedCategory = {
         id: editingEtiqueta.value.id,
         nombre: formData.value.nombre,
-        usuarioId: 1,
+        usuarioId: usuarioId,
       };
       await updateLabel(editingEtiqueta.value.id, updatedCategory);
     } else {
       const newCategory = {
         nombre: formData.value.nombre,
-        usuarioId: 1,
+        usuarioId: usuarioId,
       };
       await addLabel(newCategory);
     }
