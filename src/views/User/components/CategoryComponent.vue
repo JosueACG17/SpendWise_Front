@@ -1,14 +1,14 @@
 <template>
   <NavbarComponent />
-  <div class="animate__animated animate__fadeIn mx-auto sm:my-12 my-4 px-4 sm:px-6 lg:px-8 min-h-screen">
+  <div class="animate__animated animate__fadeIn lg:px-8 min-h-screen mx-auto my-4 px-4 sm:my-12 sm:px-6">
     <!-- Header Section with Stats -->
     <div class="mb-10">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between">
         <div class="mb-6 md:mb-0">
-          <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+          <h1 class="text-3xl text-gray-900 font-extrabold md:text-4xl tracking-tight">
             Gestión de Categorías
           </h1>
-          <p class="mt-3 text-lg text-gray-600 max-w-3xl">
+          <p class="text-gray-600 text-lg max-w-3xl mt-3">
             Organiza tus finanzas personales con categorías personalizadas para un mejor control de gastos.
           </p>
         </div>
@@ -64,7 +64,7 @@
 import { onMounted, ref } from 'vue';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
-import GenericModal from '@/views/User/components/GenericModal.vue';
+import GenericModal from '@/common/GenericModal.vue';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import StatsCard from '@/views/User/components/StatsCard.vue';
 import TableContent from './TableContent.vue';
