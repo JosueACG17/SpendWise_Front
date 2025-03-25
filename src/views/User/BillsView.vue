@@ -1,22 +1,22 @@
 <template>
   <NavbarComponent />
   <div class="mx-auto p-8 min-h-screen items-center justify-center rounded-3xl bg-white">
-    <div class="top">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
       <div class="mb-6 md:mb-0">
         <h1 class="text-3xl text-gray-900 font-extrabold md:text-4xl tracking-tight">
           Mis Gastos
         </h1>
-        <p class="text-gray-600 text-lg mt-3">
-          Organiza tus finanzas personales
+        <p class="text-gray-600 text-lg max-w-3xl mt-3">
+          Organiza tus finanzas personales para un mejor control de gastos.
         </p>
       </div>
-      <div class="filters">
-        <v-select label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
-          v-model="selectedId" variant="solo-filled"></v-select>
+      <div class="flex flex-col sm:flex-row space-x-4 space-y-4 sm:space-y-0">
         <button @click="openAddModal"
-          class="bg-gradient-to-r cursor-pointer from-yellow-500 to-yellow-600 text-white sm:px-6 sm:py-3 px-2 py-1.5 rounded-full hover:from-yellow-500 hover:to-yellow-800 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
+          class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
           Agregar Gasto
         </button>
+        <v-select label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
+          v-model="selectedId" variant="solo-filled" class="sm:w-60"></v-select>
       </div>
     </div>
 
@@ -36,7 +36,7 @@
                   <v-select v-bind="field" :model-value="field.value" @update:model-value="field.onChange"
                     label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
                     variant="solo-filled"></v-select>
-                    <div v-if="errors.categoriaId" class="error-message">{{ errors.categoriaId }}</div>
+                  <div v-if="errors.categoriaId" class="error-message">{{ errors.categoriaId }}</div>
 
                 </Field>
               </div>
@@ -59,7 +59,7 @@
                   <v-text-field :model-value="field.value"
                     @update:model-value="(val) => { field.onChange(val); form.descripcion = val; }" label="Descripción"
                     variant="solo-filled"></v-text-field>
-                    <div v-if="errors.descripcion" class="error-message">{{ errors.descripcion }}</div>
+                  <div v-if="errors.descripcion" class="error-message">{{ errors.descripcion }}</div>
 
                 </Field>
               </div>
@@ -93,7 +93,7 @@ import 'animate.css';
 import { addGasto, deleteGasto, getGastosPorUsuario, updateGasto } from '@/services/gastosService';
 import TableContent from './components/TableContentGastos.vue';
 import { getCategories } from '@/services/categoryService';
-import { Form, Field} from 'vee-validate';
+import { Form, Field } from 'vee-validate';
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
@@ -281,33 +281,14 @@ const formatCurrency = (monto) => {
   margin-bottom: 8px;
 }
 
-.top {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 30px 0px;
-}
-
-.title {
-  width: fit-content;
-}
-
-.title h1 {
-  width: fit-content;
-  white-space: nowrap;
-  margin: 0;
-}
 
 .filters {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: end;
+  flex-direction: column;
   gap: 20px;
   width: 100%;
 }
+
 
 .filters .v-input {
   max-width: 300px;
