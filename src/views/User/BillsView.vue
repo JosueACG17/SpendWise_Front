@@ -1,17 +1,16 @@
 <template>
   <NavbarComponent />
-  <div
-    class=" mx-auto p-8 min-h-screen items-center justify-center rounded-3xl bg-white">
+  <div class="mx-auto p-8 min-h-screen items-center justify-center rounded-3xl bg-white">
     <div class="top">
       <div class="mb-6 md:mb-0">
-          <h1 class="text-3xl text-gray-900 font-extrabold md:text-4xl tracking-tight">
-            Mis Gastos
-          </h1>
-          <p class="text-gray-600 text-lg mt-3">
-            Organiza tus finanzas personales
-          </p>
-        </div>
-      <div class="filters ">
+        <h1 class="text-3xl text-gray-900 font-extrabold md:text-4xl tracking-tight">
+          Mis Gastos
+        </h1>
+        <p class="text-gray-600 text-lg mt-3">
+          Organiza tus finanzas personales
+        </p>
+      </div>
+      <div class="filters">
         <v-select label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
           v-model="selectedId" variant="solo-filled"></v-select>
         <button @click="openAddModal"
@@ -23,17 +22,17 @@
 
     <TableContent title="Lista de gastos" description="Gestiona tus gastos para un mejor análisis."
       searchPlaceholder="Buscar gastos..." :items="filteredGastos" emptyStateMessage="Comienza creando un nuevo gasto"
-      addButtonText="Agregar Gasto" @add="openAddModal" @edit="editGastos" @delete="eliminarGasto" />
+      addButtonText="Agregar Gasto" @add="openAddModal" @edit="editGastos" @delete="solicitarEliminarGasto" />
 
     <v-dialog v-model="dialog" width="500">
       <v-card max-width="700">
-        <v-card-title>Agregar Transacción</v-card-title>
+        <v-card-title>{{ editingCategory ? 'Editar Gasto' : 'Agregar Transacción' }}</v-card-title>
         <v-card-text>
           <Form @submit="submitForm" :validation-schema="schema">
             <div class="inputs">
               <div class="input-group">
                 <Field name="categoriaId" v-slot="{ field }">
-                  <v-select v-bind="field" label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id" v-model="form.categoriaId" variant="solo-filled" >
+                  <v-select v-bind="field" label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id" v-model="form.categoriaId" variant="solo-filled">
                     <template #message="{ message }">
                       <div class="error-message">{{ message }}</div>
                     </template>
@@ -82,6 +81,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Modal de confirmación de eliminación -->
+    <DeleteConfirmationModal
+      :show="showDeleteModal"
+      itemName="Gasto"
+      :itemToDelete="gastoToDelete"
+      @confirmDelete="confirmDeleteGasto"
+      @close="closeDeleteModal"
+    />
+
   </div>
   <FooterComponent />
 </template>
@@ -98,6 +107,7 @@ import { getCategories } from '@/services/categoryService';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
+import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 
 const schema = yup.object({
   categoriaId: yup.number().required('La categoría es requerida'),
@@ -124,11 +134,15 @@ const editingCategory = ref(null);
 const categorias = ref([]);
 const presupuestos = ref([]);
 
+// Variables para el modal de confirmación
+const showDeleteModal = ref(false);
+const gastoToDelete = ref(null);
+
 const form = ref({
   usuarioId: usuarioId,
   monto: 0,
   categoriaId: null,
-  fecha: new Date(),
+  fecha: new Date().toISOString().split('T')[0],
   descripcion: '',
 });
 
@@ -170,71 +184,13 @@ const filteredGastos = computed(() => {
   return gastos.value.filter(gasto => gasto.categoriaId === selectedId.value);
 });
 
-const totalAsignado = computed(() => {
-  return presupuestos.value.reduce((total, p) => total + p.asignado, 0);
-});
-
-const totalGastado = computed(() => {
-  return gastos.value.reduce((total, p) => total + p.monto, 0);
-});
-
-const totalRestante = computed(() => {
-  return totalAsignado.value - totalGastado.value;
-});
-
-const submitForm = async () => {
-  try {
-    if (editingCategory.value) {
-      Swal.fire({
-        title: '¡Gasto actualizado!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
-      await updateGasto(editingCategory.value.id, form.value);
-    } else {
-      Swal.fire({
-        title: '¡Gasto creado!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
-      await addGasto(form.value);
-    }
-    dialog.value = false;
-    await cargarGastos();
-    await asignarNombreCategorias();
-  } catch (error) {
-    console.error('Error al agregar gasto:', error);
-  }
-};
-
-const formatFecha = (fecha) => {
-  if (!fecha) return 'Fecha no disponible';
-  return new Date(fecha).toLocaleDateString('es-MX', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
-
-const eliminarGasto = async (data) => {
-  try {
-    await deleteGasto(data.id);
-    await cargarGastos();
-    await asignarNombreCategorias();
-  } catch (error) {
-    console.error('Error al eliminar gasto:', error);
-  }
-};
-
 const openAddModal = () => {
   editingCategory.value = null;
   form.value = {
     usuarioId: usuarioId,
     monto: 0,
     categoriaId: null,
-    fecha: new Date(),
+    fecha: new Date().toISOString().split('T')[0],
     descripcion: '',
   };
   dialog.value = true;
@@ -246,10 +202,75 @@ const editGastos = async (gasto) => {
     usuarioId: usuarioId,
     monto: gasto.monto,
     categoriaId: gasto.categoriaId,
-    fecha: gasto.fecha,
+    fecha: new Date(gasto.fecha).toISOString().split('T')[0],
     descripcion: gasto.descripcion,
   };
   dialog.value = true;
+};
+
+const submitForm = async () => {
+  try {
+    if (editingCategory.value) {
+      await updateGasto(editingCategory.value.id, form.value);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Actualizado!',
+        text: 'El gasto se ha actualizado correctamente',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    } else {
+      await addGasto(form.value);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Agregado!',
+        text: 'Gasto registrado correctamente',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    }
+    dialog.value = false;
+    await cargarGastos();
+    await asignarNombreCategorias();
+  } catch (error) {
+    console.error('Error al agregar gasto:', error);
+  }
+};
+
+const solicitarEliminarGasto = (gasto) => {
+  gastoToDelete.value = gasto;
+  showDeleteModal.value = true;
+};
+
+const confirmDeleteGasto = async () => {
+  if (gastoToDelete.value) {
+    try {
+      await deleteGasto(gastoToDelete.value.id);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Eliminado!',
+        text: 'El gasto ha sido eliminado',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      await cargarGastos();
+      await asignarNombreCategorias();
+      closeDeleteModal();
+    } catch (error) {
+      console.error('Error al eliminar gasto:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo eliminar el gasto',
+        confirmButtonColor: '#f59e0b'
+      });
+    }
+  }
+};
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
+  gastoToDelete.value = null;
 };
 
 const formatCurrency = (monto) => {

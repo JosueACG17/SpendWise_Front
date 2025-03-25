@@ -48,7 +48,7 @@
       <div class="mb-4 input-group">
         <Field name="nombre" v-slot="{ field }">
           <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-          <input v-bind="field" type="text" id="nombre" v-model="formData.nombre"
+          <input v-bind="field" type="text" id="nombre" v-model.trim="formData.nombre"
             class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
             placeholder="Nombre de la categoría"/>
             <ErrorMessage name="nombre" class="error-message" />
@@ -84,9 +84,11 @@ import Swal from 'sweetalert2';
 const schema = yup.object({
   nombre: yup.string()
     .required('El nombre es requerido')
-    .trim()
-    .min(3, 'El nombre debe tener al menos 3 caracteres')
-    .max(50, 'El nombre no puede exceder 50 caracteres')
+    .transform(value => value?.trim()) // Limpia espacios
+    .min(3, 'El nombre debe tener al menos 3 caracteres válidos')
+    .test('no-whitespace', 'No puede contener solo espacios', value => {
+      return !!value && value.replace(/\s/g, '').length > 0;
+    })
 });
 
 const categorias = ref([]);
@@ -126,9 +128,13 @@ const openAddModal = () => {
 };
 
 const editCategory = (categoria) => {
-  editingCategory.value = categoria;
-  formData.value = {
+  editingCategory.value = {
+    id: categoria.id,
     nombre: categoria.nombre,
+    usuarioId: categoria.usuarioId
+  };
+  formData.value = {
+    nombre: categoria.nombre
   };
   showModal.value = true;
 };
@@ -138,6 +144,7 @@ const closeModal = () => {
 };
 
 const saveCategory = async () => {
+  formData.value.nombre = formData.value.nombre.trim();
   try {
     if (editingCategory.value) {
       const updatedCategory = {
@@ -145,25 +152,27 @@ const saveCategory = async () => {
         nombre: formData.value.nombre,
         usuarioId: usuarioId,
       };
-      Swal.fire({
-        title: '¡Categoria actualizada!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await updateCategory(editingCategory.value.id, updatedCategory);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Actualizado!',
+        text: 'La categoría se ha actualizado correctamente',
+        showConfirmButton: false,
+        timer: 2000
+      });
     } else {
       const newCategory = {
         nombre: formData.value.nombre,
         usuarioId: usuarioId,
       };
-      Swal.fire({
-        title: '¡Categoria creada!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await addCategory(newCategory);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Creado!',
+        text: 'Categoría creada correctamente',
+        showConfirmButton: false,
+        timer: 2000
+      });
     }
     closeModal();
     cargarCategorias();
