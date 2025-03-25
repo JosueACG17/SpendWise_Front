@@ -29,15 +29,50 @@
       <v-card max-width="700">
         <v-card-title>Agregar Transacción</v-card-title>
         <v-card-text>
-          <v-form @submit.prevent="submitForm">
+          <Form @submit="submitForm" :validation-schema="schema">
             <div class="inputs">
-              <v-select label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
-                v-model="form.categoriaId" variant="solo-filled"></v-select>
-              <v-text-field v-model="form.monto" label="Monto" type="number" variant="solo-filled"></v-text-field>
-              <v-text-field v-model="form.fecha" label="Fecha" type="date" variant="solo-filled"></v-text-field>
-              <v-text-field v-model="form.descripcion" label="Descripción" variant="solo-filled"></v-text-field>
+              <div class="input-group">
+                <Field name="categoriaId" v-slot="{ field }">
+                  <v-select v-bind="field" label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id" v-model="form.categoriaId" variant="solo-filled" >
+                    <template #message="{ message }">
+                      <div class="error-message">{{ message }}</div>
+                    </template>
+                  </v-select>
+                  <ErrorMessage name="categoriaId" class="error-message" />
+                </Field>
+              </div>
+              <div class="input-group">
+                <Field name="monto" v-slot="{ field }">
+                  <v-text-field v-bind="field" v-model="form.monto" label="Monto" type="number" variant="solo-filled">
+                    <template #message="{ message }">
+                      <div class="error-message">{{ message }}</div>
+                    </template>
+                  </v-text-field>
+                  <ErrorMessage name="monto" class="error-message" />
+                </Field>
+              </div>
+              <div class="input-group">
+                <Field name="fecha" v-slot="{ field }">
+                  <v-text-field v-bind="field" v-model="form.fecha" label="Fecha" type="date" variant="solo-filled">
+                    <template #message="{ message }">
+                      <div class="error-message">{{ message }}</div>
+                    </template>
+                  </v-text-field>
+                  <ErrorMessage name="fecha" class="error-message" />
+                </Field>
+              </div>
+              <div class="input-group">
+                <Field name="descripcion" v-slot="{ field }">
+                  <v-text-field v-bind="field" v-model="form.descripcion" label="Descripción" variant="solo-filled">
+                    <template #message="{ message }">
+                      <div class="error-message">{{ message }}</div>
+                    </template>
+                  </v-text-field>
+                  <ErrorMessage name="descripcion" class="error-message" />
+                </Field>
+              </div>
             </div>
-          </v-form>
+          </Form>
         </v-card-text>
         <v-card-actions>
           <div class="buttons-forms">
@@ -60,6 +95,23 @@ import 'animate.css';
 import { addGasto, deleteGasto, getGastosPorUsuario, updateGasto } from '@/services/gastosService';
 import TableContent from './components/TableContentGastos.vue';
 import { getCategories } from '@/services/categoryService';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+import Swal from 'sweetalert2';
+
+const schema = yup.object({
+  categoriaId: yup.number().required('La categoría es requerida'),
+  monto: yup.number()
+    .required('El monto es requerido')
+    .min(1, 'El monto debe ser mayor a 0'),
+  fecha: yup.date()
+    .required('La fecha es requerida')
+    .max(new Date(), 'La fecha no puede ser futura'),
+  descripcion: yup.string()
+    .trim()
+    .required('La descripción es requerida')
+    .max(100, 'La descripción no puede exceder 100 caracteres')
+});
 
 const token = localStorage.getItem('token');
 const decodedToken = token ? jwtDecode(token) : null;
@@ -133,8 +185,20 @@ const totalRestante = computed(() => {
 const submitForm = async () => {
   try {
     if (editingCategory.value) {
+      Swal.fire({
+        title: '¡Gasto actualizado!',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1000,
+      })
       await updateGasto(editingCategory.value.id, form.value);
     } else {
+      Swal.fire({
+        title: '¡Gasto creado!',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1000,
+      })
       await addGasto(form.value);
     }
     dialog.value = false;
@@ -198,6 +262,15 @@ const formatCurrency = (monto) => {
 </script>
 
 <style>
+.error-message {
+  color: #ff5252;
+  font-size: 0.85rem;
+}
+
+.input-group {
+  margin-bottom: 8px;
+}
+
 .top {
   display: flex;
   flex-direction: row;

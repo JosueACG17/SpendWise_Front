@@ -44,12 +44,17 @@
   <GenericModal :show="showModal" :title="editingCategory ? 'Editar Categoría' : 'Agregar Nueva Categoría'"
     :saveButtonText="editingCategory ? 'Actualizar' : 'Crear'" :icon="BriefcaseIcon" @save="saveCategory"
     @close="closeModal">
-    <div class="mb-4">
-      <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-      <input type="text" id="nombre" v-model="formData.nombre"
-        class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-        placeholder="Nombre de la categoría" />
-    </div>
+    <Form @submit="saveCategory" :validation-schema="schema">
+      <div class="mb-4 input-group">
+        <Field name="nombre" v-slot="{ field }">
+          <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+          <input v-bind="field" type="text" id="nombre" v-model="formData.nombre"
+            class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+            placeholder="Nombre de la categoría"/>
+            <ErrorMessage name="nombre" class="error-message" />
+        </Field>
+      </div>
+    </Form>
 
   </GenericModal>
 
@@ -72,6 +77,18 @@ import TableContent from './TableContent.vue';
 import { TagIcon,BriefcaseIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
 import { addCategory, deleteCategoria, getCategories, updateCategory } from '@/services/categoryService';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+import Swal from 'sweetalert2';
+
+const schema = yup.object({
+  nombre: yup.string()
+    .required('El nombre es requerido')
+    .trim()
+    .min(3, 'El nombre debe tener al menos 3 caracteres')
+    .max(50, 'El nombre no puede exceder 50 caracteres')
+});
+
 const categorias = ref([]);
 
 const showModal = ref(false);
@@ -128,12 +145,24 @@ const saveCategory = async () => {
         nombre: formData.value.nombre,
         usuarioId: usuarioId,
       };
+      Swal.fire({
+        title: '¡Categoria actualizada!',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1000,
+      })
       await updateCategory(editingCategory.value.id, updatedCategory);
     } else {
       const newCategory = {
         nombre: formData.value.nombre,
         usuarioId: usuarioId,
       };
+      Swal.fire({
+        title: '¡Categoria creada!',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1000,
+      })
       await addCategory(newCategory);
     }
     closeModal();
@@ -183,5 +212,14 @@ const deleteCategory = async () => {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transform: translateY(-2px);
   transition: all 0.3s ease;
+}
+
+.error-message {
+  color: #ff5252;
+  font-size: 0.85rem;
+}
+
+.input-group {
+  margin-bottom: 8px;
 }
 </style>
