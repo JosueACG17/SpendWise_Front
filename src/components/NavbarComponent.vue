@@ -84,13 +84,6 @@
               Categorias
             </RouterLink>
           </li>
-          <li>
-            <RouterLink to="/etiquetas"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
-              :class="{ 'text-yellow-500': $route.path === '/etiquetas', 'text-white hover:bg-yellow-600': $route.path !== '/etiquetas' }">
-              Etiquetas
-            </RouterLink>
-          </li>
         </ul>
       </div>
     </div>
