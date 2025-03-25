@@ -58,6 +58,16 @@
       <h2 class="text-2xl text-gray-800 font-bold mb-6">Presupuestos por Categoría</h2>
       <div v-if="presupuestos.length > 0" class="space-y-6">
         <div v-for="presupuesto in presupuestos" :key="presupuesto.id" class="bg-gray-50 p-4 rounded-xl">
+          <div v-if="presupuesto.totalGastado > presupuesto.monto"
+              class="mb-3 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <p class="font-medium">¡Has excedido el presupuesto!</p>
+            </div>
+            <p class="mt-1 text-sm">Te has pasado en {{ formatCurrency(presupuesto.totalGastado - presupuesto.monto) }}</p>
+          </div>
           <div class="flex justify-between items-center mb-3">
     <h3 class="text-xl font-semibold text-gray-800">
       {{ getCategoriaNombre(presupuesto.categoriaId) }}
@@ -91,24 +101,30 @@
     <!-- Nuevo Modal para agregar presupuesto -->
     <GenericModal :show="isModalOpen" title="Agregar Presupuesto" saveButtonText="Agregar" :icon="CurrencyDollarIcon"
       @save="agregarPresupuesto" @close="isModalOpen = false">
-      <form @submit.prevent="agregarPresupuesto">
-        <div class="mb-4">
-          <label class="text-gray-700 block mb-2">Categoría</label>
-          <select v-model="nuevoPresupuesto.categoriaId"
-            class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2" required>
-            <option disabled value="">Selecciona una categoría</option>
-            <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">
-              {{ categoria.nombre }}
-            </option>
-          </select>
+      <Form @submit="agregarPresupuesto" :validation-schema="schema">
+        <div class="mb-4 input-group">
+          <Field name="categoriaId" v-slot="{ field }">
+            <label class="text-gray-700 block mb-2">Categoría</label>
+            <select v-bind="field"  v-model="nuevoPresupuesto.categoriaId"
+              class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2" required>
+              <option disabled value="">Selecciona una categoría</option>
+              <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">
+                {{ categoria.nombre }}
+              </option>
+            </select>
+            <ErrorMessage name="categoriaId" class="error-message" />
+          </Field>
         </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 mb-2">Monto Asignado</label>
-          <input v-model="nuevoPresupuesto.monto" type="number"
-            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            placeholder="Ej. 1500" required />
+        <div class="mb-4 imput-group">
+          <Field name="monto" v-slot="{ field }">
+            <label class="block text-gray-700 mb-2">Monto Asignado</label>
+            <input v-bind="field"  v-model="nuevoPresupuesto.monto" type="number"
+              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              placeholder="Ej. 1500" required />
+              <ErrorMessage name="monto" class="error-message" />
+          </Field>
         </div>
-      </form>
+      </Form>
     </GenericModal>
 
     <DeleteConfirmationModal :show="showDeleteModal" itemName="Categoría" :itemToDelete="categoryToDelete"
@@ -131,6 +147,18 @@ import { addBudget, deleteBudget, getBudgetsByUser, updateBudget } from '@/servi
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import { getCategories } from '@/services/categoryService';
 import { getGastosPorUsuario } from '@/services/gastosService';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+import Swal from 'sweetalert2';
+
+const schema = yup.object({
+  categoriaId: yup.number()
+    .required('La categoría es requerida'),
+  monto: yup.number()
+    .required('El monto es requerido')
+    .min(1, 'El monto debe ser mayor a 0')
+    .max(1000000, 'El monto no puede exceder 1,000,000')
+});
 
 const categorias = ref([]);
 const presupuestos = ref([]);
@@ -239,6 +267,12 @@ const agregarPresupuesto = async () => {
         fechaInicio: nuevoPresupuesto.value.fechaInicio,
         fechaFin: nuevoPresupuesto.value.fechaFin,
       };
+      Swal.fire({
+        title: '¡Presupuesto actualizado!',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1000,
+      })
       await updateBudget(editingCategory.value.id, updatedCategory);
     } else {
       const newCategory = {
@@ -248,6 +282,12 @@ const agregarPresupuesto = async () => {
         fechaInicio: nuevoPresupuesto.value.fechaInicio,
         fechaFin: nuevoPresupuesto.value.fechaFin,
       };
+      Swal.fire({
+        title: '¡Presupuesto creado!',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1000,
+      })
       await addBudget(newCategory);
     }
     closeModal();
@@ -311,3 +351,13 @@ const getCategoriaNombre = (categoriaId) => {
   return categoria ? categoria.nombre : "Sin categoría";
 };
 </script>
+<style>
+.error-message {
+  color: #ff5252;
+  font-size: 0.85rem;
+}
+
+.input-group {
+  margin-bottom: 8px;
+}
+</style>
