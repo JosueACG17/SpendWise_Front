@@ -110,49 +110,57 @@
         </div>
       </div>
     </section>
-
-    <!-- Testimonials Section -->
+    <!-- Módulos Section -->
     <section class="py-16 bg-gray-50">
       <div class="max-w-6xl mx-auto px-4">
         <h2 class="text-3xl font-bold text-center text-[#342E2E] mb-12">
-          Lo que dicen nuestros usuarios
+          Nuestros Módulos Principales
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <div class="flex items-center mb-4">
-              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
-                class="w-12 h-12 bg-gray-200 rounded-full mr-4">
-              <div>
-                <h4 class="font-semibold text-[#342E2E]">María García</h4>
-                <p class="text-sm text-gray-500">Emprendedora</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div class="flex justify-center mb-4">
+              <div class="bg-[#342E2E] w-20 h-20 rounded-full flex items-center justify-center mb-4">
+                <WalletIcon class="text-white w-10 h-10" />
               </div>
             </div>
-            <p class="text-[#817A7A]">"Esta aplicación ha transformado la manera en que manejo mis finanzas personales.
-              Ahora tengo claridad total sobre mis gastos."</p>
+            <h3 class="text-xl font-semibold text-center text-[#342E2E] mb-3">Gestión de Gastos</h3>
+            <p class="text-[#817A7A] text-center">
+              Registra y clasifica todos tus gastos diarios. Visualiza en qué gastas tu dinero con análisis detallados.
+            </p>
           </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <div class="flex items-center mb-4">
-              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
-                class="w-12 h-12 bg-gray-200 rounded-full mr-4">
-              <div>
-                <h4 class="font-semibold text-[#342E2E]">Carlos Rodríguez</h4>
-                <p class="text-sm text-gray-500">Profesional</p>
-              </div>
-            </div>
-            <p class="text-[#817A7A]">"Gracias a esta plataforma he podido ahorrar más del 20% de mis ingresos
-              mensuales. Las visualizaciones son increíblemente útiles."</p>
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div class="flex justify-center mb-4">
+              <div class="bg-[#342E2E] w-20 h-20 rounded-full flex items-center justify-center mb-4">
+            <BanknotesIcon class="text-white w-10 h-10" />
           </div>
-          <div class="bg-white p-6 rounded-lg shadow-md">
-            <div class="flex items-center mb-4">
-              <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
-                class="w-12 h-12 bg-gray-200 rounded-full mr-4">
-              <div>
-                <h4 class="font-semibold text-[#342E2E]">Laura Martínez</h4>
-                <p class="text-sm text-gray-500">Estudiante</p>
-              </div>
             </div>
-            <p class="text-[#817A7A]">"Incluso con un presupuesto ajustado de estudiante, esta app me ha ayudado a
-              organizar mis gastos y evitar deudas innecesarias."</p>
+            <h3 class="text-xl font-semibold text-center text-[#342E2E] mb-3">Control de Presupuestos</h3>
+            <p class="text-[#817A7A] text-center">
+              Establece límites de gasto por categoría y recibe alertas cuando te acerques a tus límites.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div class="bg-[#342E2E] w-20 h-20 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-white">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-center text-[#342E2E] mb-3">Categorías Personalizadas</h3>
+            <p class="text-[#817A7A] text-center">
+              Crea y gestiona tus propias categorías para organizar tus finanzas como prefieras.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div class="bg-[#342E2E] w-20 h-20 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-white">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-center text-[#342E2E] mb-3">Sobre la App</h3>
+            <p class="text-[#817A7A] text-center">
+              Una solución todo-en-uno para gestionar tus finanzas personales con sencillez y poder.
+            </p>
           </div>
         </div>
       </div>
