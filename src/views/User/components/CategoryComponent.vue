@@ -145,24 +145,12 @@ const saveCategory = async () => {
         nombre: formData.value.nombre,
         usuarioId: usuarioId,
       };
-      Swal.fire({
-        title: '¡Categoria actualizada!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await updateCategory(editingCategory.value.id, updatedCategory);
     } else {
       const newCategory = {
         nombre: formData.value.nombre,
         usuarioId: usuarioId,
       };
-      Swal.fire({
-        title: '¡Categoria creada!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await addCategory(newCategory);
     }
     closeModal();

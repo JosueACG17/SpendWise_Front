@@ -267,12 +267,6 @@ const agregarPresupuesto = async () => {
         fechaInicio: nuevoPresupuesto.value.fechaInicio,
         fechaFin: nuevoPresupuesto.value.fechaFin,
       };
-      Swal.fire({
-        title: '¡Presupuesto actualizado!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await updateBudget(editingCategory.value.id, updatedCategory);
     } else {
       const newCategory = {
@@ -282,12 +276,6 @@ const agregarPresupuesto = async () => {
         fechaInicio: nuevoPresupuesto.value.fechaInicio,
         fechaFin: nuevoPresupuesto.value.fechaFin,
       };
-      Swal.fire({
-        title: '¡Presupuesto creado!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await addBudget(newCategory);
     }
     closeModal();

@@ -185,20 +185,8 @@ const totalRestante = computed(() => {
 const submitForm = async () => {
   try {
     if (editingCategory.value) {
-      Swal.fire({
-        title: '¡Gasto actualizado!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await updateGasto(editingCategory.value.id, form.value);
     } else {
-      Swal.fire({
-        title: '¡Gasto creado!',
-        icon: 'success',
-        showConfirmButton: false,
-        timer: 1000,
-      })
       await addGasto(form.value);
     }
     dialog.value = false;
