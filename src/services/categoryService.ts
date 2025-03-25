@@ -60,3 +60,15 @@ export const updateCategory = async (id: number, category: Category): Promise<{ 
     throw error;
   }
 };
+
+export const isCategoryInUse = async (categoryId: number): Promise<boolean> => {
+  try {
+    const response = await axiosInstance.get<{ inUse: boolean }>(`/categorias/isInUse/${categoryId}`);
+    return response.data.inUse;
+  } catch (error) {
+    handleAxiosError(error, {
+      404: 'Categoría no encontrada',
+    });
+    throw error;
+  }
+};

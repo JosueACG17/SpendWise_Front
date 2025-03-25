@@ -28,68 +28,57 @@
       <v-card max-width="700">
         <v-card-title>{{ editingCategory ? 'Editar Gasto' : 'Agregar Transacción' }}</v-card-title>
         <v-card-text>
-          <Form @submit="submitForm" :validation-schema="schema">
+          <Form @submit="submitForm" :validation-schema="schema" :initial-values="editingCategory || form"
+            v-slot="{ errors }">
             <div class="inputs">
               <div class="input-group">
                 <Field name="categoriaId" v-slot="{ field }">
-                  <v-select v-bind="field" label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id" v-model="form.categoriaId" variant="solo-filled">
-                    <template #message="{ message }">
-                      <div class="error-message">{{ message }}</div>
-                    </template>
-                  </v-select>
-                  <ErrorMessage name="categoriaId" class="error-message" />
+                  <v-select v-bind="field" :model-value="field.value" @update:model-value="field.onChange"
+                    label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
+                    variant="solo-filled"></v-select>
+                    <div v-if="errors.categoriaId" class="error-message">{{ errors.categoriaId }}</div>
+
                 </Field>
               </div>
               <div class="input-group">
                 <Field name="monto" v-slot="{ field }">
-                  <v-text-field v-bind="field" v-model="form.monto" label="Monto" type="number" variant="solo-filled">
-                    <template #message="{ message }">
-                      <div class="error-message">{{ message }}</div>
-                    </template>
-                  </v-text-field>
-                  <ErrorMessage name="monto" class="error-message" />
+                  <v-text-field v-bind="field" v-model="form.monto" label="Monto" type="number" variant="solo-filled"
+                    :error="!!errors.monto"></v-text-field>
+                  <div v-if="errors.monto" class="error-message">{{ errors.monto }}</div>
                 </Field>
               </div>
               <div class="input-group">
                 <Field name="fecha" v-slot="{ field }">
-                  <v-text-field v-bind="field" v-model="form.fecha" label="Fecha" type="date" variant="solo-filled">
-                    <template #message="{ message }">
-                      <div class="error-message">{{ message }}</div>
-                    </template>
-                  </v-text-field>
-                  <ErrorMessage name="fecha" class="error-message" />
+                  <v-text-field v-bind="field" v-model="form.fecha" label="Fecha" type="date" variant="solo-filled"
+                    :error="!!errors.fecha"></v-text-field>
+                  <div v-if="errors.fecha" class="error-message">{{ errors.fecha }}</div>
                 </Field>
               </div>
               <div class="input-group">
                 <Field name="descripcion" v-slot="{ field }">
-                  <v-text-field v-bind="field" v-model="form.descripcion" label="Descripción" variant="solo-filled">
-                    <template #message="{ message }">
-                      <div class="error-message">{{ message }}</div>
-                    </template>
-                  </v-text-field>
-                  <ErrorMessage name="descripcion" class="error-message" />
+                  <v-text-field :model-value="field.value"
+                    @update:model-value="(val) => { field.onChange(val); form.descripcion = val; }" label="Descripción"
+                    variant="solo-filled"></v-text-field>
+                    <div v-if="errors.descripcion" class="error-message">{{ errors.descripcion }}</div>
+
                 </Field>
               </div>
+              <v-card-actions>
+                <div class="flex justify-content-end space-x-4 text-end align-end">
+                  <button class="bg-red-600 p-3 rounded-lg text-white" type="button"
+                    @click="dialog = false">Cancelar</button>
+                  <button class="bg-yellow-600 p-3 rounded-lg text-white" type="submit">Guardar</button>
+                </div>
+              </v-card-actions>
             </div>
           </Form>
         </v-card-text>
-        <v-card-actions>
-          <div class="buttons-forms">
-            <button @click="dialog = false">Cancelar</button>
-            <button @click="submitForm">Guardar</button>
-          </div>
-        </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- Modal de confirmación de eliminación -->
-    <DeleteConfirmationModal
-      :show="showDeleteModal"
-      itemName="Gasto"
-      :itemToDelete="gastoToDelete"
-      @confirmDelete="confirmDeleteGasto"
-      @close="closeDeleteModal"
-    />
+    <DeleteConfirmationModal :show="showDeleteModal" itemName="Gasto" :itemToDelete="gastoToDelete"
+      @confirmDelete="confirmDeleteGasto" @close="closeDeleteModal" />
 
   </div>
   <FooterComponent />
@@ -104,7 +93,7 @@ import 'animate.css';
 import { addGasto, deleteGasto, getGastosPorUsuario, updateGasto } from '@/services/gastosService';
 import TableContent from './components/TableContentGastos.vue';
 import { getCategories } from '@/services/categoryService';
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field} from 'vee-validate';
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
@@ -121,18 +110,17 @@ const schema = yup.object({
     .trim()
     .required('La descripción es requerida')
     .max(100, 'La descripción no puede exceder 100 caracteres')
+    .matches(/^[a-zA-Z0-9\s]+$/, 'La descripción solo puede contener letras, números y espacios')
 });
 
 const token = localStorage.getItem('token');
 const decodedToken = token ? jwtDecode(token) : null;
 const usuarioId = decodedToken ? decodedToken.nameid : null;
-
 const dialog = ref(false);
 const gastos = ref([]);
 const selectedId = ref(null);
 const editingCategory = ref(null);
 const categorias = ref([]);
-const presupuestos = ref([]);
 
 // Variables para el modal de confirmación
 const showDeleteModal = ref(false);
@@ -155,6 +143,7 @@ onMounted(async () => {
 const cargarGastos = async () => {
   try {
     gastos.value = await getGastosPorUsuario(usuarioId);
+    await asignarNombreCategorias(); //
   } catch (error) {
     console.error('Error al obtener gastos:', error);
   }
@@ -170,7 +159,12 @@ const cargarCategorias = async () => {
 
 const asignarNombreCategorias = () => {
   if (!gastos.value.length || !categorias.value.length) return;
+
   gastos.value = gastos.value.map(gasto => {
+    if (gasto.nombreCategoria && categorias.value.some(cat => cat.id === gasto.categoriaId)) {
+      return gasto;
+    }
+
     const categoria = categorias.value.find(cat => cat.id === gasto.categoriaId);
     return {
       ...gasto,
@@ -185,55 +179,50 @@ const filteredGastos = computed(() => {
 });
 
 const openAddModal = () => {
-  editingCategory.value = null;
-  form.value = {
+  editingCategory.value = {
     usuarioId: usuarioId,
     monto: 0,
     categoriaId: null,
     fecha: new Date().toISOString().split('T')[0],
-    descripcion: '',
+    descripcion: ''
   };
   dialog.value = true;
 };
 
-const editGastos = async (gasto) => {
-  editingCategory.value = gasto;
-  form.value = {
-    usuarioId: usuarioId,
-    monto: gasto.monto,
-    categoriaId: gasto.categoriaId,
-    fecha: new Date(gasto.fecha).toISOString().split('T')[0],
-    descripcion: gasto.descripcion,
+const editGastos = (gasto) => {
+  editingCategory.value = {
+    ...gasto,
+    fecha: new Date(gasto.fecha).toISOString().split('T')[0]
   };
   dialog.value = true;
 };
 
-const submitForm = async () => {
+const submitForm = async (values) => {
   try {
-    if (editingCategory.value) {
-      await updateGasto(editingCategory.value.id, form.value);
-      Swal.fire({
-        icon: 'success',
-        title: '¡Actualizado!',
-        text: 'El gasto se ha actualizado correctamente',
-        showConfirmButton: false,
-        timer: 2000
-      });
+    const currentGasto = editingCategory.value?.id
+      ? gastos.value.find(g => g.id === editingCategory.value.id)
+      : null;
+
+    const payload = {
+      ...values,
+      usuarioId: usuarioId,
+      ...(currentGasto?.nombreCategoria && { nombreCategoria: currentGasto.nombreCategoria })
+    };
+
+    if (editingCategory.value?.id) {
+      await updateGasto(editingCategory.value.id, payload);
+      Swal.fire('¡Actualizado!', 'El gasto se actualizó correctamente', 'success');
     } else {
-      await addGasto(form.value);
-      Swal.fire({
-        icon: 'success',
-        title: '¡Agregado!',
-        text: 'Gasto registrado correctamente',
-        showConfirmButton: false,
-        timer: 2000
-      });
+      await addGasto(payload);
+      Swal.fire('¡Agregado!', 'Gasto registrado correctamente', 'success');
     }
+
     dialog.value = false;
     await cargarGastos();
     await asignarNombreCategorias();
   } catch (error) {
-    console.error('Error al agregar gasto:', error);
+    console.error('Error:', error);
+    Swal.fire('Error', 'Ocurrió un error al procesar el gasto', 'error');
   }
 };
 
@@ -336,30 +325,5 @@ const formatCurrency = (monto) => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.buttons-forms {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-}
-
-.buttons-forms button {
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 5px;
-}
-
-.buttons-forms button:first-child {
-  background-color: #f44336;
-  color: white;
-}
-
-.buttons-forms button:last-child {
-  background-color: #ecab00;
-  color: white;
 }
 </style>
