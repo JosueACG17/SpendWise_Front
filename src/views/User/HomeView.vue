@@ -91,6 +91,12 @@
           </div>
         </div>
         <div class="text-center mt-8">
+          <div class="text-center mb-6">
+            <h3 class="text-3xl font-bold text-center text-[#342E2E]">Exporta tu reporte financiero</h3>
+            <p class="text-[#817A7A] mt-2">
+              Descarga un PDF con tu análisis completo para compartir o guardar tus registros
+            </p>
+          </div>
           <button @click="handleDownloadPDF"
             class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-500 transition-colors font-medium" :disabled="!categoriesLoaded || !monthsLoaded"
           >
