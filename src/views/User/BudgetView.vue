@@ -238,6 +238,18 @@ const openAddModal = () => {
 };
 
 const agregarPresupuesto = async () => {
+  const isValid = await schema.validate(nuevoPresupuesto.value).catch(() => false);
+  if (!isValid) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Por favor, completa todos los campos correctamente',
+      showConfirmButton: false,
+      timer: 700
+    });
+    return;
+  }
+
   try {
     if (editingCategory.value) {
       const updatedCategory = {

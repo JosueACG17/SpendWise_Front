@@ -24,12 +24,6 @@
       <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard title="Total Categorías" :value="categorias.length" :icon="TagIcon" iconBgColor="bg-yellow-100"
           iconColor="text-yellow-600" />
-        <!-- <StatsCard title="Categoria Más Usada" :value="Alimentacion" :icon="ChartBarIcon" iconBgColor="bg-green-100"
-          iconColor="text-green-600" />
-        <StatsCard title="Ultima Actualización" :value="Hoy" :icon="ClockIcon" iconBgColor="bg-blue-100"
-          iconColor="text-blue-600" />
-        <StatsCard title="Presupuesto Asignado" :value="Presupuesto" :icon="CurrencyDollarIcon"
-          iconBgColor="bg-purple-100" iconColor="text-purple-600" /> -->
       </div>
     </div>
 
@@ -44,18 +38,17 @@
   <GenericModal :show="showModal" :title="editingCategory ? 'Editar Categoría' : 'Agregar Nueva Categoría'"
     :saveButtonText="editingCategory ? 'Actualizar' : 'Crear'" :icon="BriefcaseIcon" @save="saveCategory"
     @close="closeModal">
-    <Form @submit="saveCategory" :validation-schema="schema">
+    <Form @submit="saveCategory">
       <div class="mb-4 input-group">
-        <Field name="nombre" v-slot="{ field }">
+        <Field name="nombre">
           <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
-          <input v-bind="field" type="text" id="nombre" v-model.trim="formData.nombre"
+          <input :value="formData.nombre" @input="formData.nombre = $event.target.value"
             class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            placeholder="Nombre de la categoría"/>
-            <ErrorMessage name="nombre" class="error-message" />
+            placeholder="Nombre de la categoría" />
+          <ErrorMessage name="nombre" class="error-message" />
         </Field>
       </div>
     </Form>
-
   </GenericModal>
 
   <!-- Delete Confirmation Modal -->
@@ -67,29 +60,18 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import NavbarComponent from '@/components/NavbarComponent.vue';
 import FooterComponent from '@/components/FooterComponent.vue';
 import GenericModal from '@/common/GenericModal.vue';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import StatsCard from '@/views/User/components/StatsCard.vue';
 import TableContent from './TableContent.vue';
-import { TagIcon,BriefcaseIcon } from '@heroicons/vue/24/solid';
+import { TagIcon, BriefcaseIcon } from '@heroicons/vue/24/solid';
 import 'animate.css';
-import { addCategory, deleteCategoria, getCategories, updateCategory } from '@/services/categoryService';
+import { addCategory, deleteCategoria, getCategories, updateCategory, isCategoryInUse  } from '@/services/categoryService';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
 import Swal from 'sweetalert2';
-
-const schema = yup.object({
-  nombre: yup.string()
-    .required('El nombre es requerido')
-    .transform(value => value?.trim()) // Limpia espacios
-    .min(3, 'El nombre debe tener al menos 3 caracteres válidos')
-    .test('no-whitespace', 'No puede contener solo espacios', value => {
-      return !!value && value.replace(/\s/g, '').length > 0;
-    })
-});
 
 const categorias = ref([]);
 
@@ -128,14 +110,8 @@ const openAddModal = () => {
 };
 
 const editCategory = (categoria) => {
-  editingCategory.value = {
-    id: categoria.id,
-    nombre: categoria.nombre,
-    usuarioId: categoria.usuarioId
-  };
-  formData.value = {
-    nombre: categoria.nombre
-  };
+  editingCategory.value = { ...categoria };
+  formData.value.nombre = categoria.nombre;
   showModal.value = true;
 };
 
@@ -143,7 +119,34 @@ const closeModal = () => {
   showModal.value = false;
 };
 
+const validateCategoryName = (name) => {
+  const trimmedName = name.trim();
+  const hasSpecialChars = /[^a-zA-Z0-9\s]/.test(trimmedName);
+  if (!trimmedName) {
+    return 'El nombre es requerido';
+  }
+  if (hasSpecialChars) {
+    return 'El nombre no puede contener caracteres especiales';
+  }
+  if (trimmedName.length < 3) {
+    return 'El nombre debe tener al menos 3 caracteres válidos';
+  }
+  return null;
+};
+
 const saveCategory = async () => {
+  const validationError = validateCategoryName(formData.value.nombre);
+  if (validationError) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: validationError,
+      showConfirmButton: false,
+      timer: 700
+    });
+    return;
+  }
+
   formData.value.nombre = formData.value.nombre.trim();
   try {
     if (editingCategory.value) {
@@ -158,7 +161,7 @@ const saveCategory = async () => {
         title: '¡Actualizado!',
         text: 'La categoría se ha actualizado correctamente',
         showConfirmButton: false,
-        timer: 2000
+        timer: 1000
       });
     } else {
       const newCategory = {
@@ -171,7 +174,7 @@ const saveCategory = async () => {
         title: '¡Creado!',
         text: 'Categoría creada correctamente',
         showConfirmButton: false,
-        timer: 2000
+        timer: 1000
       });
     }
     closeModal();
@@ -191,10 +194,31 @@ const closeDeleteModal = () => {
   categoryToDelete.value = null;
 };
 
+
+
 const deleteCategory = async () => {
   if (categoryToDelete.value) {
     try {
+      const inUse = await isCategoryInUse(categoryToDelete.value.id);
+      if (inUse) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se puede eliminar la categoría porque está siendo utilizada en un presupuesto',
+          showConfirmButton: false,
+        timer: 1000
+        });
+        closeDeleteModal();
+        return;
+      }
       await deleteCategoria(categoryToDelete.value.id);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Eliminado!',
+        text: 'La categoría se ha eliminado correctamente',
+        showConfirmButton: false,
+        timer: 1000
+      });
     } catch (error) {
       console.error("Error al eliminar la categoría:", error);
     }
@@ -202,6 +226,7 @@ const deleteCategory = async () => {
   closeDeleteModal();
   cargarCategorias();
 };
+
 </script>
 
 <style scoped>
