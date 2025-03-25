@@ -1,9 +1,6 @@
 <template>
   <NavbarComponent />
-
-  <div
-    class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
-
+  <div class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
     <div class="flex flex-col items-center mb-4">
       <button @click="openAddModal"
         class="bg-gradient-to-r cursor-pointer from-yellow-500 to-yellow-600 text-white sm:px-6 sm:py-3 px-2 py-1.5 rounded-full hover:from-yellow-500 hover:to-yellow-800 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
@@ -11,11 +8,9 @@
       </button>
       <h1 class="text-4xl text-gray-800 animate__animated animate__fadeIn font-bold mt-3 sm:mt-0">Mis Presupuestos</h1>
     </div>
-
     <p class="text-center text-gray-700 text-lg animate__animated animate__delay-1s animate__fadeIn mb-8">
       Gestión y visualización tus presupuestos asignados.
     </p>
-
     <div class="bg-white p-6 rounded-xl shadow-xl mb-8">
       <h2 class="text-2xl text-gray-800 font-bold mb-4">Resumen de Presupuestos</h2>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3 sm:grid-cols-2">
@@ -33,7 +28,6 @@
         </div>
       </div>
     </div>
-
     <!-- Progreso General de Presupuestos -->
     <div class="bg-white rounded-xl shadow-xl p-6 mb-8">
       <h2 class="text-2xl font-bold text-gray-800 mb-6">Progreso General de Presupuestos</h2>
@@ -53,7 +47,6 @@
         </span>
       </p>
     </div>
-
     <div class="bg-white p-6 rounded-xl shadow-xl">
       <h2 class="text-2xl text-gray-800 font-bold mb-6">Presupuestos por Categoría</h2>
       <div v-if="presupuestos.length > 0" class="space-y-6">
@@ -69,69 +62,57 @@
             <p class="mt-1 text-sm">Te has pasado en {{ formatCurrency(presupuesto.totalGastado - presupuesto.monto) }}</p>
           </div>
           <div class="flex justify-between items-center mb-3">
-    <h3 class="text-xl font-semibold text-gray-800">
-      {{ getCategoriaNombre(presupuesto.categoriaId) }}
-    </h3>
-    <p class="text-gray-700" :class="{ 'text-red-600': presupuesto.totalGastado > presupuesto.monto }">
-      {{ formatCurrency(presupuesto.totalGastado) }} / {{ formatCurrency(presupuesto.monto) }}
-    </p>
-  </div>
-  <div class="bg-gray-200 h-2.5 rounded-full w-full">
-    <div class="h-2.5 rounded-full" :class="{
-      'bg-gradient-to-r from-blue-400 to-blue-600': presupuesto.totalGastado <= presupuesto.monto,
-      'bg-gradient-to-r from-red-400 to-red-600': presupuesto.totalGastado > presupuesto.monto
-    }" :style="{ width: `${Math.min((presupuesto.totalGastado / presupuesto.monto) * 100, 100)}%` }"></div>
-  </div>
-  <div class="flex justify-end mt-3 space-x-2">
-    <button @click="editarPresupuesto(presupuesto)"
-      class="text-yellow-600 cursor-pointer hover:text-yellow-700">
-      Editar
-    </button>
-    <button @click="confirmDelete(presupuesto.id)" class="text-red-600 hover:text-red-700 cursor-pointer">
-      Eliminar
-    </button>
-  </div>
+            <h3 class="text-xl font-semibold text-gray-800">
+              {{ getCategoriaNombre(presupuesto.categoriaId) }}
+            </h3>
+            <p class="text-gray-700" :class="{ 'text-red-600': presupuesto.totalGastado > presupuesto.monto }">
+              {{ formatCurrency(presupuesto.totalGastado) }} / {{ formatCurrency(presupuesto.monto) }}
+            </p>
+          </div>
+          <div class="bg-gray-200 h-2.5 rounded-full w-full">
+            <div class="h-2.5 rounded-full" :class="{
+              'bg-gradient-to-r from-blue-400 to-blue-600': presupuesto.totalGastado <= presupuesto.monto,
+              'bg-gradient-to-r from-red-400 to-red-600': presupuesto.totalGastado > presupuesto.monto
+            }" :style="{ width: `${Math.min((presupuesto.totalGastado / presupuesto.monto) * 100, 100)}%` }"></div>
+          </div>
+          <div class="flex justify-end mt-3 space-x-2">
+            <button @click="editarPresupuesto(presupuesto)"
+              class="text-yellow-600 cursor-pointer hover:text-yellow-700">
+              Editar
+            </button>
+            <button @click="confirmDelete(presupuesto.id)" class="text-red-600 hover:text-red-700 cursor-pointer">
+              Eliminar
+            </button>
+          </div>
         </div>
       </div>
       <p v-else class="text-red-600">
         No existen categorías con presupuesto asignado.
       </p>
     </div>
-
     <!-- Nuevo Modal para agregar presupuesto -->
-    <GenericModal :show="isModalOpen" title="Agregar Presupuesto" saveButtonText="Agregar" :icon="CurrencyDollarIcon"
-      @save="agregarPresupuesto" @close="isModalOpen = false">
+    <GenericModal :show="isModalOpen" title="Agregar Presupuesto" saveButtonText="Agregar" :icon="CurrencyDollarIcon" @save="agregarPresupuesto" @close="isModalOpen = false">
       <Form @submit="agregarPresupuesto" :validation-schema="schema">
         <div class="mb-4 input-group">
-          <Field name="categoriaId" v-slot="{ field }">
-            <label class="text-gray-700 block mb-2">Categoría</label>
-            <select v-bind="field"  v-model="nuevoPresupuesto.categoriaId"
-              class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2" required>
-              <option disabled value="">Selecciona una categoría</option>
-              <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">
-                {{ categoria.nombre }}
-              </option>
-            </select>
-            <ErrorMessage name="categoriaId" class="error-message" />
+          <label class="text-gray-700 block mb-2">Categoría</label>
+          <Field name="categoriaId" as="select" v-model="nuevoPresupuesto.categoriaId" class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2" required>
+            <option disabled value="">Selecciona una categoría</option>
+            <option v-for="categoria in categorias" :key="categoria.id" :value="categoria.id">
+              {{ categoria.nombre }}
+            </option>
           </Field>
+          <ErrorMessage name="categoriaId" class="error-message" />
         </div>
-        <div class="mb-4 imput-group">
-          <Field name="monto" v-slot="{ field }">
-            <label class="block text-gray-700 mb-2">Monto Asignado</label>
-            <input v-bind="field"  v-model="nuevoPresupuesto.monto" type="number"
-              class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              placeholder="Ej. 1500" required />
-              <ErrorMessage name="monto" class="error-message" />
-          </Field>
+        <div class="mb-4 input-group">
+          <label class="block text-gray-700 mb-2">Monto Asignado</label>
+          <Field name="monto" type="number" v-model.number="nuevoPresupuesto.monto" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Ej. 1500"/>
+          <ErrorMessage name="monto" class="error-message" />
         </div>
       </Form>
     </GenericModal>
-
     <DeleteConfirmationModal :show="showDeleteModal" itemName="Categoría" :itemToDelete="categoryToDelete"
       @confirmDelete="deleteCategory" @close="closeDeleteModal" />
-
   </div>
-
   <FooterComponent />
 </template>
 
@@ -155,6 +136,7 @@ const schema = yup.object({
   categoriaId: yup.number()
     .required('La categoría es requerida'),
   monto: yup.number()
+    .typeError('El monto debe ser un número válido')
     .required('El monto es requerido')
     .min(1, 'El monto debe ser mayor a 0')
     .max(1000000, 'El monto no puede exceder 1,000,000')
@@ -185,7 +167,6 @@ const totalRestante = computed(() => {
   return totalAsignado.value - totalGastado.value;
 });
 
-// Obtener el token del localStorage y decodificarlo
 const token = localStorage.getItem('token');
 const decodedToken = token ? jwtDecode(token) : null;
 const usuarioId = decodedToken ? decodedToken.nameid : null;
@@ -268,6 +249,13 @@ const agregarPresupuesto = async () => {
         fechaFin: nuevoPresupuesto.value.fechaFin,
       };
       await updateBudget(editingCategory.value.id, updatedCategory);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Actualizado!',
+        text: 'El presupuesto se ha actualizado correctamente',
+        showConfirmButton: false,
+        timer: 1000
+      });
     } else {
       const newCategory = {
         categoriaId: nuevoPresupuesto.value.categoriaId,
@@ -277,6 +265,13 @@ const agregarPresupuesto = async () => {
         fechaFin: nuevoPresupuesto.value.fechaFin,
       };
       await addBudget(newCategory);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Creado!',
+        text: 'Presupuesto agregado correctamente',
+        showConfirmButton: false,
+        timer: 1000
+      });
     }
     closeModal();
     await cargarPresupuestos();
@@ -313,6 +308,14 @@ const deleteCategory = async () => {
   if (categoryToDelete.value) {
     try {
       await deleteBudget(categoryToDelete.value);
+      Swal.fire({
+        icon: 'success',
+        title: '¡Eliminado!',
+        text: 'El presupuesto ha sido eliminado correctamente',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      closeDeleteModal();
     } catch (error) {
       console.error("Error al eliminar el presupuesto:", error);
     }
