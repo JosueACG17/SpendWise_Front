@@ -42,6 +42,7 @@
 .number {
   font-size: 150px;
   margin: 0 10px;
+  color:yellow
 }
 
 .bitcoin-logo {
