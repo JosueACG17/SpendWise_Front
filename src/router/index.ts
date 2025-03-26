@@ -16,6 +16,7 @@ import EtiquetasView from '@/views/User/LabelsView.vue'
 import NotificationsView from '@/views/User/NotificationsView.vue'
 import UsuariosCrudView from '../views/Admin/UsuariosCrudView.vue'
 import LogsView from '../views/Admin/LogsView.vue'
+import ChartsView from '@/views/User/ChartsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -72,6 +73,12 @@ const router = createRouter({
       path: '/notificaciones',
       name: 'notificaciones',
       component: NotificationsView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/graficas',
+      name: 'graficas',
+      component: ChartsView,
       meta: { requiresAuth: true },
     },
     {

@@ -58,30 +58,42 @@
           class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
           <li>
             <RouterLink to="/inicio"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
+              class="flex items-center py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/inicio', 'text-white hover:bg-yellow-600': $route.path !== '/inicio' }">
-              Inicio
+              <HomeIcon class="h-5 w-5 mr-2" />
+              <span>Inicio</span>
             </RouterLink>
           </li>
           <li>
             <RouterLink to="/gastos"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
+              class="flex items-center py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/gastos', 'text-white hover:bg-yellow-600': $route.path !== '/gastos' }">
-              Gastos
+              <CreditCardIcon class="h-5 w-5 mr-2" />
+              <span>Gastos</span>
             </RouterLink>
           </li>
           <li>
             <RouterLink to="/presupuestos"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
+              class="flex items-center py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/presupuestos', 'text-white hover:bg-yellow-600': $route.path !== '/presupuestos' }">
-              Presupuestos
+              <ChartBarIcon class="h-5 w-5 mr-2" />
+              <span>Presupuestos</span>
             </RouterLink>
           </li>
           <li>
             <RouterLink to="/categorias"
-              class="block py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
+              class="flex items-center py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
               :class="{ 'text-yellow-500': $route.path === '/categorias', 'text-white hover:bg-yellow-600': $route.path !== '/categorias' }">
-              Categorias
+              <TagIcon class="h-5 w-5 mr-2" />
+              <span>Categorias</span>
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/graficas"
+              class="flex items-center py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
+              :class="{ 'text-yellow-500': $route.path === '/graficas', 'text-white hover:bg-yellow-600': $route.path !== '/graficas' }">
+              <ChartPieIcon class="h-5 w-5 mr-2" />
+              <span>Estadísticas</span>
             </RouterLink>
           </li>
         </ul>
@@ -98,7 +110,12 @@ import { usePerfilStore } from '@/stores/perfilStore';
 import {
   UserIcon,
   ArrowRightOnRectangleIcon,
-  BellIcon
+  BellIcon,
+  HomeIcon,
+  CreditCardIcon,
+  ChartBarIcon,
+  TagIcon,
+  ChartPieIcon
 } from '@heroicons/vue/24/outline';
 import { useNotificacionesStore } from "@/stores/notificationStore";
 

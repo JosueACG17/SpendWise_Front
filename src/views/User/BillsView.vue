@@ -6,7 +6,7 @@
         <h1 class="text-3xl text-gray-900 font-extrabold md:text-4xl tracking-tight">
           Mis Gastos
         </h1>
-        <p class="text-gray-600 text-lg max-w-3xl mt-3">
+        <p class="text-gray-600 text-lg max-w-3xl mt-3 animate__animated animate__fadeIn">
           Organiza tus finanzas personales para un mejor control de gastos.
         </p>
       </div>
@@ -16,7 +16,7 @@
           Agregar Gasto
         </button>
         <v-select label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
-          v-model="selectedId" variant="solo-filled" class="sm:w-60"></v-select>
+          v-model="selectedId" variant="solo-filled" class="sm:w-60 text-white"></v-select>
       </div>
     </div>
 
@@ -277,34 +277,10 @@ const formatCurrency = (monto) => {
   font-size: 0.85rem;
 }
 
-.input-group {
-  margin-bottom: 8px;
-}
-
-
-.filters {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-}
-
-
-.filters .v-input {
-  max-width: 300px;
-}
-
-.filters button {
-  height: 56px;
-}
-
-.v-card-item__prepend {
-  display: none;
-}
-
 .inputs {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
 </style>
