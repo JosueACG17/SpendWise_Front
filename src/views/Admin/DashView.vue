@@ -1,7 +1,7 @@
 <template>
   <NavSidebar>
     <main class="flex-1 overflow-auto p-6 bg-gray-100">
-      <p class="text-center text-3xl font-bold mb-6">¡Bienvenido!</p>
+      <p class="text-center text-3xl font-bold mb-6">¡Bienvenido Administrador!</p>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
         <CardComponent v-for="(card, index) in dashboardCards" :key="index" :card="card" />
       </div>
@@ -35,7 +35,7 @@ const userStore = useUserStore();
 const errorLogStore = useErrorLogStore();
 
 const dashboardCards = ref([
-  { title: 'Usuarios', value: '0', icon: UsersIcon, bgColor: 'bg-blue-500' },
+  { title: 'Usuarios', value: '0', icon: UsersIcon, bgColor: 'bg-yellow-600' },
   { title: 'Errores Encontrados', value: '0', icon: ExclamationTriangleIcon, bgColor: 'bg-red-500' },
 ]);
 
