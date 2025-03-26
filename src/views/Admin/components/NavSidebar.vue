@@ -43,29 +43,24 @@
         <div class="relative" ref="menuRef">
           <button @click="isUserMenuOpen = !isUserMenuOpen"
             class="flex items-center max-w-xs rounded-full text-sm focus:outline-none cursor-pointer">
-            <img class="h-10 w-10 rounded-full border-2 border-gray-500 p-0.5"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt="User avatar" />
-            <span class="ml-2 text-gray-700 hidden md:block font-semibold">Josue Chan</span>
+            <img class="h-10 w-10 rounded-full border-2 border-gray-500 p-0.5 object-cover"
+              :src="userPhoto"
+              alt="User" />
+            <span class="ml-2 text-gray-700 hidden md:block font-semibold">{{ userName }}</span>
             <ChevronDownIcon class="ml-1 h-4 w-4 text-gray-700" />
           </button>
 
           <div v-if="isUserMenuOpen"
             class="absolute right-0 mt-2 w-56 bg-white  rounded-lg shadow-lg border border-gray-200 z-10">
             <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
-              <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5 object-cover"
+                :src="userPhoto"
                 alt="User avatar" />
               <div>
-                <p class="text-sm font-medium text-gray-900 ">Josue Chan</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Programador</p>
+                <p class="text-sm font-medium text-gray-900 ">{{ userName }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">{{ userEmail }}</p>
               </div>
             </div>
-            <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-gray-700  hover:bg-gray-100 ">
-              <UserIcon class="h-5 w-5 mr-2" />
-              Perfil
-            </RouterLink>
-
             <button @click="confirmLogout"
               class="flex items-center w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer">
               <ArrowRightOnRectangleIcon class="h-5 w-5 mr-2" />
@@ -80,16 +75,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Swal from 'sweetalert2';
 import { useAuthStore } from '@/stores/authStore';
+import { usePerfilStore } from '@/stores/perfilStore';
 import {
   Bars3BottomLeftIcon as MenuIcon,
   XMarkIcon as XIcon,
   HomeIcon,
   UsersIcon,
   BriefcaseIcon,
-  UserIcon,
   ArrowRightOnRectangleIcon,
   ChevronDownIcon,
 
@@ -109,6 +104,12 @@ const menuItems = ref([
   { name: 'Logs', icon: BriefcaseIcon, route: '/logs', active: false },
 
 ]);
+
+const perfilStore = usePerfilStore();
+const userEmail = computed(() => authStore.email || 'email@dominio.com')
+const userName = computed(() => perfilStore.perfil?.nombreCompleto || 'Administrador')
+const userPhoto = computed(() => perfilStore.perfil?.fotoUrl || 'https://cdn-icons-png.flaticon.com/512/219/219983.png')
+
 
 const confirmLogout = async () => {
   const result = await Swal.fire({

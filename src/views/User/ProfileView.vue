@@ -1,7 +1,7 @@
 <template>
   <NavbarComponent />
   <div class="p-5">
-    <h1 class="text-3xl font-bold mb-4 text-gray-900 text-center">Mi Perfil</h1>
+    <h1 class="text-2xl sm:text-4xl font-bold mb-4 text-gray-900 text-center">Mi Perfil</h1>
     <!-- Si ya tiene perfil -->
     <div v-if="perfilStore.perfil" class="bg-white rounded-xl shadow-xl overflow-hidden">
       <div class="relative h-32 bg-gradient-to-r from-gray-800 to-gray-900">
@@ -48,46 +48,67 @@
       </div>
     </div>
     <!-- Si NO tiene perfil -->
-    <form v-else @submit.prevent="onSubmit" class="grid gap-4 max-w-3xl mx-auto bg-white rounded-xl shadow-xl p-8">
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-gray-700">Nombre completo</label>
-        <input v-model="nombreCompleto" type="text" placeholder="Ingresa tu nombre completo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
-        <p v-if="errors.nombreCompleto" class="text-red-600 text-sm mt-1">{{ errors.nombreCompleto }}</p>
+    <div v-else class="bg-white rounded-xl shadow-xl overflow-hidden">
+      <div class="relative h-32 bg-gradient-to-r from-gray-800 to-gray-900">
+        <div class="absolute inset-0 bg-black bg-opacity-20"></div>
       </div>
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-gray-700">Teléfono</label>
-        <input v-model="telefono" type="tel" placeholder="Ingresa tu teléfono" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
-        <p v-if="errors.telefono" class="text-red-600 text-sm mt-1">{{ errors.telefono }}</p>
-      </div>
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-gray-700">Fecha de nacimiento</label>
-        <input v-model="fechaNacimiento" type="date" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
-        <p v-if="errors.fechaNacimiento" class="text-red-600 text-sm mt-1">{{ errors.fechaNacimiento }}</p>
-      </div>
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-gray-700">Género</label>
-        <select v-model="genero" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition">
-          <option disabled value="">Selecciona un género</option>
-          <option>Masculino</option>
-          <option>Femenino</option>
-          <option>Otro</option>
-        </select>
-        <p v-if="errors.genero" class="text-red-600 text-sm mt-1">{{ errors.genero }}</p>
-      </div>
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
-        <input type="file" @change="handleFile" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition"/>
-        <p v-if="errors.foto" class="text-red-600 text-sm mt-1">{{ errors.foto }}</p>
-      </div>
-      <div class="flex justify-end">
-        <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition duration-200 flex items-center gap-2 px-6 py-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      <div class="relative flex flex-col items-center pt-10 pb-8">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Porfavor, Completa tu perfil</h2>
+
+        <!-- Imagen por defecto o precargada -->
+
+        <div class="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-200 flex items-center justify-center">
+          <img v-if="fotoUrl" :src="fotoUrl" alt="Foto de perfil" class="w-full h-full object-cover"/>
+          <svg v-else class="w-20 h-20 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A12.07 12.07 0 0112 15c2.213 0 4.294.576 6.121 1.604M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          Guardar Perfil
-        </button>
+        </div>
       </div>
-    </form>
+
+      <form @submit.prevent="onSubmit" class="p-8 grid gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700">Nombre completo</label>
+            <input v-model="nombreCompleto" type="text" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500"/>
+            <span v-if="errors.nombreCompleto" class="text-red-500 text-sm">{{ errors.nombreCompleto}}</span>
+
+          </div>
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700">Teléfono</label>
+            <input v-model="telefono" type="tel" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500"/>
+            <span v-if="errors.telefono" class="text-red-500 text-sm">{{ errors.telefono }}</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700">Fecha de nacimiento</label>
+            <input v-model="fechaNacimiento" type="date" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500"/>
+            <span v-if="errors.fechaNacimiento" class="text-red-500 text-sm">{{ errors.fechaNacimiento}}</span>
+
+          </div>
+          <div class="space-y-1">
+            <label class="text-sm font-medium text-gray-700">Género</label>
+            <select v-model="genero" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500">
+              <option disabled value="">Selecciona un género</option>
+              <option>Masculino</option>
+              <option>Femenino</option>
+              <option>Otro</option>
+            </select>
+            <span v-if="errors.genero" class="text-red-500 text-sm">{{ errors.genero}}</span>
+          </div>
+        </div>
+        <div class="space-y-1">
+          <label class="text-sm font-medium text-gray-700">Foto de perfil</label>
+          <input type="file" @change="handleFile" class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-500"/>
+          <span v-if="errors.foto" class="text-red-500 text-sm">{{ errors.foto}}</span>
+        </div>
+        <div class="flex justify-end">
+          <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg px-6 py-3">
+            Guardar Perfil
+          </button>
+        </div>
+      </form>
+    </div>
     <!-- Modal para editar perfil -->
     <div v-if="mostrarModalEditar" class="fixed inset-0 flex items-center justify-center p-4">
       <div class="fixed inset-0 bg-gray-900 opacity-75"></div>
@@ -157,7 +178,8 @@ const perfilSchema = yup.object({
   nombreCompleto: yup
     .string()
     .trim()
-    .required('El nombre completo es requerido'),
+    .required('El nombre completo es requerido')
+    .matches(/^[a-zA-Z0-9]+$/, 'La contraseña no debe contener caracteres especiales'),
   telefono: yup
     .string()
     .trim()
@@ -224,6 +246,7 @@ const handleFile = (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
     foto.value = target.files[0]
+    fotoUrl.value = URL.createObjectURL(target.files[0])
   }
 }
 

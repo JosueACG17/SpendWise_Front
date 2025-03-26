@@ -128,7 +128,7 @@ const authStore = useAuthStore();
 const perfilStore = usePerfilStore();
 
 const userEmail = computed(() => authStore.email || 'email@dominio.com')
-const userName = computed(() => perfilStore.perfil?.nombreCompleto || 'Nombre Usuario')
+const userName = computed(() => perfilStore.perfil?.nombreCompleto || 'Usuario')
 const userPhoto = computed(() => perfilStore.perfil?.fotoUrl || 'https://cdn-icons-png.flaticon.com/512/219/219983.png')
 
 const toggleDropdown = () => {
