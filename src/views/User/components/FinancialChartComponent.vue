@@ -1,6 +1,6 @@
 <template>
-  <section class="py-15 bg-white">
-    <div class="max-w-6xl mx-auto px-4">
+  <section class="py-15 bg-white animate__animated animate__fadeIn">
+    <div class="max-w-6xl mx-auto px-4 animate__animated animate__fadeInUp">
       <h2 class="text-3xl font-bold text-center text-[#342E2E] mb-10">
         Visualiza tus finanzas
       </h2>
@@ -33,7 +33,7 @@
       <div class="text-center mt-8">
         <div class="text-center mb-6">
           <h3 class="text-3xl font-bold text-center text-[#342E2E]">Exporta tu reporte financiero</h3>
-          <p class="text-[#817A7A] mt-2">
+          <p class="text-gray-500 mt-2">
             Descarga un PDF con tu análisis completo para compartir o guardar tus registros
           </p>
         </div>

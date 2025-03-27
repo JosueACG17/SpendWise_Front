@@ -12,7 +12,7 @@
       <div class="flex flex-col sm:flex-row gap-4 justify-center animate__animated animate__fadeInUp animate__delay-2s">
         <RouterLink to="/gastos">
           <button
-            class="bg-yellow-500 px-8 py-3 rounded-lg font-medium w-full hover:bg-yellow-600 cursor-pointer transition-colors ">
+            class="bg-yellow-600 text-white px-8 py-3 rounded-lg font-medium w-full hover:bg-yellow-600 cursor-pointer transition-colors ">
             Ver gastos
           </button>
         </RouterLink>

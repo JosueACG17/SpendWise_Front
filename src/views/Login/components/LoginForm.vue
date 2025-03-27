@@ -68,12 +68,10 @@ import { ref } from 'vue';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import { useAuthStore } from '@/stores/authStore';
-import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
 import LoadingScreen from '@/components/LoadingScreen.vue';
 
 const authStore = useAuthStore();
-const router = useRouter();
 
 const isLoading = ref(false);
 
@@ -103,9 +101,7 @@ const togglePasswordVisibility = () => {
 const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true;
-
     await authStore.login(values.email, values.password);
-
     isLoading.value = false;
 
     Swal.fire({
@@ -113,18 +109,15 @@ const onSubmit = handleSubmit(async (values) => {
       title: '¡Inicio de sesión exitoso!',
       showConfirmButton: false,
       timer: 1000,
-    }).then(() => {
-      router.push({ name: 'home' });
     });
   } catch {
     isLoading.value = false;
-
     Swal.fire({
       icon: 'error',
       title: 'Credenciales Incorrectas',
       text: 'Por favor, revisa tu correo y contraseña.',
       showConfirmButton: false,
-      timer: 2000,
+      timer: 1000,
     });
   }
 });

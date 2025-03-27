@@ -9,34 +9,22 @@
         <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 cursor-pointer" id="user-menu-button"
           aria-expanded="false" @click="toggleDropdown">
           <p class="text-white mt-1.5 mr-2 ml-2">{{ userName }}</p>
-          <img class="w-8 h-8 rounded-full object-cover" :src="userPhoto"
-            alt="user photo" />
+          <img class="w-8 h-8 rounded-full object-cover" :src="userPhoto" alt="user photo" />
         </button>
-        <!-- Icono de notificaciones -->
-         <RouterLink to="/notificaciones">
-        <div class="relative cursor-pointer sm:ml-4" >
-          <BellIcon class="w-6 h-6 text-white" />
-          <span v-if="totalNotificaciones > 0"
-            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
-            {{ totalNotificaciones }}
-          </span>
-        </div>
-      </RouterLink>
         <div v-show="isDropdownOpen"
-            class="z-50 absolute right-0 w-60 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
-            <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
-              <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5 object-cover"
-                :src="userPhoto"
-                alt="User avatar" />
-              <div>
-                <p class="text-sm font-medium text-white ">{{ userName }}</p>
-                <p class="text-xs text-white">{{ userEmail }}</p>
-              </div>
+          class="z-50 absolute right-0 w-60 top-10 sm:top-8 my-4 text-base list-none divide-y rounded-lg shadow-sm bg-black divide-gray-600">
+          <div class="p-4 flex items-center space-x-3 border-b border-gray-200 ">
+            <img class="h-12 w-12 rounded-full border-2 border-gray-500 p-0.5 object-cover" :src="userPhoto"
+              alt="User avatar" />
+            <div>
+              <p class="text-sm font-medium text-white ">{{ userName }}</p>
+              <p class="text-xs text-white">{{ userEmail }}</p>
             </div>
-            <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-white  hover:bg-gray-600 ">
-              <UserIcon class="h-5 w-5 mr-2" />
-              Perfil
-            </RouterLink>
+          </div>
+          <RouterLink to="/profile" class="flex items-center px-4 py-2 text-sm text-white  hover:bg-gray-600 ">
+            <UserIcon class="h-5 w-5 mr-2" />
+            Perfil
+          </RouterLink>
 
           <button @click="confirmLogout"
             class="flex items-center w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600 cursor-pointer">
@@ -65,11 +53,11 @@
             </RouterLink>
           </li>
           <li>
-            <RouterLink to="/gastos"
+            <RouterLink to="/categorias"
               class="flex items-center py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
-              :class="{ 'text-yellow-500': $route.path === '/gastos', 'text-white hover:bg-yellow-600': $route.path !== '/gastos' }">
-              <CreditCardIcon class="h-5 w-5 mr-2" />
-              <span>Gastos</span>
+              :class="{ 'text-yellow-500': $route.path === '/categorias', 'text-white hover:bg-yellow-600': $route.path !== '/categorias' }">
+              <TagIcon class="h-5 w-5 mr-2" />
+              <span>Categorias</span>
             </RouterLink>
           </li>
           <li>
@@ -81,11 +69,11 @@
             </RouterLink>
           </li>
           <li>
-            <RouterLink to="/categorias"
+            <RouterLink to="/gastos"
               class="flex items-center py-2 px-3 rounded-sm sm:hover:bg-transparent md:p-0 sm:hover:text-yellow-500 "
-              :class="{ 'text-yellow-500': $route.path === '/categorias', 'text-white hover:bg-yellow-600': $route.path !== '/categorias' }">
-              <TagIcon class="h-5 w-5 mr-2" />
-              <span>Categorias</span>
+              :class="{ 'text-yellow-500': $route.path === '/gastos', 'text-white hover:bg-yellow-600': $route.path !== '/gastos' }">
+              <CreditCardIcon class="h-5 w-5 mr-2" />
+              <span>Gastos</span>
             </RouterLink>
           </li>
           <li>
@@ -110,17 +98,12 @@ import { usePerfilStore } from '@/stores/perfilStore';
 import {
   UserIcon,
   ArrowRightOnRectangleIcon,
-  BellIcon,
   HomeIcon,
   CreditCardIcon,
   ChartBarIcon,
   TagIcon,
   ChartPieIcon
 } from '@heroicons/vue/24/outline';
-import { useNotificacionesStore } from "@/stores/notificationStore";
-
-const notificacionesStore = useNotificacionesStore();
-const totalNotificaciones = computed(() => notificacionesStore.total);
 
 const isDropdownOpen = ref(false);
 const isMenuOpen = ref(false);

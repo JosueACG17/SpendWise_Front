@@ -117,7 +117,15 @@ const router = useRouter();
 const isLoading = ref(false);
 
 const validationSchema = yup.object({
-  email: yup.string().trim().email('Correo incorrecto').required('El correo es requerido'),
+  email: yup
+    .string()
+    .trim()
+    .email('Correo Electrónico inválido')
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/,
+      'El correo debe tener un formato válido (ejemplo: usuario@dominio.com)'
+    )
+    .required('El correo es requerido'),
   password: yup.string().trim().min(6, 'La contraseña debe tener al menos 6 caracteres').required('La contraseña es requerida'),
   confirmPassword: yup.string().trim().oneOf([yup.ref('password')], 'Las contraseñas deben coincidir').required('La confirmación de la contraseña es requerida'),
 });
