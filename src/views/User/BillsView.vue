@@ -93,16 +93,18 @@ import 'animate.css';
 import { addGasto, deleteGasto, getGastosPorUsuario, updateGasto } from '@/services/gastosService';
 import TableContent from './components/TableContentGastos.vue';
 import { getCategories } from '@/services/categoryService';
+import { getBudgetsByUser } from '@/services/presupuestosService';
 import { Form, Field } from 'vee-validate';
 import * as yup from 'yup';
 import Swal from 'sweetalert2';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 
 const schema = yup.object({
-  categoriaId: yup.number().required('La categoría es requerida'),
+  categoriaId: yup.number().required('La categoría es requerida').typeError('Elige una categoría válida'),
   monto: yup.number()
     .required('El monto es requerido')
-    .min(1, 'El monto debe ser mayor a 0'),
+    .min(1, 'El monto debe ser mayor a 0')
+    .typeError('El monto debe ser un número válido'),
   fecha: yup.date()
     .required('La fecha es requerida')
     .max(new Date(), 'La fecha no puede ser futura'),
@@ -110,7 +112,7 @@ const schema = yup.object({
     .trim()
     .required('La descripción es requerida')
     .max(100, 'La descripción no puede exceder 100 caracteres')
-    .matches(/^[a-zA-Z0-9\s]+$/, 'La descripción solo puede contener letras, números y espacios')
+    .matches(/^[a-zA-Z\s]+$/, 'La descripción solo puede contener letras y espacios')
 });
 
 const token = localStorage.getItem('token');
@@ -121,7 +123,7 @@ const gastos = ref([]);
 const selectedId = ref(null);
 const editingCategory = ref(null);
 const categorias = ref([]);
-
+const presupuestos = ref([]);
 // Variables para el modal de confirmación
 const showDeleteModal = ref(false);
 const gastoToDelete = ref(null);
@@ -137,8 +139,17 @@ const form = ref({
 onMounted(async () => {
   await cargarGastos();
   await cargarCategorias();
+  await cargarPresupuestos();
   await asignarNombreCategorias();
 });
+
+const cargarPresupuestos = async () => {
+  try {
+    presupuestos.value = await getBudgetsByUser(usuarioId);
+  } catch (error) {
+    console.error('Error al obtener presupuestos:', error);
+  }
+};
 
 const cargarGastos = async () => {
   try {
@@ -210,31 +221,49 @@ const editGastos = (gasto) => {
 
 const submitForm = async (values) => {
   try {
-    const currentGasto = editingCategory.value?.id
-      ? gastos.value.find(g => g.id === editingCategory.value.id)
-      : null;
+    const presupuestoCategoria = presupuestos.value.find(p => p.categoriaId === values.categoriaId);
 
-    const payload = {
-      ...values,
-      usuarioId: usuarioId,
-      ...(currentGasto?.nombreCategoria && { nombreCategoria: currentGasto.nombreCategoria })
-    };
-
-    if (editingCategory.value?.id) {
-      await updateGasto(editingCategory.value.id, payload);
-      Swal.fire('¡Actualizado!', 'El gasto se actualizó correctamente', 'success');
-    } else {
-      await addGasto(payload);
-      Swal.fire('¡Agregado!', 'Gasto registrado correctamente', 'success');
+    if (!presupuestoCategoria) {
+      dialog.value = false;
+      Swal.fire({
+        icon: 'warning',
+        title: 'Categoría sin presupuesto',
+        text: 'No puedes agregar gastos a una categoría que no tiene presupuesto asignado. Por favor, crea un presupuesto primero.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#f59e0b',
+      });
+      return;
     }
 
-    dialog.value = false;
-    await cargarGastos();
-    await asignarNombreCategorias();
+    await guardarGasto(values);
   } catch (error) {
     console.error('Error:', error);
     Swal.fire('Error', 'Ocurrió un error al procesar el gasto', 'error');
   }
+};
+
+const guardarGasto = async (values) => {
+  const currentGasto = editingCategory.value?.id
+    ? gastos.value.find(g => g.id === editingCategory.value.id)
+    : null;
+
+  const payload = {
+    ...values,
+    usuarioId: usuarioId,
+    ...(currentGasto?.nombreCategoria && { nombreCategoria: currentGasto.nombreCategoria })
+  };
+
+  if (editingCategory.value?.id) {
+    await updateGasto(editingCategory.value.id, payload);
+    Swal.fire('¡Actualizado!', 'El gasto se actualizó correctamente', 'success');
+  } else {
+    await addGasto(payload);
+    Swal.fire('¡Agregado!', 'Gasto registrado correctamente', 'success');
+  }
+
+  dialog.value = false;
+  await cargarGastos();
+  await asignarNombreCategorias();
 };
 
 const solicitarEliminarGasto = (gasto) => {
