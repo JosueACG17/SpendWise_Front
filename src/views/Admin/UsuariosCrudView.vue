@@ -116,7 +116,12 @@ const openAddUserModal = (): void => {
 
 const editUser = (user: any): void => {
   selectedUser.value = user;
-  form.value = { email: user.email, password: '', rolId: user.rolId };
+  const role = roles.value.find(r => r.nombre === user.role);
+  form.value = {
+    email: user.email,
+    password: '',
+    rolId: role ? role.id : null,
+  };
   isModalOpen.value = true;
 };
 
