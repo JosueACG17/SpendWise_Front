@@ -3,7 +3,7 @@
   <div class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
     <div class="flex flex-col items-center mb-4">
       <button @click="openAddModal"
-        class="bg-gradient-to-r cursor-pointer from-yellow-500 to-yellow-600 text-white sm:px-6 sm:py-3 px-2 py-1.5 rounded-full hover:from-yellow-500 hover:to-yellow-800 transition-all duration-300 shadow-lg hover:shadow-xl self-end">
+        class="bg-yellow-600 hover:bg-yellow-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 text-white sm:px-5 sm:py-2.5 px-2 py-1.5 rounded-md transition-all duration-300 shadow-lg hover:shadow-xl self-end">
         Agregar Presupuesto
       </button>
       <h1 class="text-4xl text-gray-800 animate__animated animate__fadeIn font-bold mt-3 sm:mt-0">Mis Presupuestos</h1>
@@ -226,6 +226,17 @@ const calcularGastosPorPresupuesto = () => {
 };
 
 const openAddModal = () => {
+  if (!categorias.value.length) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'No hay categorías disponibles',
+      text: 'Por favor, crea una categoría antes de agregar un presupuesto.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#f59e0b',
+    });
+    return;
+  }
+
   editingCategory.value = null;
   nuevoPresupuesto.value = {
     categoriaId: null,

@@ -10,6 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
   const email = ref<string | null>(null)
   const userId = ref<number | null>(null)
+  const userRole = ref<string | null>(null) // <- Añade esta línea
   const router = useRouter()
   const perfilStore = usePerfilStore()
 
@@ -29,13 +30,20 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = response.token;
       localStorage.setItem('token', response.token);
 
-      const decodedToken = jwtDecode<{ nameid: string; email: string }>(response.token);
+      const decodedToken = jwtDecode<{ nameid: string; email: string; role: string }>(response.token); // <- Añade role aquí
 
       email.value = decodedToken.email;
       userId.value = parseInt(decodedToken.nameid, 10);
+      userRole.value = decodedToken.role; // <- Guarda el rol
 
       await perfilStore.cargarPerfil(userId.value);
-      router.push({ name: 'home' });
+
+      // Redirige según el rol
+      if (userRole.value === 'Administrador') {
+        router.push({ name: 'Dashboard' });
+      } else {
+        router.push({ name: 'home' });
+      }
     } catch (error) {
       console.error('Error en login:', error);
       throw error;
@@ -76,10 +84,11 @@ export const useAuthStore = defineStore('auth', () => {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
       try {
-        const decoded = jwtDecode<{ nameid: string; email: string }>(storedToken);
+        const decoded = jwtDecode<{ nameid: string; email: string; role: string }>(storedToken); // <- Añade role aquí
         token.value = storedToken;
         email.value = decoded.email;
         userId.value = parseInt(decoded.nameid, 10);
+        userRole.value = decoded.role; // <- Guarda el rol
 
         await perfilStore.cargarPerfil(userId.value);
       } catch (error) {
@@ -98,6 +107,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     checkAuth,
+    userRole,
     userId,
     initializeAuth
   }

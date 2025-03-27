@@ -10,13 +10,13 @@
           Organiza tus finanzas personales para un mejor control de gastos.
         </p>
       </div>
-      <div class="flex flex-col sm:flex-row space-x-4 space-y-4 sm:space-y-0">
+      <div class="flex flex-col sm:flex-row space-x-4 space-y-3 sm:space-y-0">
         <button @click="openAddModal"
-          class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
+          class="inline-flex items-center cursor-pointer px-4 py-2  border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
           Agregar Gasto
         </button>
         <v-select label="Selecciona una categoría" :items="categorias" item-title="nombre" item-value="id"
-          v-model="selectedId" variant="solo-filled" class="sm:w-60 text-white"></v-select>
+          v-model="selectedId" variant="solo-filled" class="sm:w-60 sm:h-15 "></v-select>
       </div>
     </div>
 
@@ -179,12 +179,23 @@ const filteredGastos = computed(() => {
 });
 
 const openAddModal = () => {
+  if (!categorias.value.length) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'No hay categorías disponibles',
+      text: 'Por favor, crea una categoría antes de agregar un gasto.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#f59e0b',
+    });
+    return;
+  }
+
   editingCategory.value = {
     usuarioId: usuarioId,
     monto: 0,
     categoriaId: null,
     fecha: new Date().toISOString().split('T')[0],
-    descripcion: ''
+    descripcion: '',
   };
   dialog.value = true;
 };

@@ -14,7 +14,7 @@
         </div>
         <div class="flex space-x-4">
           <button @click="openAddModal"
-            class="inline-flex items-center cursor-pointer px-5 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
+            class="inline-flex items-center cursor-pointer sm:px-5 sm:py-2.5 px-2 py-1.5 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-300">
             Agregar Categoría
           </button>
         </div>
@@ -43,7 +43,7 @@
         <Field name="nombre">
           <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
           <input :value="formData.nombre" @input="formData.nombre = $event.target.value"
-            class="mt-1 p-3 focus:ring-yellow-500 focus:border-yellow-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+            class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2 mt-1"
             placeholder="Nombre de la categoría" />
           <ErrorMessage name="nombre" class="error-message" />
         </Field>

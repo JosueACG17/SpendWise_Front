@@ -6,16 +6,6 @@
         <h2 class="text-xl font-bold text-gray-900">{{ title }}</h2>
         <p class="mt-1 text-sm text-gray-500">{{ description }}</p>
       </div>
-      <div class="mt-4 md:mt-0 relative">
-        <div class="relative rounded-md shadow-sm">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" />
-          </div>
-          <input v-model="searchQuery" type="text"
-            class="focus:ring-yellow-500 focus:border-yellow-500 bg-white block w-full pl-10 pr-12 py-2 sm:text-sm border-gray-300 rounded-md"
-            :placeholder="searchPlaceholder" />
-        </div>
-      </div>
     </div>
 
 
@@ -113,7 +103,6 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
 import {
-  MagnifyingGlassIcon,
   ExclamationTriangleIcon,
   PlusIcon,
   PencilIcon,

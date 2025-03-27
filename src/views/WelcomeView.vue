@@ -7,7 +7,7 @@
     ></div>
 
     <div
-      class="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:h-screen lg:items-center lg:px-8 animate__animated animate__fadeInUp "
+      class="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:h-screen lg:items-center lg:px-8"
     >
       <div class="max-w-xl text-center ltr:sm:text-left rtl:sm:text-right">
         <h1 class="text-3xl font-extrabold text-white sm:text-4xl">
