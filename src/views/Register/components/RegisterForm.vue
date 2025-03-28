@@ -123,7 +123,7 @@ const validationSchema = yup.object({
     .email('Correo Electrónico inválido')
     .matches(
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/,
-      'El correo debe tener un formato válido (ejemplo: usuario@dominio.com)'
+      'El correo debe tener un formato válido'
     )
     .required('El correo es requerido'),
   password: yup.string().trim().min(6, 'La contraseña debe tener al menos 6 caracteres').required('La contraseña es requerida'),
