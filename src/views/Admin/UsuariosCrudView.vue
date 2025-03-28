@@ -109,18 +109,20 @@ const validationSchema = yup.object({
       'El correo debe tener un formato válido'
     )
     .required('El correo es requerido'),
-  password: yup.string()
+  password: yup
+    .string()
     .trim()
     .when('isEditMode', {
-      is: false,
+      is: true,
       then: (schema) => schema
-        .min(6, 'La contraseña debe tener al menos 6 caracteres')
-        .required('La contraseña es requerida'),
+        .nullable()
+        .notRequired(),
       otherwise: (schema) => schema
         .min(6, 'La contraseña debe tener al menos 6 caracteres')
-        .nullable()
+        .required('La contraseña es requerida')
     }),
-  rolId: yup.number()
+  rolId: yup
+    .number()
     .required('El rol es requerido')
     .typeError('Debes seleccionar un rol')
 });
@@ -217,10 +219,6 @@ const onSubmit = handleSubmit(async (values) => {
     email: values.email,
     rolId: values.rolId,
   };
-
-  // Solo agregamos la contraseña si:
-  // 1. Estamos creando un nuevo usuario (obligatorio)
-  // 2. O estamos editando y se proporcionó una nueva contraseña
   if (!isEditMode.value || (isEditMode.value && values.password)) {
     userData.contraseña = values.password;
   }
