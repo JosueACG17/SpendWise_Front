@@ -4,7 +4,8 @@ import type {
   CategoryFormData,
   CategoryResponse,
   CategoryUsageStatus,
-  CategoryErrorHandlers
+  CategoryErrorHandlers,
+  CategoryExpenseStatus
 } from "@/interfaces/category";
 
 const defaultErrorHandlers: CategoryErrorHandlers = {
@@ -39,14 +40,47 @@ export const getCategories = async (usuarioId: number): Promise<Category[]> => {
   }
 };
 
+export const hasExpenses = async (categoryId: number): Promise<boolean> => {
+  try {
+    const response = await axiosInstance.get<CategoryExpenseStatus>(`/categorias/hasExpenses/${categoryId}`);
+    return response.data.hasExpenses;
+  } catch (error) {
+    handleAxiosError(error, {
+      ...defaultErrorHandlers,
+      404: 'No se encontró la categoría'
+    });
+    throw error;
+  }
+};
+
 export const deleteCategoria = async (id: number): Promise<CategoryResponse> => {
   try {
+    const hasExp = await hasExpenses(id);
+    if (hasExp) {
+      throw {
+        response: {
+          status: 409,
+          data: { message: 'No se puede eliminar la categoría porque tiene gastos asociados' }
+        }
+      };
+    }
+
+    const inUse = await isCategoryInUse(id);
+    if (inUse) {
+      throw {
+        response: {
+          status: 409,
+          data: { message: 'No se puede eliminar la categoría porque está en un presupuesto' }
+        }
+      };
+    }
+
     const response = await axiosInstance.delete<CategoryResponse>(`/categorias/${id}`);
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
       ...defaultErrorHandlers,
-      409: 'No se puede eliminar la categoría porque está en uso'
+      409: (error as any)?.response?.data?.message || 'La categoría está en uso y no puede ser eliminada'
     });
     throw error;
   }
@@ -78,9 +112,6 @@ export const isCategoryInUse = async (categoryId: number): Promise<boolean> => {
   }
 };
 
-/**
- * Obtiene una categoría por su ID
- */
 export const getCategoryById = async (id: number): Promise<Category> => {
   try {
     const response = await axiosInstance.get<Category>(`/categorias/${id}`);

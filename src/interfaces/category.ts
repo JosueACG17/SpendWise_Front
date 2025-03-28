@@ -44,3 +44,7 @@ export interface ListCategoriesParams {
   page?: number;
   limit?: number;
 }
+
+export interface CategoryExpenseStatus {
+  hasExpenses: boolean;
+}
