@@ -28,42 +28,48 @@
     :title="selectedUser ? 'Editar Usuario' : 'Agregar Usuario'"
     :saveButtonText="selectedUser ? 'Actualizar' : 'Crear'"
     :icon="UserIcon"
-    @save="saveUser"
+    @save="onSubmit"
     @close="closeModal"
   >
-    <form @submit.prevent="saveUser">
+    <form @submit.prevent="onSubmit">
       <div class="mb-4">
         <label class="text-gray-700 block mb-2">Correo Electrónico</label>
         <input
-          v-model="form.email"
+          v-model="email"
+          @blur="validateField('email')"
           type="email"
-          required
           class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2"
           placeholder="Ingrese el correo electrónico"
+          :class="{ 'border-red-500': (meta.touched || submitCount > 0) && errors.email }"
         />
+        <p v-if="(meta.touched || submitCount > 0) && errors.email" class="text-red-600 text-sm mt-1">{{ errors.email }}</p>
       </div>
 
       <div class="mb-4">
-        <label class="text-gray-700 block mb-2">Contraseña</label>
-        <input
-          v-model="form.password"
-          type="password"
-          :required="!selectedUser"
-          class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2"
-          placeholder="Ingrese la contraseña"
-        />
-      </div>
+    <label class="text-gray-700 block mb-2">Contraseña</label>
+    <input
+      v-model="password"
+      @blur="validateField('password')"
+      type="password"
+      class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2"
+      :placeholder="isEditMode ? 'Nueva Contraseña (dejar vacío para mantener la actual)' : 'Ingrese la contraseña'"
+      :class="{ 'border-red-500': (meta.touched || submitCount > 0) && errors.password }"
+    />
+    <p v-if="(meta.touched || submitCount > 0) && errors.password" class="text-red-600 text-sm mt-1">{{ errors.password }}</p>
+  </div>
 
       <div class="mb-4">
         <label class="text-gray-700 block mb-2">Rol</label>
         <select
-          v-model="form.rolId"
-          required
+          v-model="rolId"
+          @blur="validateField('rolId')"
           class="border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 px-4 py-2"
+          :class="{ 'border-red-500': (meta.touched || submitCount > 0) && errors.rolId }"
         >
           <option value="" disabled>Seleccione un rol</option>
           <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.nombre }}</option>
         </select>
+        <p v-if="(meta.touched || submitCount > 0) && errors.rolId" class="text-red-600 text-sm mt-1">{{ errors.rolId }}</p>
       </div>
     </form>
   </GenericModal>
@@ -78,29 +84,73 @@ import { UserIcon } from '@heroicons/vue/24/solid';
 import GenericModal from '@/common/GenericModal.vue';
 import { useUserStore } from '@/stores/userStore';
 import { fetchRoles } from '@/services/roleService';
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode';
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
 
 interface Role {
   id: number;
   nombre: string;
 }
 
-interface UserForm {
-  email: string;
-  password?: string;
-  rolId: number | null;
-}
-
 const userStore = useUserStore();
 const isModalOpen = ref<boolean>(false);
 const selectedUser = ref<any | null>(null);
 const roles = ref<Role[]>([]);
+const originalPassword = ref<string | null>(null);
 
-const form = ref<UserForm>({
-  email: '',
-  password: '',
-  rolId: null,
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .trim()
+    .email('Correo Electrónico inválido')
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/,
+      'El correo debe tener un formato válido'
+    )
+    .required('El correo es requerido'),
+  password: yup.string()
+    .trim()
+    .when('isEditMode', {
+      is: false,
+      then: (schema) => schema
+        .min(6, 'La contraseña debe tener al menos 6 caracteres')
+        .required('La contraseña es requerida'),
+      otherwise: (schema) => schema
+        .min(6, 'La contraseña debe tener al menos 6 caracteres')
+        .nullable()
+    }),
+  rolId: yup.number()
+    .required('El rol es requerido')
+    .typeError('Debes seleccionar un rol')
 });
+
+const {
+  errors,
+  handleSubmit,
+  defineField,
+  validateField,
+  meta,
+  resetForm,
+  submitCount,
+  setFieldValue
+} = useForm({
+  validationSchema,
+  initialValues: {
+    email: '',
+    password: '',
+    rolId: null,
+    isEditMode: false
+  },
+  validateOnMount: false,
+  validateOnChange: false,
+  validateOnBlur: false
+});
+
+const [email] = defineField('email');
+const [password] = defineField('password');
+const [rolId] = defineField('rolId');
+const isEditMode = ref(false);
 
 onMounted(async () => {
   await userStore.getUsers();
@@ -110,18 +160,34 @@ onMounted(async () => {
 
 const openAddUserModal = (): void => {
   selectedUser.value = null;
-  form.value = { email: '', password: '', rolId: null };
+  isEditMode.value = false;
+  originalPassword.value = null;
+  resetForm({
+    values: {
+      email: '',
+      password: '',
+      rolId: null,
+      isEditMode: false
+    }
+  });
   isModalOpen.value = true;
 };
 
 const editUser = (user: any): void => {
   selectedUser.value = user;
+  isEditMode.value = true;
+  originalPassword.value = user.password; // Guardamos la contraseña original
   const role = roles.value.find(r => r.nombre === user.role);
-  form.value = {
-    email: user.email,
-    password: '',
-    rolId: role ? role.id : null,
-  };
+
+  resetForm({
+    values: {
+      email: user.email,
+      password: '',
+      rolId: role ? role.id : null,
+      isEditMode: true
+    }
+  });
+
   isModalOpen.value = true;
 };
 
@@ -143,15 +209,20 @@ const deleteUser = async (user: any): Promise<void> => {
 
 const closeModal = (): void => {
   isModalOpen.value = false;
+  originalPassword.value = null;
 };
 
-const saveUser = async (): Promise<void> => {
+const onSubmit = handleSubmit(async (values) => {
   const userData: any = {
-    email: form.value.email,
-    rolId: form.value.rolId,
+    email: values.email,
+    rolId: values.rolId,
   };
-  if (form.value.password) {
-    userData.contraseña = form.value.password;
+
+  // Solo agregamos la contraseña si:
+  // 1. Estamos creando un nuevo usuario (obligatorio)
+  // 2. O estamos editando y se proporcionó una nueva contraseña
+  if (!isEditMode.value || (isEditMode.value && values.password)) {
+    userData.contraseña = values.password;
   }
 
   try {
@@ -163,10 +234,11 @@ const saveUser = async (): Promise<void> => {
     await userStore.getUsers();
     Swal.fire('Éxito', 'Usuario guardado correctamente.', 'success');
     closeModal();
-  } catch {
+  } catch (error) {
+    console.error('Error al guardar usuario:', error);
     Swal.fire('Error', 'Hubo un problema al guardar el usuario.', 'error');
   }
-};
+});
 
 const tableUsers = computed(() => {
   return userStore.users.map((user) => ({
