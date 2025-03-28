@@ -19,7 +19,7 @@ import { computed } from 'vue';
 import type { PropType } from 'vue';
 import TableContentGastos from './TableContentGastos.vue';
 
-// Interfaces de tipos
+// Interfaces 
 interface Gasto {
   id: number;
   monto: number;
@@ -48,7 +48,7 @@ const props = defineProps({
   }
 });
 
-// Emits con tipado
+// Emits
 const emit = defineEmits({
   add: () => true,
   edit: (gasto: Gasto) => {
@@ -63,7 +63,6 @@ const emit = defineEmits({
   }
 });
 
-// Mapeo seguro de gastos con categorías
 const gastosConCategoria = computed<Gasto[]>(() => {
   return props.gastos.map(gasto => {
     const categoria = props.categorias.find(c => c.id === gasto.categoriaId);

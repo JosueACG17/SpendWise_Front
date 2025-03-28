@@ -1,18 +1,26 @@
 import { axiosInstance, handleAxiosError } from "@/utils/Request";
+import type {
+  Category,
+  CategoryFormData,
+  CategoryResponse,
+  CategoryUsageStatus,
+  CategoryErrorHandlers
+} from "@/interfaces/category";
 
-interface Category {
-  id: number;
-  nombre: string;
-  usuarioId?: number;
-}
+const defaultErrorHandlers: CategoryErrorHandlers = {
+  400: 'Datos inválidos',
+  404: 'Categoría no encontrada',
+  500: 'Error en el servidor'
+};
 
-export const addCategory = async (category: Category): Promise<{ message: string }> => {
+export const addCategory = async (category: CategoryFormData): Promise<CategoryResponse> => {
   try {
-    const response = await axiosInstance.post<{ message: string }>('/categorias', category);
+    const response = await axiosInstance.post<CategoryResponse>('/categorias', category);
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
-      400: 'Datos inválidos',
+      ...defaultErrorHandlers,
+      400: 'Datos inválidos para crear categoría'
     });
     throw error;
   }
@@ -24,38 +32,37 @@ export const getCategories = async (usuarioId: number): Promise<Category[]> => {
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
-      404: 'No se encontraron categorías',
+      ...defaultErrorHandlers,
+      404: 'No se encontraron categorías para este usuario'
     });
     throw error;
   }
 };
 
-export const deleteCategoria = async (id: number): Promise<{ message: string }> => {
+export const deleteCategoria = async (id: number): Promise<CategoryResponse> => {
   try {
-    const response = await axiosInstance.delete<{ message: string }>(`/categorias/${id}`);
+    const response = await axiosInstance.delete<CategoryResponse>(`/categorias/${id}`);
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
-      404: 'Categoría no encontrada',
-      500: 'Error en el servidor al eliminar la categoría',
+      ...defaultErrorHandlers,
+      409: 'No se puede eliminar la categoría porque está en uso'
     });
     throw error;
   }
 };
 
-export const updateCategory = async (id: number, category: Category): Promise<{ message: string }> => {
+export const updateCategory = async (id: number, category: CategoryFormData): Promise<CategoryResponse> => {
   try {
-    const categoryActualizada = {
-      ...category,
-      id: id,
-    };
-    const response = await axiosInstance.put<{ message: string }>(`/categorias/${id}`, categoryActualizada);
+    const response = await axiosInstance.put<CategoryResponse>(
+      `/categorias/${id}`,
+      { ...category, id }
+    );
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
-      400: 'Datos inválidos',
-      404: 'Categoría no encontrada',
-      500: 'Error en el servidor al actualizar la categoría',
+      ...defaultErrorHandlers,
+      400: 'Datos inválidos para actualizar categoría'
     });
     throw error;
   }
@@ -63,12 +70,23 @@ export const updateCategory = async (id: number, category: Category): Promise<{ 
 
 export const isCategoryInUse = async (categoryId: number): Promise<boolean> => {
   try {
-    const response = await axiosInstance.get<{ inUse: boolean }>(`/categorias/isInUse/${categoryId}`);
+    const response = await axiosInstance.get<CategoryUsageStatus>(`/categorias/isInUse/${categoryId}`);
     return response.data.inUse;
   } catch (error) {
-    handleAxiosError(error, {
-      404: 'Categoría no encontrada',
-    });
+    handleAxiosError(error, defaultErrorHandlers);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene una categoría por su ID
+ */
+export const getCategoryById = async (id: number): Promise<Category> => {
+  try {
+    const response = await axiosInstance.get<Category>(`/categorias/${id}`);
+    return response.data;
+  } catch (error) {
+    handleAxiosError(error, defaultErrorHandlers);
     throw error;
   }
 };

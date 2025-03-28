@@ -9,6 +9,7 @@
       />
 
       <GastosTable
+      @add="openAddModal" 
         :gastos="gastosConCategoria"
         :categorias="categorias"
         @edit="editGasto"
@@ -46,6 +47,7 @@ import GastosModal from '@/views/User/components/BillsModal.vue';
 import DeleteConfirmationModal from '@/views/User/components/DeleteConfirmationModal.vue';
 import { useGastos } from '@/composables/UseGastos';
 import { useCategorias } from '@/composables/useCategorias';
+import Swal from 'sweetalert2';
 
 interface Gasto {
   id: number;
@@ -77,13 +79,30 @@ const {
   showDeleteModal,
   gastoToDelete,
   cargarGastos,
-  openAddModal,
   editGasto,
   handleSubmit,
   solicitarEliminarGasto,
   confirmDeleteGasto,
   closeDeleteModal
 } = useGastos(usuarioId);
+
+// Función modificada para verificar categorías antes de abrir el modal
+const openAddModal = () => {
+  if (categorias.value.length === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'No hay categorías disponibles',
+      text: 'Por favor, crea una categoría antes de agregar un gasto.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#f59e0b',
+    });
+    return;
+  }
+
+  // Si hay categorías, proceder a abrir el modal
+  editingGasto.value = null;
+  dialog.value = true;
+};
 
 // Computed para combinar gastos con nombres de categoría
 const gastosConCategoria = computed<Gasto[]>(() => {
