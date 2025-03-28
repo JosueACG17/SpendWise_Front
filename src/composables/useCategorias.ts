@@ -6,7 +6,8 @@ import {
   deleteCategoria,
   getCategories,
   updateCategory,
-  isCategoryInUse
+  isCategoryInUse,
+  hasExpenses
 } from '@/services/categoryService';
 import { getBudgetsByUser } from '@/services/presupuestosService';
 
@@ -112,19 +113,29 @@ export function useCategorias(usuarioId: number) {
     if (!categoryToDelete.value) return;
 
     try {
+      // Primero verificar si está en presupuestos
       const inUse = await isCategoryInUse(categoryToDelete.value.id);
       if (inUse) {
-        showError('Error', 'No se puede eliminar la categoría porque está siendo utilizada en un presupuesto');
+        showError('Error', 'No se puede eliminar la categoría porque tiene un presupuesto asociado');
         closeDeleteModal();
         return;
       }
 
+      // Luego verificar si tiene gastos
+      const hasExp = await hasExpenses(categoryToDelete.value.id);
+      if (hasExp) {
+        showError('Error', 'No se puede eliminar la categoría porque tiene gastos asociados');
+        closeDeleteModal();
+        return;
+      }
+
+      // Si pasa las validaciones, eliminar
       await deleteCategoria(categoryToDelete.value.id);
       showSuccess('¡Eliminado!', 'La categoría se ha eliminado correctamente');
       await cargarCategorias();
     } catch (error) {
       console.error("Error al eliminar la categoría:", error);
-      throw error;
+      showError('Error', 'Ocurrió un error al eliminar la categoría');
     } finally {
       closeDeleteModal();
     }

@@ -1,6 +1,6 @@
 <template>
   <NavbarComponent />
-  <div class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100">
+  <div class="mx-auto p-7 min-h-screen items-center justify-center rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 animate__animated animate__fadeIn">
     <div class="flex flex-col items-center mb-4">
       <button @click="openAddModal"
         class="bg-yellow-600 hover:bg-yellow-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 text-white sm:px-5 sm:py-2.5 px-2 py-1.5 rounded-md transition-all duration-300 shadow-lg hover:shadow-xl self-end">
