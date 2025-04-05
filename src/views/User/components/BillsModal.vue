@@ -119,15 +119,16 @@ const schema = yup.object({
     .required('El monto es requerido')
     .min(1, 'El monto debe ser mayor a 0')
     .typeError('El monto debe ser un número válido'),
-  fecha: yup.date()
+    fecha: yup.date()
     .required('La fecha es requerida')
     .max(new Date(), 'La fecha no puede ser futura')
+    .min(new Date(new Date().setMonth(new Date().getMonth() - 6)), 'La fecha debe estar dentro de los últimos 6 meses')
     .typeError('La fecha debe ser válida'),
   descripcion: yup.string()
     .trim()
     .required('La descripción es requerida')
     .max(100, 'La descripción no puede exceder 100 caracteres')
-    .matches(/^[a-zA-Z\s]+$/, 'La descripción solo puede contener letras y espacios')
+    .matches(/^[a-zA-Z0-9\s]+$/, 'La descripción solo puede contener letras, números y espacios')
 });
 
 const form = ref({

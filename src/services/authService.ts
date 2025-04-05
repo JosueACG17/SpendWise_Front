@@ -11,6 +11,11 @@ interface RegisterResponse {
 export const loginUser = async (email: string, contraseña: string): Promise<LoginResponse> => {
   try {
     const response = await axiosInstance.post<LoginResponse>('/Auth/login', { email, contraseña });
+
+    if (!response.data || typeof response.data.token !== 'string') {
+      throw new Error('Respuesta inválida del servidor al iniciar sesión');
+    }
+
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
@@ -26,6 +31,11 @@ export const registerUser = async (email: string, password: string): Promise<Reg
       email,
       contraseña: password,
     });
+
+    if (!response.data || typeof response.data.message !== 'string') {
+      throw new Error('Respuesta inválida del servidor al registrar');
+    }
+
     return response.data;
   } catch (error) {
     handleAxiosError(error, {
@@ -40,8 +50,11 @@ export const validateToken = async (token: string): Promise<{ isValid: boolean; 
     const response = await axiosInstance.get('/Auth/validate-token', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return { isValid: response.status === 200 };
-  } catch  {
+
+    return {
+      isValid: response.status === 200 && typeof response.data === 'object',
+    };
+  } catch {
     return { isValid: false, message: 'Token inválido o expirado' };
   }
 };

@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(localStorage.getItem('token'))
   const email = ref<string | null>(null)
   const userId = ref<number | null>(null)
-  const userRole = ref<string | null>(null) // <- Añade esta línea
+  const userRole = ref<string | null>(null)
   const router = useRouter()
   const perfilStore = usePerfilStore()
 
@@ -30,15 +30,14 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = response.token;
       localStorage.setItem('token', response.token);
 
-      const decodedToken = jwtDecode<{ nameid: string; email: string; role: string }>(response.token); // <- Añade role aquí
+      const decodedToken = jwtDecode<{ nameid: string; email: string; role: string }>(response.token); 
 
       email.value = decodedToken.email;
       userId.value = parseInt(decodedToken.nameid, 10);
-      userRole.value = decodedToken.role; // <- Guarda el rol
+      userRole.value = decodedToken.role;
 
       await perfilStore.cargarPerfil(userId.value);
 
-      // Redirige según el rol
       if (userRole.value === 'Administrador') {
         router.push({ name: 'Dashboard' });
       } else {
@@ -88,7 +87,7 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = storedToken;
         email.value = decoded.email;
         userId.value = parseInt(decoded.nameid, 10);
-        userRole.value = decoded.role; // <- Guarda el rol
+        userRole.value = decoded.role;
 
         await perfilStore.cargarPerfil(userId.value);
       } catch (error) {
