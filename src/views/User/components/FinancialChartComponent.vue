@@ -8,10 +8,7 @@
         <div class="bg-gray-50 p-6 rounded-lg shadow-md">
           <h3 class="text-xl font-semibold mb-4 text-[#342E2E]">Gastos por categoría</h3>
           <div class="h-80">
-            <ChartComponent
-              v-if="categoriesLoaded"
-              :chartData="expensesByCategory"
-            />
+            <ChartComponent v-if="categoriesLoaded" :chartData="expensesByCategory" />
             <div v-else class="h-full flex items-center justify-center">
               <p class="text-gray-500">Cargando datos...</p>
             </div>
@@ -20,10 +17,7 @@
         <div class="bg-gray-50 p-6 rounded-lg shadow-md">
           <h3 class="text-xl font-semibold mb-4 text-[#342E2E]">Evolución de gastos</h3>
           <div class="h-80">
-            <LineChart
-              v-if="monthsLoaded"
-              :chartData="expensesOverTime"
-            />
+            <LineChart v-if="monthsLoaded" :chartData="expensesOverTime" />
             <div v-else class="h-full flex items-center justify-center">
               <p class="text-gray-500">Cargando datos...</p>
             </div>
@@ -38,11 +32,13 @@
           </p>
         </div>
         <button @click="handleDownloadPDF"
-          class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-500 transition-colors font-medium" :disabled="!categoriesLoaded || !monthsLoaded"
-        >
+          class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-500 transition-colors font-medium"
+          :disabled="!categoriesLoaded || !monthsLoaded">
           <span class="flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
             </svg>
             Descargar PDF
           </span>
@@ -54,6 +50,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import Swal from 'sweetalert2';
 import { jwtDecode } from 'jwt-decode';
 import ChartComponent from './ChartComponent.vue';
 import LineChart from './LineChart.vue';
@@ -62,6 +59,21 @@ import { getGastosPorUsuario } from '@/services/gastosService';
 import { generateFinancialPDF } from '@/utils/PdfGenerator';
 
 const handleDownloadPDF = () => {
+  if (
+    expensesByCategory.value.datasets[0].data.length === 0 ||
+    expensesOverTime.value.datasets[0].data.length === 0
+  ) {
+    Swal.fire({
+      icon: 'warning',
+      iconColor: '#FF6B6B',
+      title: 'No hay datos disponibles',
+      text: 'Asegúrate de tener gastos registrados antes de descargar el PDF.',
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#FF6B6B'
+    });
+    return;
+  }
+
   generateFinancialPDF(
     {
       labels: expensesByCategory.value.labels,

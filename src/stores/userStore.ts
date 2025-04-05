@@ -88,7 +88,6 @@ export const useUserStore = defineStore('user', () => {
     try {
       loading.value = true
       await deleteUser(userId)
-      users.value = users.value.filter((u) => u.id !== userId)
       Swal.fire({
         icon: 'success',
         title: '¡Éxito!',
@@ -99,7 +98,10 @@ export const useUserStore = defineStore('user', () => {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'No se pudo eliminar el usuario. Inténtalo de nuevo.',
+        text: 'No se ha podido eliminar el usuario porque está en uso.',
+        timer: 1400,
+        timerProgressBar: true,
+        showConfirmButton: false,
       })
     } finally {
       loading.value = false

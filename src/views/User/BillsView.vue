@@ -9,7 +9,7 @@
       />
 
       <GastosTable
-      @add="openAddModal" 
+      @add="openAddModal"
         :gastos="gastosConCategoria"
         :categorias="categorias"
         @edit="editGasto"
@@ -58,11 +58,9 @@ interface Gasto {
   nombreCategoria?: string;
 }
 
-// Obtener usuario ID
 const token = localStorage.getItem('token');
 const usuarioId = token ? jwtDecode(token).nameid : null;
 
-// Composable para categorías
 const {
   categorias,
   presupuestos,
@@ -70,7 +68,6 @@ const {
   cargarPresupuestos
 } = useCategorias(usuarioId);
 
-// Composable para gastos
 const {
   filteredGastos,
   selectedId,
@@ -86,7 +83,6 @@ const {
   closeDeleteModal
 } = useGastos(usuarioId);
 
-// Función modificada para verificar categorías antes de abrir el modal
 const openAddModal = () => {
   if (categorias.value.length === 0) {
     Swal.fire({
@@ -99,12 +95,10 @@ const openAddModal = () => {
     return;
   }
 
-  // Si hay categorías, proceder a abrir el modal
   editingGasto.value = null;
   dialog.value = true;
 };
 
-// Computed para combinar gastos con nombres de categoría
 const gastosConCategoria = computed<Gasto[]>(() => {
   return filteredGastos.value.map(gasto => ({
     ...gasto,
@@ -112,7 +106,6 @@ const gastosConCategoria = computed<Gasto[]>(() => {
   }));
 });
 
-// Carga inicial
 onMounted(async () => {
   try {
     await Promise.all([
